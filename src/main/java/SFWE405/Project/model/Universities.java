@@ -1,7 +1,6 @@
-package SFWE405.Project;
+package SFWE405.Project.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
