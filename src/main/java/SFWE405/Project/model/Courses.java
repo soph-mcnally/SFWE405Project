@@ -10,6 +10,16 @@ public class Courses {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    // how to add university id foreign key?
+    // and semester id?
+    private int courseCode;
+    private String courseName;
+    private String courseType; // make enum or relate to departments?
+    private double unitsAmount;
+    private boolean upperDivision;
+
+
+
 
 
 }
