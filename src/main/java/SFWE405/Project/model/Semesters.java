@@ -11,7 +11,15 @@ public class Semesters {
     private Long id;
 
     private int year;
+
     @Enumerated(EnumType.STRING)
     private Season season;
+
+    public enum Season {
+        SPRING,
+        SUMMER,
+        FALL,
+        WINTER
+    }
 
 }

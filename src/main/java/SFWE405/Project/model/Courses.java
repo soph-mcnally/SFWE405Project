@@ -14,11 +14,18 @@ public class Courses {
     // and semester id?
     private int courseCode;
     private String courseName;
-    private String courseType; // make enum or relate to departments?
+
+    @Enumerated(EnumType.STRING)
+    private CourseType courseType;
+
     private double unitsAmount;
     private boolean upperDivision;
 
-
+    public enum CourseType {
+        LECTURE,
+        LAB,
+        DISCUSSION,
+    }
 
 
 
