@@ -11,5 +11,5 @@ public class Programs {
     private Long id;
 
     private String programName;
-    private double creditsRequired;
+    private double creditsRequired; // comment
 }
