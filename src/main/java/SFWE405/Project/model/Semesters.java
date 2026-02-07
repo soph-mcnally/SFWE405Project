@@ -1,6 +1,11 @@
 package SFWE405.Project.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
@@ -10,7 +15,7 @@ public class Semesters {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int year;
+    private int semesterYear;
 
     @Enumerated(EnumType.STRING)
     private Season season;
