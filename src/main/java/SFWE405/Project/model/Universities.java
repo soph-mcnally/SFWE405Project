@@ -2,6 +2,9 @@ package SFWE405.Project.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.Set;
 import java.util.HashSet;
 
@@ -9,13 +12,15 @@ import java.util.HashSet;
 @Entity
 public class Universities {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String location;
 
-    @OneToMany (mappedBy = "enrolledAt"); // Peopl owns this relationship -> mappedBy is needed
+    @OneToMany (mappedBy = "enrolledAt"); // People owns this relationship -> mappedBy is needed
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<People> enrolled = new HashSet<>();
 
     //constructors
@@ -26,17 +31,8 @@ public class Universities {
         this.location = location;
     }
 
-    // getters/setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public Set<People> getEnrolled() { return enrolled; }
-
     // helpers
     public void enrollPerson(People p) {
-        enrolled.add(p);
+        p.setEnrolledAt(this);
     }
 }
