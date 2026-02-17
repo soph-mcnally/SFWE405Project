@@ -18,7 +18,10 @@ public class HomeworkAssignments {
 
     @NotNull(message = "Assignment name cannot be null")
     private String assignmentName;
-    LocalDate dueDate;
+
+    @Future(message = "Due date must be in the future")
+    private LocalDate dueDate;
+    
     private String relatedFileName = null;  //allows for accessing files possibly needed (Likely stored in templates)
 
     @ManyToOne
