@@ -1,4 +1,4 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

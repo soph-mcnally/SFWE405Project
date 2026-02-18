@@ -1,4 +1,4 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +17,7 @@ import lombok.ToString;
 public class Universities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long universitiesID;
 
     private String name;
     private String location;
