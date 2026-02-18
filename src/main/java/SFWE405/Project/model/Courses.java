@@ -5,28 +5,40 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "Courses")
 public class Courses {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "CourseID")
+    private Long courseId;
 
-    // how to add university id foreign key?
-    // and semester id?
-    private int courseCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UniversityID", nullable = false)
+    private Universities university;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SemesterID", nullable = false)
+    private Semesters semester;
+
+    @Column(name = "CourseCode", nullable = false)
+    private String courseCode;
+
+    @Column(name = "CourseName", nullable = false)
     private String courseName;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "CourseType", nullable = false)
     private CourseType courseType;
 
-    private double unitsAmount;
-    private boolean upperDivision;
+    @Column(name = "UnitsAmount", nullable = false)
+    private Integer unitsAmount;
+
+    @Column(name = "UpperDivision", nullable = false)
+    private Boolean upperDivision;
 
     public enum CourseType {
         LECTURE,
         LAB,
-        DISCUSSION,
+        DISCUSSION
     }
-
-
-
 }
