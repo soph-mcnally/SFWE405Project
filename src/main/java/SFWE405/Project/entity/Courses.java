@@ -1,4 +1,4 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,21 +10,28 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Semesters {
+public class Courses {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int semesterYear;
+    // how to add university id foreign key?
+    // and semester id?
+    private int courseCode;
+    private String courseName;
 
     @Enumerated(EnumType.STRING)
-    private Season season;
+    private CourseType courseType;
 
-    public enum Season {
-        SPRING,
-        SUMMER,
-        FALL,
-        WINTER
+    private double unitsAmount;
+    private boolean upperDivision;
+
+    public enum CourseType {
+        LECTURE,
+        LAB,
+        DISCUSSION,
     }
+
+
 
 }

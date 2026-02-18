@@ -1,10 +1,19 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
-import java.util.Set;
-import java.util.HashSet;
+import SFWE405.Project.entity.Universities;
 
-import jakarta.persistence.*;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,7 +23,7 @@ import lombok.ToString;
 public class People {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long personID;
 
     private String firstName;
     private String lastName;
@@ -73,5 +82,8 @@ public class People {
             newUni.getEnrolled().add(this);
         }
     }
+
+    @OneToMany(mappedBy = "person")
+    private List<StudentPrograms> studentPrograms;
         
 }
