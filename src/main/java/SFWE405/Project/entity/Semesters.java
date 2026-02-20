@@ -1,19 +1,16 @@
 package SFWE405.Project.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
 public class Semesters {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long semesterID;
 
     private int semesterYear;
 
@@ -27,4 +24,7 @@ public class Semesters {
         WINTER
     }
 
+    // semesters to courses relationship
+    @OneToMany(mappedBy = "semester")
+    private List<Courses> courses;
 }
