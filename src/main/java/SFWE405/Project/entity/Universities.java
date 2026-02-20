@@ -1,24 +1,28 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
-import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.Set;
-import java.util.HashSet;
 
 @Data
 @Entity
 public class Universities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long universitiesID;
 
     private String name;
     private String location;
 
-    @OneToMany (mappedBy = "enrolledAt"); // People owns this relationship -> mappedBy is needed
+    @OneToMany (mappedBy = "enrolledAt") // People owns this relationship -> mappedBy is needed
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<People> enrolled = new HashSet<>();
