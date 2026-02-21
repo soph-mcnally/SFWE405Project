@@ -1,14 +1,11 @@
 package SFWE405.Project.entity;
 
-import SFWE405.Project.entity.Courses;
-
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Future;
 
 import jakarta.persistence.Table;
 
@@ -26,20 +23,29 @@ import jakarta.persistence.Entity;  //Spring Entity
 @SuppressWarnings("unused") //gets rid of unused import warnings
 @Data
 @Entity
-public class HomeworkAssignments {
+public class AcademicHistory {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull(message = "Assignment name cannot be null")
-    private String assignmentName;
+    @OneToOne
+    @JoinColumn(name = "person_id", nullable = false) //FK
+    private Long person_id;
 
-    @Future(message = "Due date must be in the future")
-    private LocalDate dueDate;
-    
-    private String relatedFileName = null;  //allows for accessing files possibly needed (Likely stored in templates)
+    @OneToOne
+    @JoinColumn(name = "university_id", nullable = false) //FK
+    private Long university_id;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false) //FK column in join table references the Courses entity
-    private Courses course;
+    @NotNull(message = "Start date cannot be null")
+    private LocalDate StartDate;
+
+    private LocalDate EndDate;
+
+    private Long CreditsEarned;
+
+    private double GPA;
+
+    private boolean TranscriptReceived; //graduation status
+
 }
