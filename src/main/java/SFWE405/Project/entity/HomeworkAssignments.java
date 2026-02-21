@@ -1,6 +1,6 @@
-package SFWE405.Project.model;
+package SFWE405.Project.entity;
 
-import SFWE405.Project.model.Courses;
+import SFWE405.Project.entity.Courses;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*; //validating attributes
