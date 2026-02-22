@@ -1,15 +1,23 @@
 package SFWE405.Project.entity;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+
+import jakarta.persistence.Table;
+
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+
+import jakarta.persistence.JoinColumn;
+
+import java.time.LocalDate;
+
+import lombok.Data;                 //Lombok getters & setters
+import jakarta.persistence.Entity;  //Spring Entity
 
 
 @SuppressWarnings("unused") //gets rid of unused import warnings
