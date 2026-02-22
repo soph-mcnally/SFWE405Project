@@ -1,7 +1,5 @@
 package SFWE405.Project.entity;
 
-import SFWE405.Project.entity.Universities;
-
 import java.util.List;
 
 import jakarta.persistence.Column;

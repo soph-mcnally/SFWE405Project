@@ -1,26 +1,16 @@
 package SFWE405.Project.entity;
 
-import SFWE405.Project.entity.Courses;
+import java.time.LocalDate;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Future;
-
-import jakarta.persistence.Table;
-
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-
 import jakarta.persistence.JoinColumn;
-
-import java.time.LocalDate;
-
-import lombok.Data;                 //Lombok getters & setters
-import jakarta.persistence.Entity;  //Spring Entity
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;                 //Lombok getters & setters
+import lombok.Data;  //Spring Entity
 
 
 @SuppressWarnings("unused") //gets rid of unused import warnings
@@ -29,7 +19,7 @@ import jakarta.persistence.Entity;  //Spring Entity
 public class HomeworkAssignments {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long homeworkAssignmentsID;
 
     @NotNull(message = "Assignment name cannot be null")
     private String assignmentName;

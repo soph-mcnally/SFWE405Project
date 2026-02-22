@@ -27,15 +27,15 @@ public class AcademicHistory {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long academicHistoryID;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "person_id", nullable = false) //FK
-    private Long person_id;
+    private People person;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "university_id", nullable = false) //FK
-    private Long university_id;
+    private Universities university;
 
     @NotNull(message = "Start date cannot be null")
     private LocalDate StartDate;
