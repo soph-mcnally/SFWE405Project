@@ -1,7 +1,7 @@
 package SFWE405.Project.controller;
 
 import SFWE405.Project.entity.University;
-import SFWE405.Project.repository.UniversitiesRepository;
+import SFWE405.Project.repository.UniversityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UniversityController {
 
     @Autowired
-    private UniversitiesRepository universitiesRepository;
+    private UniversityRepository universitiesRepository;
 
     // GET all universities
     @GetMapping

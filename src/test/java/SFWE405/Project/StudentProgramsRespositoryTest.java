@@ -21,7 +21,7 @@ import SFWE405.Project.entity.CompositeKeys.StudentProgramID;
 import SFWE405.Project.repository.PeopleRepository;
 import SFWE405.Project.repository.ProgramsRepository;
 import SFWE405.Project.repository.StudentProgramsRepository;
-import SFWE405.Project.repository.UniversitiesRepository;
+import SFWE405.Project.repository.UniversityRepository;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -37,7 +37,7 @@ class StudentProgramsRepositoryTest {
     private PeopleRepository peopleRepository;
 
     @Autowired
-    private UniversitiesRepository universitiesRepository;
+    private UniversityRepository universitiesRepository;
 
     private University uOfA;
 
