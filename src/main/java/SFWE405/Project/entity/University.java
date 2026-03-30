@@ -14,7 +14,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-public class Universities {
+public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long universitiesID;
@@ -28,9 +28,9 @@ public class Universities {
     private Set<People> enrolled = new HashSet<>();
 
     //constructors
-    public Universities() {}
+    public University() {}
 
-    public Universities(String name, String location) {
+    public University(String name, String location) {
         this.name = name;
         this.location = location;
     }

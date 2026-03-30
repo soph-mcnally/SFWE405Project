@@ -16,7 +16,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Programs;
 import SFWE405.Project.entity.StudentPrograms;
-import SFWE405.Project.entity.Universities;
+import SFWE405.Project.entity.University;
 import SFWE405.Project.entity.CompositeKeys.StudentProgramID;
 import SFWE405.Project.repository.PeopleRepository;
 import SFWE405.Project.repository.ProgramsRepository;
@@ -39,11 +39,11 @@ class StudentProgramsRepositoryTest {
     @Autowired
     private UniversitiesRepository universitiesRepository;
 
-    private Universities uOfA;
+    private University uOfA;
 
     @BeforeAll
     void setUp(){
-        uOfA = new Universities("U of A", "Tucson, Arizona");
+        uOfA = new University("U of A", "Tucson, Arizona");
         universitiesRepository.save(uOfA);
     }
 

@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Semesters {
+public class Semester {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -10,7 +10,7 @@ import lombok.Data;                 //Lombok getters & setters
 @SuppressWarnings("unused") //gets rid of unused import warnings
 @Data
 @Entity
-public class HomeworkAssignments {
+public class HomeworkAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -25,5 +25,5 @@ public class HomeworkAssignments {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) //FK column in join table references the Courses entity
-    private Courses course;
+    private Course course;
 }

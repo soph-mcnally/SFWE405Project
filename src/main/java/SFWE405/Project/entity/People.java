@@ -1,7 +1,5 @@
 package SFWE405.Project.entity;
 
-import SFWE405.Project.entity.Universities;
-
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -44,7 +42,7 @@ public class People {
     @JoinColumn (name = "university_id", nullable = false)
     @ToString.Exclude // excluding these from the @Data annotation to avoid recursion and equality bugs
     @EqualsAndHashCode.Exclude
-    private Universities enrolledAt;
+    private University enrolledAt;
 
     public enum PersonType { // <- we should consider moving these into their own file
         STUDENT,
@@ -73,7 +71,7 @@ public class People {
     }
 
     // helper to maintain both sides in the database
-    public void setEnrolledAt(Universities newUni) {
+    public void setEnrolledAt(University newUni) {
         if (this.enrolledAt != null) {
             this.enrolledAt.getEnrolled().remove(this);
         }

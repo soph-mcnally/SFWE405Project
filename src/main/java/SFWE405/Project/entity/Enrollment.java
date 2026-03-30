@@ -37,7 +37,7 @@ public class Enrollment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "course_id", nullable = false)
-    private Courses course;
+    private Course course;
 
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status;
