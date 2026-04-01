@@ -1,4 +1,4 @@
-package SFWE405.Project;
+package SFWE405;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

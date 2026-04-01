@@ -6,17 +6,17 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
+import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "Courses")
-public class Courses {
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "CourseID")
@@ -24,11 +24,11 @@ public class Courses {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UniversityID", nullable = false)
-    private Universities university;
+    private University university;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SemesterID", nullable = false)
-    private Semesters semester;
+    private Semester semester;
 
     @Column(name = "CourseCode", nullable = false)
     private String courseCode;

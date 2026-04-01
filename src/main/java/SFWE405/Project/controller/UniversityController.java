@@ -1,7 +1,7 @@
 package SFWE405.Project.controller;
 
-import SFWE405.Project.entity.Universities;
-import SFWE405.Project.repository.UniversitiesRepository;
+import SFWE405.Project.entity.University;
+import SFWE405.Project.repository.UniversityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,21 +12,21 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/universities")
-public class UniversitiesController {
+public class UniversityController {
 
     @Autowired
-    private UniversitiesRepository universitiesRepository;
+    private UniversityRepository universitiesRepository;
 
     // GET all universities
     @GetMapping
-    public List<Universities> getAllUniversities() {
+    public List<University> getAllUniversities() {
         return universitiesRepository.findAll();
     }
 
     // GET university by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Universities> getUniversityById(@PathVariable Long id) {
-        Optional<Universities> university = universitiesRepository.findById(id);
+    public ResponseEntity<University> getUniversityById(@PathVariable Long id) {
+        Optional<University> university = universitiesRepository.findById(id);
 
         return university
                 .map(ResponseEntity::ok)
@@ -35,21 +35,21 @@ public class UniversitiesController {
 
     // CREATE new university
     @PostMapping
-    public Universities createUniversity(@RequestBody Universities university) {
+    public University createUniversity(@RequestBody University university) {
         return universitiesRepository.save(university);
     }
 
     // UPDATE university
     @PutMapping("/{id}")
-    public ResponseEntity<Universities> updateUniversity(
+    public ResponseEntity<University> updateUniversity(
             @PathVariable Long id,
-            @RequestBody Universities updatedUniversity) {
+            @RequestBody University updatedUniversity) {
 
         return universitiesRepository.findById(id)
                 .map(existing -> {
                     existing.setName(updatedUniversity.getName());
                     existing.setLocation(updatedUniversity.getLocation());
-                    Universities saved = universitiesRepository.save(existing);
+                    University saved = universitiesRepository.save(existing);
                     return ResponseEntity.ok(saved);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());

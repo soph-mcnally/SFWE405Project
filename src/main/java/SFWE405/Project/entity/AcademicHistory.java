@@ -1,16 +1,11 @@
 package SFWE405.Project.entity;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 
-import jakarta.persistence.Table;
-
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 import jakarta.persistence.JoinColumn;
 
@@ -35,7 +30,7 @@ public class AcademicHistory {
 
     @ManyToOne
     @JoinColumn(name = "university_id", nullable = false) //FK
-    private Universities university;
+    private University university;
 
     @NotNull(message = "Start date cannot be null")
     private LocalDate StartDate;

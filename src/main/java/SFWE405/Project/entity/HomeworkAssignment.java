@@ -1,5 +1,6 @@
 package SFWE405.Project.entity;
 
+
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import lombok.Data;  //Spring Entity
 @SuppressWarnings("unused") //gets rid of unused import warnings
 @Data
 @Entity
-public class HomeworkAssignments {
+public class HomeworkAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long homeworkAssignmentsID;
@@ -31,5 +32,5 @@ public class HomeworkAssignments {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) //FK column in join table references the Courses entity
-    private Courses course;
+    private Course course;
 }
