@@ -64,6 +64,17 @@ public class DataSeeder {
             course.setUpperDivision(true);
             course = courseRepository.save(course);
 
+            // 5b. Second Course (not yet enrolled)
+            Course course2 = new Course();
+            course2.setCourseCode("SFWE401");
+            course2.setCourseName("Software Assurance & Security");
+            course2.setCourseType(Course.CourseType.LECTURE);
+            course2.setSemester(semester);
+            course2.setUniversity(university);
+            course2.setUnitsAmount(3);
+            course2.setUpperDivision(true);
+            course2 = courseRepository.save(course2);
+
             // 6. Enrollment
             Enrollment enrollment = new Enrollment();
             enrollment.setPerson(student);
