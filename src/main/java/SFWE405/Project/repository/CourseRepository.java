@@ -6,6 +6,6 @@ import SFWE405.Project.entity.Course;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    List<Course> findByUniversityUniversitiesID(Long universitiesID);
-    List<Course> findByUniversityUniversitiesIDAndSemesterId(Long universitiesID, Long semesterId);
+    List<Course> findByUniversityUniversityId(Long universityId);
+    List<Course> findByUniversityUniversityIdAndSemesterSemesterId(Long universityId, Long semesterId);
 }

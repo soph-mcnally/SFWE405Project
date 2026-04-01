@@ -17,7 +17,7 @@ import lombok.ToString;
 public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long universitiesID;
+    private Long universityId;
 
     private String name;
     private String location;

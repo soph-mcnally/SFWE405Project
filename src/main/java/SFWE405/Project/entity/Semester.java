@@ -8,9 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.GenerationType;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -19,12 +17,13 @@ import java.util.List;
 public class Semester {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long semesterID;
+    private Long semesterId;
 
     private int semesterYear;
 
     @Enumerated(EnumType.STRING)
     private Season season;
+
 
     public enum Season {
         SPRING,

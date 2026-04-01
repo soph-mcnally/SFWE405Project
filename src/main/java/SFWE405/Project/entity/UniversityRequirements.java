@@ -22,9 +22,9 @@ public class UniversityRequirements {
 
     @ManyToOne // universities is owner of relationship
     @JoinColumn(name = "universitiesID") // creates the FK column (points to universities)
-    private Universities university;
+    private University university;
 
-    public UniversityRequirements(String requirementDescription, Universities university) {
+    public UniversityRequirements(String requirementDescription, University university) {
         this.requirementDescription = requirementDescription;
         this.university = university;
     }

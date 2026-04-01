@@ -1,8 +1,6 @@
 package SFWE405.Project.entity;
 
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*; //validating attributes
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;

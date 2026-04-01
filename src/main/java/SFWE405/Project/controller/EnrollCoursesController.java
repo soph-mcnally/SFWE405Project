@@ -41,7 +41,7 @@ public class EnrollCoursesController {
 
         List<AvailableSemesterResponse> response = semesters.stream().map(semester -> {
             AvailableSemesterResponse item = new AvailableSemesterResponse();
-            item.setId(semester.getId());
+            item.setId(semester.getSemesterId());
             item.setSeason(semester.getSeason().name());
             item.setSemesterYear(semester.getSemesterYear());
             return item;

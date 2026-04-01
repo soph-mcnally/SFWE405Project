@@ -34,8 +34,8 @@ public class EnrollmentService {
         People person = peopleRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("Person not found"));
 
-        List<Course> courses = courseRepository.findByUniversityUniversitiesID(
-                person.getEnrolledAt().getUniversitiesID());
+        List<Course> courses = courseRepository.findByUniversityUniversityId(
+                person.getEnrolledAt().getUniversityId());
 
         List<Semester> semesters = new ArrayList<>();
 
@@ -54,8 +54,8 @@ public class EnrollmentService {
         People person = peopleRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("Person not found"));
 
-        return courseRepository.findByUniversityUniversitiesIDAndSemesterId(
-                person.getEnrolledAt().getUniversitiesID(),
+        return courseRepository.findByUniversityUniversityIdAndSemesterSemesterId(
+                person.getEnrolledAt().getUniversityId(),
                 semesterId);
     }
 
