@@ -5,7 +5,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*; //validating attributes
 import java.time.LocalDate;
 
-import lombok.Data;                 //Lombok getters & setters
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;                 //Lombok getters & setters
+import lombok.Data;  //Spring Entity
+
 
 @SuppressWarnings("unused") //gets rid of unused import warnings
 @Data
@@ -13,7 +22,7 @@ import lombok.Data;                 //Lombok getters & setters
 public class HomeworkAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long homeworkAssignmentsID;
 
     @NotNull(message = "Assignment name cannot be null")
     private String assignmentName;
