@@ -11,12 +11,15 @@ import jakarta.persistence.JoinColumn;
 
 import java.time.LocalDate;
 
-import lombok.Data;                 //Lombok getters & setters
 import jakarta.persistence.Entity;  //Spring Entity
 
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter
+@Setter
 @SuppressWarnings("unused") //gets rid of unused import warnings
-@Data
 @Entity
 public class AcademicHistory {
     

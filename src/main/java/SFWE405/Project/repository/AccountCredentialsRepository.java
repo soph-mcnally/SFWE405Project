@@ -17,5 +17,5 @@ import SFWE405.Project.entity.AccountCredentials;
  */
 public interface AccountCredentialsRepository extends JpaRepository<AccountCredentials, Long> {
 
-    Optional<AccountCredentials> findByUsername(String username);
+    Optional<AccountCredentials> findByUserName(String userName);
 }

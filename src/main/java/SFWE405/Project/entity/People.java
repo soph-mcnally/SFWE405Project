@@ -2,6 +2,8 @@ package SFWE405.Project.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,11 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data //<- is this annotation needed?
+@Getter
+@Setter
 @Entity
 public class People {
     @Id
@@ -40,8 +43,7 @@ public class People {
 
     @ManyToOne (optional = false) //this side owns this relationship, as it's the side with the multiplicity
     @JoinColumn (name = "university_id", nullable = false)
-    @ToString.Exclude // excluding these from the @Data annotation to avoid recursion and equality bugs
-    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private University enrolledAt;
 
     public enum PersonType { // <- we should consider moving these into their own file
@@ -49,6 +51,7 @@ public class People {
         FACULTY,
         ADMIN
     }
+
     @Enumerated(EnumType.STRING)
     private PersonType personType; 
 
@@ -56,10 +59,19 @@ public class People {
         UNDERGRADUATE,
         GRADUATE
     }
+
     @Enumerated(EnumType.STRING)
     private DegreeLevel degreeLevel;
 
-    //constructors
+    @OneToOne
+    @JoinColumn(name = "credentialsId") // FK column
+    @JsonIgnore // prevents infinite recursion during JSON serialization
+    public AccountCredentials accountCredentials; 
+
+    @jakarta.persistence.Transient
+    private Long universityId; // Transient field to hold the university ID for input purposes (not persisted in DB)
+
+    //****************************************************Constructors****************************************************
     public People() {}
 
     public People(String firstName, String lastName, String email, PersonType personType, DegreeLevel degreeLevel) {
@@ -70,18 +82,16 @@ public class People {
         this.degreeLevel = degreeLevel;
     }
 
+    //****************************************************Functions****************************************************
     // helper to maintain both sides in the database
     public void setEnrolledAt(University newUni) {
-        if (this.enrolledAt != null) {
-            this.enrolledAt.getEnrolled().remove(this);
-        }
         this.enrolledAt = newUni;
-        if (newUni != null) {
-            newUni.getEnrolled().add(this);
-        }
     }
 
     @OneToMany(mappedBy = "person")
     private List<StudentPrograms> studentPrograms;
-        
+
+    public void setAccountCredentials(AccountCredentials savedAccount) {
+        this.accountCredentials = savedAccount;
+    }     
 }
