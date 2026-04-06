@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import SFWE405.Project.entity.*;
 import SFWE405.Project.repository.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 
 @Configuration
@@ -41,10 +42,11 @@ public class DataSeeder {
 
             // 3. Credentials
             AccountCredentials creds = new AccountCredentials();
-            creds.setUsername("testUser");
+            creds.setUserName("testUser");
             creds.setPassword("password123");
             creds.setPerson(student);
             creds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
+            creds.setDateCreated(LocalDateTime.now());
             credentialsRepository.save(creds);
 
             // 4. Semester

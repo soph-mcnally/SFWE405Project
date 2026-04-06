@@ -7,12 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.GenerationType;
-
-import lombok.Data;
-
 import java.util.List;
+import lombok.Setter;
+import lombok.Getter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Semester {
     @Id
@@ -39,6 +39,5 @@ public class Semester {
     // helper method to update both sides of courses relationship
     public void addCourse(Course course) {
         courses.add(course);
-        course.setSemester(this);
     }
 }

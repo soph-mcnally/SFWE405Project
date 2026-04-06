@@ -10,12 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;                 //Lombok getters & setters
-import lombok.Data;  //Spring Entity
+import jakarta.validation.constraints.NotNull; 
+import lombok.Setter;
+import lombok.Getter;
 
-
+@Getter
+@Setter
 @SuppressWarnings("unused") //gets rid of unused import warnings
-@Data
 @Entity
 public class HomeworkAssignment {
     @Id

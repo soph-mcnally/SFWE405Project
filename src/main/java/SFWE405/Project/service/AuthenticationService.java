@@ -32,16 +32,16 @@ public class AuthenticationService {
         this.authTokenRepository = authTokenRepository;
     }
 
-    public AuthToken login(String username, String password) {
-        AccountCredentials credentials = accountCredentialsRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+    public AuthToken login(String userName, String password) {
+        AccountCredentials credentials = accountCredentialsRepository.findByUserName(userName)
+                .orElseThrow(() -> new RuntimeException("Invalid user name or password"));
 
         if (credentials.getAccountStatus() != AccountCredentials.AccountStatus.ACTIVE) {
             throw new RuntimeException("Account is locked or disabled");
         }
 
         if (!credentials.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid username or password");
+            throw new RuntimeException("Invalid user name or password");
         }
 
         AuthToken authToken = new AuthToken();
