@@ -1,14 +1,26 @@
 package SFWE405;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import SFWE405.Project.entity.*;
-import SFWE405.Project.repository.*;
-
-import java.time.LocalDateTime;
-import java.time.LocalDate;
+import SFWE405.Project.entity.AccountCredentials;
+import SFWE405.Project.entity.Course;
+import SFWE405.Project.entity.Enrollment;
+import SFWE405.Project.entity.HomeworkAssignment;
+import SFWE405.Project.entity.People;
+import SFWE405.Project.entity.Semester;
+import  SFWE405.Project.entity.University;
+import SFWE405.Project.repository.AccountCredentialsRepository;
+import SFWE405.Project.repository.CourseRepository;
+import SFWE405.Project.repository.EnrollmentRepository;
+import SFWE405.Project.repository.HomeworkAssignmentRepository;
+import SFWE405.Project.repository.PeopleRepository;
+import SFWE405.Project.repository.SemesterRepository;
+import SFWE405.Project.repository.UniversityRepository;
 
 @Configuration
 public class DataSeeder {
@@ -20,7 +32,8 @@ public class DataSeeder {
             AccountCredentialsRepository credentialsRepository,
             SemesterRepository semesterRepository,
             CourseRepository courseRepository,
-            EnrollmentRepository enrollmentRepository
+            EnrollmentRepository enrollmentRepository,
+            HomeworkAssignmentRepository homeworkAssignmentRepository
     ) {
         return args -> {
 
@@ -47,7 +60,11 @@ public class DataSeeder {
             creds.setPerson(student);
             creds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             creds.setDateCreated(LocalDateTime.now());
-            credentialsRepository.save(creds);
+            creds = credentialsRepository.save(creds);
+
+            //Link to student
+            student.setAccountCredentials(creds);
+            student = peopleRepository.save(student); //authetication token requires link between person and credential
 
             // 4. Semester
             Semester semester = new Semester();
@@ -85,6 +102,19 @@ public class DataSeeder {
             enrollment.setGrade("A");
             enrollment.setEnrolledDate(LocalDate.now());
             enrollmentRepository.save(enrollment);
+
+            //7. Homework Assignment (tied to course student is enrolled in)
+            HomeworkAssignment hw1 = new HomeworkAssignment();
+            hw1.setAssignmentName("Project Phase 1");
+            hw1.setDueDate(LocalDate.now().plusDays(7));  // Must be future date due to @Future validation
+            hw1.setCourse(course);
+            homeworkAssignmentRepository.save(hw1);
+
+            HomeworkAssignment hw2 = new HomeworkAssignment();
+            hw2.setAssignmentName("Project Phase 2");
+            hw2.setDueDate(LocalDate.now().plusDays(14));
+            hw2.setCourse(course);
+            homeworkAssignmentRepository.save(hw2);
 
             System.out.println("Database seeded successfully!");
         };
