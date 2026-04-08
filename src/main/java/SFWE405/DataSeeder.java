@@ -11,6 +11,7 @@ import SFWE405.Project.entity.AccountCredentials;
 import SFWE405.Project.entity.Course;
 import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.HomeworkAssignment;
+import SFWE405.Project.entity.CourseAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
 import  SFWE405.Project.entity.University;
@@ -21,6 +22,7 @@ import SFWE405.Project.repository.HomeworkAssignmentRepository;
 import SFWE405.Project.repository.PeopleRepository;
 import SFWE405.Project.repository.SemesterRepository;
 import SFWE405.Project.repository.UniversityRepository;
+import SFWE405.Project.repository.CourseAssignmentRepository;
 
 @Configuration
 public class DataSeeder {
@@ -33,7 +35,8 @@ public class DataSeeder {
             SemesterRepository semesterRepository,
             CourseRepository courseRepository,
             EnrollmentRepository enrollmentRepository,
-            HomeworkAssignmentRepository homeworkAssignmentRepository
+            HomeworkAssignmentRepository homeworkAssignmentRepository,
+            CourseAssignmentRepository courseAssignmentRepository
     ) {
         return args -> {
 
@@ -115,6 +118,27 @@ public class DataSeeder {
             hw2.setDueDate(LocalDate.now().plusDays(14));
             hw2.setCourse(course);
             homeworkAssignmentRepository.save(hw2);
+
+            //8. Faculty Creation & Credetials for Faculty
+            People faculty = new People("Dr. Thomas", "Cerny", "tom@arizona.edu", People.PersonType.FACULTY, null);
+            faculty.setEnrolledAt(university); //Propbably need to get rid of this requirement
+            faculty = peopleRepository.save(faculty);
+
+            AccountCredentials facultyCreds = new AccountCredentials();
+            facultyCreds.setUserName("drCerny");
+            facultyCreds.setPassword("securePass456");
+            facultyCreds.setPerson(faculty);
+            facultyCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
+            facultyCreds.setDateCreated(LocalDateTime.now());
+            facultyCreds = credentialsRepository.save(facultyCreds);
+            
+             //Link to Faculty
+             faculty.setAccountCredentials(facultyCreds);
+             faculty = peopleRepository.save(faculty); //authetication token requires link between person and credential
+
+            //9. Course Assignment for Faculty
+            CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
+            courseAssignmentRepository.save(courseAssignment);
 
             System.out.println("Database seeded successfully!");
         };
