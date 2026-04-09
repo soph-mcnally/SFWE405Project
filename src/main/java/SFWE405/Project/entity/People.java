@@ -81,7 +81,7 @@ public class People {
     //****************************************************Constructors****************************************************
     public People() {}
 
-    public People(String firstName, String lastName, String email, String username, String password, PersonType personType, DegreeLevel degreeLevel) {
+    public People(String firstName, String lastName, String email, PersonType personType, DegreeLevel degreeLevel) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
