@@ -86,7 +86,30 @@ public class DataSeeder {
             enrollment.setEnrolledDate(LocalDate.now());
             enrollmentRepository.save(enrollment);
 
+            // 7. Admin (People)
+            People admin = new People();
+            admin.setFirstName("Sophie");
+            admin.setLastName("McNally");
+            admin.setEmail("sophie@example.com");
+            admin.setPersonType(People.PersonType.ADMIN);
+            admin.setDegreeLevel(People.DegreeLevel.GRADUATE);
+            admin.setEnrolledAt(university);
+            admin = peopleRepository.save(admin);
+
+            // 8. Admin credentials
+            AccountCredentials adminCreds = new AccountCredentials();
+            adminCreds.setUserName("adminUser");
+            adminCreds.setPassword("faculty123");
+            adminCreds.setPerson(admin);
+            adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
+            adminCreds.setDateCreated(LocalDateTime.now());
+            adminCreds = credentialsRepository.save(adminCreds);
+
+            admin.setAccountCredentials(adminCreds);
+            peopleRepository.save(admin);
+
             System.out.println("Database seeded successfully!");
+
         };
     }
 }

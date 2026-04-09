@@ -1,5 +1,6 @@
 package SFWE405.Project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
@@ -34,6 +35,7 @@ public class Semester {
 
     // semesters to courses relationship
     @OneToMany(mappedBy = "semester")
+    @JsonIgnore
     private List<Course> courses;
 
     // helper method to update both sides of courses relationship
