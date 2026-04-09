@@ -1,3 +1,10 @@
+/**
+ * @author Karri Fox
+ *
+ * Service to allow the user to manage their information, such as changing their password, email, etc.
+ * 
+ */
+
 package SFWE405.Project.service;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.University;
@@ -9,12 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author Karri Fox
- *
- * Service to allow the user to manage their information, such as changing their password, email, etc.
- * 
- */
 
 @Service
 public class ManageUserService {
@@ -60,7 +61,7 @@ public class ManageUserService {
                 .map(existing -> {
                     existing.setFirstName(updatedPerson.getFirstName());
                     existing.setLastName(updatedPerson.getLastName());
-                    existing.setEnrolledAt(updatedPerson.getEnrolledAt());
+                    existing.setEmail(updatedPerson.getEmail());
                     existing.setPersonType(updatedPerson.getPersonType());
                     existing.setDegreeLevel(updatedPerson.getDegreeLevel());
 

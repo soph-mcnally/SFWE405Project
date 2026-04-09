@@ -1,3 +1,10 @@
+/*
+ * @author: Brandon Sisco
+ * @UpdatedAuthor: Karri Fox
+ *
+ * Controller to allow the user to manage their account, such as changing their password, email, etc.
+ * 
+ */
 package SFWE405.Project.controller;
 
 import SFWE405.Project.entity.People;

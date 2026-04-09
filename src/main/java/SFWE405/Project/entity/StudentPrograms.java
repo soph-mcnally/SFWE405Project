@@ -1,3 +1,11 @@
+/*
+ * @author Karri Fox
+ *
+ * StudentPrograms entity representing the many-to-many relationship between People and Programs, 
+ * indicating which students are enrolled in which programs.
+ * 
+ */
+
 package SFWE405.Project.entity;
 
 import SFWE405.Project.entity.CompositeKeys.StudentProgramID;
