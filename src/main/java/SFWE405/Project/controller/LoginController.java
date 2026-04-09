@@ -28,7 +28,8 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         AuthToken authToken = authenticationService.login(
-                request.getUsernameOrEmail(),
+               // request.getUsernameOrEmail(),
+                request.getUserName(),
                 request.getPassword()
         );
 

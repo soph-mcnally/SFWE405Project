@@ -60,7 +60,7 @@ public class DataSeeder {
             AccountCredentials creds = new AccountCredentials();
             creds.setUserName("testUser");
             creds.setPassword("password123");
-            creds.setEmail("brandon@example.com");
+           // creds.setEmail("brandon@example.com");
             creds.setPerson(student);
             creds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             creds.setDateCreated(LocalDateTime.now());
