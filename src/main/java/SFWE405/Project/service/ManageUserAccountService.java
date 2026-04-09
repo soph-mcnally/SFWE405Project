@@ -1,3 +1,10 @@
+/**
+ * @author Karri Fox
+ *
+ * Service to allow the user to manage their user account
+ * 
+ */
+
 package SFWE405.Project.service;
 
 import java.util.List;
@@ -10,12 +17,6 @@ import SFWE405.Project.entity.People;
 import SFWE405.Project.repository.AccountCredentialsRepository;
 import SFWE405.Project.repository.PeopleRepository;
 
-/**
- * @author Karri Fox
- *
- * Service to allow the user to manage their user account
- * 
- */
 
 @Service
 public class ManageUserAccountService {
