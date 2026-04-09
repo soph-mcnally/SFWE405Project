@@ -81,4 +81,18 @@ public class HomeworkAssignmentService {
 
         return hwAsgnRepo.save(newAssignment);
     }
+
+    public String deleteAssignment(Long courseId, Long asgnId){
+        //Faculty --> Course --> Assignments --> Deletion
+        HomeworkAssignment asgnToDelete =  hwAsgnRepo.findByCourse_CourseIdAndHomeworkAssignmentsID(courseId, asgnId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+
+        String name = asgnToDelete.getAssignmentName();
+        
+        hwAsgnRepo.delete(asgnToDelete);
+
+        return ("Deleted <" + name + "> from Course: " + courseId);
+    }
+
+    //Faculty - 
 }

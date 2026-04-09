@@ -12,6 +12,7 @@ package SFWE405.Project.repository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -20,4 +21,6 @@ import SFWE405.Project.entity.HomeworkAssignment;
 
 public interface HomeworkAssignmentRepository extends JpaRepository<HomeworkAssignment, Long> {
     List<HomeworkAssignment> findByCourse_CourseId(Long courseId);
+
+    Optional<HomeworkAssignment> findByCourse_CourseIdAndHomeworkAssignmentsID(Long courseId, Long asgnId);
 }

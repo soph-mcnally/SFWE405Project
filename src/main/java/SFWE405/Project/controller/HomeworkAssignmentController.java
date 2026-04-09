@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,6 +94,7 @@ public class HomeworkAssignmentController {
     }
 
     //Faculty - Create HW for course
+    //TODO: Catch duplicates
     @PostMapping("/facultyCreateAssignmentByCourse/{courseId}")
     public ResponseEntity<HomeworkAssignment> createAssignmentByCourse(
         @RequestHeader("Authorization") String authHeader,
@@ -115,8 +117,28 @@ public class HomeworkAssignmentController {
     }
 
 
-    /*TODO: Endpoints
-     *Teacher update HW (due date, description, etc) - PUT
-     *Teacher delete HW - DELETE
-     */
+    //TODO: Faculty - Update Assignment
+
+
+    //Faculty - Delete Assignment
+    @DeleteMapping("/facultyDeleteAssignment/{courseId}/{asgnId}")
+    public ResponseEntity<String> deleteAssignment(
+        @RequestHeader("Authorization") String authHeader,
+        @PathVariable Long courseId,
+        @PathVariable Long asgnId)
+    {
+        People faculty = authenticationService.validateToken(authHeader);
+        if (faculty.getPersonType() != People.PersonType.FACULTY) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Faculty allowed");
+        }
+
+        boolean facultyAssociated = courseAsgnRepo.existsByFaculty_PersonIDAndCourse_CourseId(faculty.getPersonID(), courseId);
+        if (!facultyAssociated) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Faculty is not associated with specified course");
+        }
+
+        String response = homeworkAssignmentService.deleteAssignment(courseId, asgnId);
+        
+        return ResponseEntity.ok(response); //Placeholder for further implementation
+    }
 }
