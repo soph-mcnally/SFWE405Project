@@ -15,14 +15,7 @@
 package SFWE405.Project.entity;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Getter;
@@ -51,7 +44,8 @@ public class AccountCredentials {
 
     private LocalDateTime dateCreated;
 
-    @OneToOne(mappedBy = "accountCredentials")  // Bidirectional relationship with People
+    @OneToOne//(mappedBy = "accountCredentials")  // Bidirectional relationship with People
+    @JoinColumn(name = "person_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private People person;
