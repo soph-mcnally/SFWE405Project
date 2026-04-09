@@ -1,0 +1,141 @@
+{
+  "info": {
+    "_postman_id": "1598a6a0-c934-4d11-9948-caf2718f3e46",
+    "name": "CreateHW - Faculty",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51743897",
+    "_collection_link": "https://go.postman.co/collection/51743897-1598a6a0-c934-4d11-9948-caf2718f3e46?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetToken_F",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();",
+              "const token = response.token || response.accessToken || response.access_token;",
+              "if (token) {",
+              "    pm.collectionVariables.set(\"token\", token);",
+              "    console.log(\"Token saved to environment successfully\");",
+              "} else {",
+              "    console.log(\"Could not find token in response:\", JSON.stringify(response));",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userName\": \"drCerny\",\n  \"password\": \"securePass456\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateHW - F",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"assignmentName\" : \"Midterm Review I\",\r\n    \"dueDate\" : \"2026-04-15\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/homework-assignment/facultyCreateAssignmentByCourse/{{courseId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "homework-assignment",
+            "facultyCreateAssignmentByCourse",
+            "{{courseId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "courseId",
+      "value": ""
+    }
+  ]
+}

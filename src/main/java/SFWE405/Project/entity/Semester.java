@@ -1,15 +1,18 @@
 package SFWE405.Project.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.GenerationType;
-import java.util.List;
-import lombok.Setter;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -34,6 +37,7 @@ public class Semester {
 
     // semesters to courses relationship
     @OneToMany(mappedBy = "semester")
+    @JsonIgnore  // add this to prevent infinite recursion during JSON serialization - @TravisPotter
     private List<Course> courses;
 
     // helper method to update both sides of courses relationship
