@@ -32,8 +32,8 @@ public class AuthenticationService {
         this.authTokenRepository = authTokenRepository;
     }
 
-    public AuthToken login(String usernameOrEmail, String password) {
-        AccountCredentials credentials = accountCredentialsRepository.findByUserName(usernameOrEmail)
+    public AuthToken login(String userName, String password) {
+        AccountCredentials credentials = accountCredentialsRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("Invalid user name or password"));
 
         // student login use case has username or email, so adding that functionality -- JA
