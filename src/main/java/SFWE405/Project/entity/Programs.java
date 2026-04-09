@@ -1,3 +1,10 @@
+/*
+ * @author Karri Fox
+ *
+ * Program entity representing the different programs offered at the university, such as Computer Science, Mechanical Engineering, etc.
+ * 
+ */
+
 package SFWE405.Project.entity;
 import java.util.List;
 

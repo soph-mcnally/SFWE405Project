@@ -14,7 +14,7 @@ import SFWE405.Project.entity.HomeworkAssignment;
 import SFWE405.Project.entity.CourseAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
-import  SFWE405.Project.entity.University;
+import SFWE405.Project.entity.University;
 import SFWE405.Project.repository.AccountCredentialsRepository;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.EnrollmentRepository;
@@ -121,6 +121,7 @@ public class DataSeeder {
             AccountCredentials adminCreds = new AccountCredentials();
             adminCreds.setUserName("adminUser");
             adminCreds.setPassword("faculty123");
+            adminCreds.setEmail("sophie@example.com");
             adminCreds.setPerson(admin);
             adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             adminCreds.setDateCreated(LocalDateTime.now());
@@ -149,6 +150,7 @@ public class DataSeeder {
             AccountCredentials facultyCreds = new AccountCredentials();
             facultyCreds.setUserName("drCerny");
             facultyCreds.setPassword("securePass456");
+            facultyCreds.setEmail("cerny@example.com");
             facultyCreds.setPerson(faculty);
             facultyCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             facultyCreds.setDateCreated(LocalDateTime.now());
