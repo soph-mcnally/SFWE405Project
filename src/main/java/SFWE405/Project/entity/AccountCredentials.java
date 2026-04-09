@@ -33,9 +33,6 @@ public class AccountCredentials {
     @Column(unique = true, nullable = false)
     private String userName;
 
-  //  @Column(unique = true, nullable = false)
-  //  private String email;
-
     @Column(nullable = false)
     private String password;  // Note: In production, store hashed passwords (e.g., using BCrypt), not plain text
 
@@ -44,8 +41,7 @@ public class AccountCredentials {
 
     private LocalDateTime dateCreated;
 
-    @OneToOne//(mappedBy = "accountCredentials")  // Bidirectional relationship with People
-    @JoinColumn(name = "person_id", nullable = false)
+    @OneToOne(mappedBy = "accountCredentials")  // Bidirectional relationship with People
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private People person;
