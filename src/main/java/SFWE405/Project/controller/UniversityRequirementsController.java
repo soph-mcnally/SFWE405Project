@@ -14,7 +14,7 @@ import java.util.List;
 
 Created By: Gavin Hernandez
 
-
+Handles communications for UniverityRequirements
 
  */
 @RestController
