@@ -32,12 +32,6 @@ public class People {
     @Column(unique = true, nullable = false) //each person should have a unique email -> no repeating emails
     private String email;
 
-    // added for Student Login -- edit, commenting out as i updated credentials instead
-   // @Column(unique = true, nullable = false)
-  //  private String username;
-
-  //  @Column(nullable = false)
-  //  private String password;
 
     /* adding the relationship here for a join table, but I'm still uncertain how we are doing this
     @ManyToMany
@@ -70,10 +64,10 @@ public class People {
     @Enumerated(EnumType.STRING)
     private DegreeLevel degreeLevel;
 
-    @OneToOne(mappedBy = "person")
-    //@JoinColumn(name = "credentialsId") // FK column
+    @OneToOne
+    @JoinColumn(name = "credentialsId") // FK column
     @JsonIgnore // prevents infinite recursion during JSON serialization
-    public AccountCredentials accountCredentials; 
+    public AccountCredentials accountCredentials;
 
     @jakarta.persistence.Transient
     private Long universityId; // Transient field to hold the university ID for input purposes (not persisted in DB)
@@ -85,8 +79,6 @@ public class People {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-       // this.username = username;
-       // this.password = password;
         this.personType = personType;
         this.degreeLevel = degreeLevel;
     }

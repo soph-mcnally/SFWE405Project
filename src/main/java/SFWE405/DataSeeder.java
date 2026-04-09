@@ -44,11 +44,14 @@ public class DataSeeder {
             AccountCredentials creds = new AccountCredentials();
             creds.setUserName("testUser");
             creds.setPassword("password123");
-           // creds.setEmail("brandon@example.com");
             creds.setPerson(student);
             creds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             creds.setDateCreated(LocalDateTime.now());
             credentialsRepository.save(creds);
+
+            // link back to person and re-save so FK gets written
+            student.setAccountCredentials(creds);
+            peopleRepository.save(student);
 
             // 4. Semester
             Semester semester = new Semester();

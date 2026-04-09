@@ -36,17 +36,6 @@ public class AuthenticationService {
         AccountCredentials credentials = accountCredentialsRepository.findByUserName(userName)
                 .orElseThrow(() -> new RuntimeException("Invalid user name or password"));
 
-        // student login use case has username or email, so adding that functionality -- JA
-      /*  AccountCredentials credentials;
-        if (usernameOrEmail.contains("@")) {
-            credentials = accountCredentialsRepository.findByEmail(usernameOrEmail)
-                    .orElseThrow(() -> new RuntimeException("Invalid username/email or password"));
-        }
-        else {
-            credentials = accountCredentialsRepository.findByUserName(usernameOrEmail)
-                    .orElseThrow(() -> new RuntimeException("Invalid username/email or password"));
-        } */
-
         if (credentials.getAccountStatus() != AccountCredentials.AccountStatus.ACTIVE) {
             throw new RuntimeException("Account is locked or disabled");
         }
