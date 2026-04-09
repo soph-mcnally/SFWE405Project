@@ -7,4 +7,5 @@ import SFWE405.Project.entity.University;
 
 public interface UniversityRequirementsRepository extends JpaRepository<UniversityRequirements, Long> {
     List<UniversityRequirements> findByUniversity(University university);
+    List<UniversityRequirements> findByCategory(Long category);
 }
