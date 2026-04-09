@@ -9,7 +9,6 @@
  * Controller for handling homework assignment related endpoints.
  * Provides functionality for students to view homework assignments for their courses.
  * 
- * TODO: Allow teachers to create/update/delete homework assignments for their courses.
  */
 
 package SFWE405.Project.controller;
