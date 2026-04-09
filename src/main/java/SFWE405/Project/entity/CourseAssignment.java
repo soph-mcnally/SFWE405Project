@@ -40,6 +40,8 @@ public class CourseAssignment {
     private Course course;
 
     //Contructors
+    public CourseAssignment() {}
+    
     public CourseAssignment(People faculty, Course course) {
         this.faculty = faculty;
         this.course = course;
