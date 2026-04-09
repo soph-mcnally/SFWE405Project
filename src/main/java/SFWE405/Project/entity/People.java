@@ -70,8 +70,8 @@ public class People {
     @Enumerated(EnumType.STRING)
     private DegreeLevel degreeLevel;
 
-    @OneToOne
-    @JoinColumn(name = "credentialsId") // FK column
+    @OneToOne(mappedBy = "person")
+    //@JoinColumn(name = "credentialsId") // FK column
     @JsonIgnore // prevents infinite recursion during JSON serialization
     public AccountCredentials accountCredentials; 
 
