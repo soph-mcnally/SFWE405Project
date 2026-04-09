@@ -22,9 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import SFWE405.Project.entity.HomeworkAssignment;
+import SFWE405.Project.entity.Course;
 import SFWE405.Project.repository.EnrollmentRepository;
 import SFWE405.Project.repository.HomeworkAssignmentRepository;
 import SFWE405.Project.repository.CourseAssignmentRepository;
+import SFWE405.Project.repository.CourseRepository;
 
 
 @Service
@@ -32,15 +34,17 @@ public class HomeworkAssignmentService {
     private final HomeworkAssignmentRepository hwAsgnRepo;
     private final EnrollmentRepository enrollmentRepo;
     private final CourseAssignmentRepository courseAsgnRepo;
+    private final CourseRepository courseRepo;
 
     
-    public HomeworkAssignmentService(HomeworkAssignmentRepository hwAsgnRepo, EnrollmentRepository enrollmentRepo, CourseAssignmentRepository courseAsgnRepo) {
+    public HomeworkAssignmentService(HomeworkAssignmentRepository hwAsgnRepo, EnrollmentRepository enrollmentRepo, CourseAssignmentRepository courseAsgnRepo, CourseRepository courseRepo) {
         this.hwAsgnRepo = hwAsgnRepo;
         this.enrollmentRepo = enrollmentRepo;
         this.courseAsgnRepo = courseAsgnRepo;
+        this.courseRepo = courseRepo;
     }
 
-    //Method to get HW assignments relative to a course
+    //Student - View HW by course
     public List<HomeworkAssignment> getHomeworkForCourseIfEnrolled(Long personId, Long courseId) {
         //Student --> Course Enrolled --> Course has HW assignments
 
@@ -53,16 +57,28 @@ public class HomeworkAssignmentService {
         return hwAsgnRepo.findByCourse_CourseId(courseId);
     }
 
+    //Faculty - View HW by course 
     public List<HomeworkAssignment> getAllHomeworkForCourseifTeacherAssociated(Long personId, Long courseId) {
         //Faculty --> Course Associated --> Course has HW assignments
 
-        boolean teacherAssociated = courseAsgnRepo.existsByFaculty_PersonIDAndCourse_CourseId(personId, courseId);
+        boolean facultyAssociated = courseAsgnRepo.existsByFaculty_PersonIDAndCourse_CourseId(personId, courseId);
         
-        if (!teacherAssociated) {
+        if (!facultyAssociated) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Faculty is not associated with specified course");
         }
 
         return hwAsgnRepo.findByCourse_CourseId(courseId);
     }
 
+    //Faculty - Create HW for course
+    public HomeworkAssignment createAssignmentForCourse(Long courseId, HomeworkAssignment newAssignment){
+        //Faculty --> Course Associated --> Link Assignment to Course
+        
+        Course associatedCourse = courseRepo.findById(courseId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+
+        newAssignment.setCourse(associatedCourse);
+
+        return hwAsgnRepo.save(newAssignment);
+    }
 }

@@ -19,6 +19,8 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import SFWE405.Project.entity.HomeworkAssignment;
 import SFWE405.Project.entity.People;
+import SFWE405.Project.repository.CourseAssignmentRepository;
 import SFWE405.Project.service.AuthenticationService;
 import SFWE405.Project.service.HomeworkAssignmentService;
 
@@ -36,23 +39,23 @@ import SFWE405.Project.service.HomeworkAssignmentService;
 @RequestMapping("/api/homework-assignment")
 public class HomeworkAssignmentController {
     
-    private final SFWE405.Project.repository.HomeworkAssignmentRepository homeworkAssignmentRepository;
     private final AuthenticationService authenticationService;
     private final HomeworkAssignmentService homeworkAssignmentService;
+    private final CourseAssignmentRepository courseAsgnRepo;
 
     // Constructor injection for services
-    public HomeworkAssignmentController(AuthenticationService authenticationService, HomeworkAssignmentService homeworkAssignmentService, SFWE405.Project.repository.HomeworkAssignmentRepository homeworkAssignmentRepository) {
+    public HomeworkAssignmentController(AuthenticationService authenticationService, HomeworkAssignmentService homeworkAssignmentService, CourseAssignmentRepository courseAsgnRepo) {
         this.authenticationService = authenticationService;
         this.homeworkAssignmentService = homeworkAssignmentService;
-        this.homeworkAssignmentRepository = homeworkAssignmentRepository;
+        this.courseAsgnRepo = courseAsgnRepo;
     }
 
-    //Endpoint to get HW assignments realtive to a course, Actor - student
-    @GetMapping("/ViewHWAssignmentByCourse/{courseId}")
-    public ResponseEntity<List<HomeworkAssignment>>  getHomeworkAssignments(
-        @RequestHeader("Authorization") String authHeader,                          //Get auth token
+    //Student - View HW of course
+    @GetMapping("/studentViewHWByCourse/{courseId}")
+    public ResponseEntity<List<HomeworkAssignment>>  getHomeworkAssignmentsForStudent(
+        @RequestHeader("Authorization") String authHeader,
         @PathVariable Long courseId)
-    {                                              //Get courseId                 
+    {               
 
         People person = authenticationService.validateToken(authHeader);                //Validate token and get person details
 
@@ -69,15 +72,13 @@ public class HomeworkAssignmentController {
         return ResponseEntity.ok(homeworkAssignments);
     }
 
-    //Endpoints for teachers to CRUD homework assignments for their courses
-    @GetMapping("/teacherViewAssignmentByCourse/{courseId}")
+    //Faculty View HW of course
+    @GetMapping("/facultyViewAssignmentByCourse/{courseId}")
     public ResponseEntity<List<HomeworkAssignment>> getHomeworkAssignmentsForTeacher(
         @RequestHeader("Authorization") String authHeader,
         @PathVariable Long courseId)
     {
-
         People faculty = authenticationService.validateToken(authHeader);
-
         if (faculty.getPersonType() != People.PersonType.FACULTY) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Faculty allowed");
         }
@@ -91,8 +92,30 @@ public class HomeworkAssignmentController {
         return ResponseEntity.ok(homeworkAssignments);
     }
 
+    //Faculty - Create HW for course
+    @PostMapping("/facultyCreateAssignmentByCourse/{courseId}")
+    public ResponseEntity<HomeworkAssignment> createAssignmentByCourse(
+        @RequestHeader("Authorization") String authHeader,
+        @PathVariable Long courseId,
+        @RequestBody HomeworkAssignment newAssignment)
+    {
+        People faculty = authenticationService.validateToken(authHeader);
+        if (faculty.getPersonType() != People.PersonType.FACULTY) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Faculty allowed");
+        }
+
+        boolean facultyAssociated = courseAsgnRepo.existsByFaculty_PersonIDAndCourse_CourseId(faculty.getPersonID(), courseId);
+        if (!facultyAssociated) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Faculty is not associated with specified course");
+        }
+
+        HomeworkAssignment createdAssignment = homeworkAssignmentService.createAssignmentForCourse(courseId, newAssignment);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdAssignment);
+    }
+
+
     /*TODO: Endpoints
-     *Teacher create HW - POST
      *Teacher update HW (due date, description, etc) - PUT
      *Teacher delete HW - DELETE
      */
