@@ -1,30 +1,32 @@
 {
   "info": {
-    "_postman_id": "52b54a34-8002-4214-9942-d79f47790186",
-    "name": "ViewHWAssignments",
+    "_postman_id": "1d606ae0-dec1-40f5-8fe6-8ef8589e4042",
+    "name": "ViewHW-Student",
     "description": "1. Run GetToken (Body must have username & password)\n    \n    1. Copy given token\n        \n2. Change token variable in ViewAssignments\n    \n3. Run ViewAssignments",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "51743897",
-    "_collection_link": "https://go.postman.co/collection/51743897-52b54a34-8002-4214-9942-d79f47790186?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/51743897-1d606ae0-dec1-40f5-8fe6-8ef8589e4042?source=collection_link"
   },
   "item": [
     {
-      "name": "GetToken",
+      "name": "GetToken_S",
       "event": [
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "const response = pm.response.json();",
               "const token = response.token || response.accessToken || response.access_token;",
               "if (token) {",
-              "    pm.vault.set(\"bearer-token\", token);",
-              "    console.log(\"Token saved to vault successfully\");",
+              "    pm.collectionVariables.set(\"token\", token);",
+              "    console.log(\"Token saved to environment successfully\");",
               "} else {",
               "    console.log(\"Could not find token in response:\", JSON.stringify(response));",
               "}"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -62,17 +64,22 @@
       "response": []
     },
     {
-      "name": "ViewAssignments",
+      "name": "ViewHW_S",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "{{vault:bearer-token}}"
-          }
-        ],
+        "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/homework-assignment/ViewHWAssignmentByCourse/{{courseId}}",
+          "raw": "http://localhost:8080/api/homework-assignment/studentViewHWByCourse/{{courseId}}",
           "protocol": "http",
           "host": [
             "localhost"
@@ -81,12 +88,24 @@
           "path": [
             "api",
             "homework-assignment",
-            "ViewHWAssignmentByCourse",
+            "studentViewHWByCourse",
             "{{courseId}}"
           ]
         }
       },
       "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "courseId",
+      "value": "1",
+      "type": "default"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
     }
   ]
 }
