@@ -12,7 +12,7 @@
       "name": "SFWE505Project",
       "item": [
         {
-          "name": "http://localhost:8080/api/accounts/person/1",
+          "name": "http://localhost:8080/api/accounts/1",
           "request": {
             "auth": {
               "type": "noauth"
@@ -21,7 +21,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Doe\",\r\n  \"enrolledAt\": \"2024-01-15\",\r\n  \"personType\": \"STUDENT\",\r\n  \"degreeLevel\": \"BACHELORS\",\r\n  \"universityId\": 1\r\n}",
+              "raw": "{\r\n    \"userName\": \"updated_user\",\r\n    \"password\": \"newpass123\",\r\n    \"accountStatus\": \"INACTIVE\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -29,7 +29,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/api/accounts/person/",
+              "raw": "http://localhost:8080/api/accounts/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -38,8 +38,7 @@
               "path": [
                 "api",
                 "accounts",
-                "person",
-                ""
+                "1"
               ]
             }
           },
@@ -101,15 +100,15 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/api/accounts",
+              "raw": "http://localhost:8080/people/all",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
-                "api",
-                "accounts"
+                "people",
+                "all"
               ]
             }
           },
@@ -125,7 +124,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Doe\",\r\n  \"enrolledAt\": \"2024-01-15\",\r\n  \"personType\": \"STUDENT\",\r\n  \"degreeLevel\": \"BACHELORS\"\r\n}",
+              "raw": "",
               "options": {
                 "raw": {
                   "language": "json"
@@ -149,7 +148,7 @@
           "response": []
         },
         {
-          "name": "http://localhost:8080/people",
+          "name": "http://localhost:8080/api/accounts/person/2",
           "request": {
             "auth": {
               "type": "noauth"
@@ -158,7 +157,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"firstName\": \"Karri\",\r\n    \"lastName\": \"Fox\",\r\n    \"email\": \"karri@example.com\",\r\n    \"personType\": \"STUDENT\",\r\n    \"degreeLevel\": \"GRADUATE\",\r\n    \"universityId\": 1\r\n}",
+              "raw": "{\r\n    \"userName\": \"karrif\",\r\n    \"password\": \"123456\",\r\n    \"accountStatus\": \"ACTIVE\",\r\n    \"email\": \"karri@example.com\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -166,14 +165,17 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/people",
+              "raw": "http://localhost:8080/api/accounts/person/2",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
-                "people"
+                "api",
+                "accounts",
+                "person",
+                "2"
               ]
             }
           },
