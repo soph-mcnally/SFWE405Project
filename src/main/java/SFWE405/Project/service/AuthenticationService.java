@@ -12,6 +12,8 @@ import SFWE405.Project.repository.AccountCredentialsRepository;
 import SFWE405.Project.repository.AuthTokenRepository;
 
 /**
+ * @author Brandon Sisco
+ *
  * Service class responsible for user authentication and token validation.
  *
  * This service handles login requests by validating username and password,
@@ -59,7 +61,7 @@ public class AuthenticationService {
         authToken.setToken(UUID.randomUUID().toString());
         authToken.setPerson(credentials.getPerson());
         authToken.setCreatedAt(LocalDateTime.now());
-        authToken.setExpiresAt(LocalDateTime.now().plusHours(4));
+        authToken.setExpiresAt(LocalDateTime.now().plusMinutes(30)); // tokens now expire after 30 minutes
         authToken.setActive(true);
 
         return authTokenRepository.save(authToken);
@@ -72,7 +74,7 @@ public class AuthenticationService {
 
         String tokenValue = authHeader.substring(7); // index position after "Bearer "
 
-        AuthToken authToken = authTokenRepository.findByTokenAndActiveTrue(tokenValue)
+        AuthToken authToken = authTokenRepository.findByTokenAndActiveTrue(tokenValue) // token exists and is active
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
 
         if (authToken.getExpiresAt().isBefore(LocalDateTime.now())) {
