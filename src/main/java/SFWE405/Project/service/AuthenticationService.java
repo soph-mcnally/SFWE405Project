@@ -70,7 +70,7 @@ public class AuthenticationService {
             throw new RuntimeException("Missing or invalid Authorization header");
         }
 
-        String tokenValue = authHeader.substring(7);
+        String tokenValue = authHeader.substring(7); // index position after "Bearer "
 
         AuthToken authToken = authTokenRepository.findByTokenAndActiveTrue(tokenValue)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
