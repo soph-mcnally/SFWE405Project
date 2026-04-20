@@ -43,7 +43,7 @@ public class AcademicRecordController {
         try {
             People person = authenticationService.validateToken(authHeader);
 
-            if (person.getPersonType() != People.PersonType.STUDENT || person.getPersonType() != People.PersonType.ADMIN) {
+            if (person.getPersonType() != People.PersonType.STUDENT && person.getPersonType() != People.PersonType.ADMIN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN) // 403 error, shows lack of permission; persists after authentication
                         .body("Only students or administrators can view academic records");
             }

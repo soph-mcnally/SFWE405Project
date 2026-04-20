@@ -68,7 +68,7 @@ public class DataSeeder {
 
             //Link to student
             student.setAccountCredentials(creds);
-            student = peopleRepository.save(student); //authetication token requires link between person and credential
+            student = peopleRepository.save(student); //authentication token requires link between person and credential
 
             // 4. Semester
             Semester semester = new Semester();

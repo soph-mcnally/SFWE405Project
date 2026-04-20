@@ -12,7 +12,7 @@ import SFWE405.Project.repository.AccountCredentialsRepository;
 import SFWE405.Project.repository.AuthTokenRepository;
 
 /**
- * @author Brandon Sisco
+ * @author Brandon Sisco & Julia Axelrod
  *
  * Service class responsible for user authentication and token validation.
  *
