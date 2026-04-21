@@ -1,3 +1,10 @@
+/*
+ * @author Karri Fox
+ *
+ * Program entity representing the different programs offered at the university, such as Computer Science, Mechanical Engineering, etc.
+ * 
+ */
+
 package SFWE405.Project.entity;
 import java.util.List;
 
@@ -7,11 +14,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Getter;
 
+@Getter
+@Setter
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Programs {

@@ -1,36 +1,34 @@
 package SFWE405.Project.entity;
 
-import java.util.HashSet;
 import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.Setter;
+import lombok.Getter;
 
-@Data
+@Getter
+@Setter
 @Entity
-public class Universities {
+public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long universitiesID;
+    private Long universityId;
 
     private String name;
     private String location;
 
     @OneToMany (mappedBy = "enrolledAt") // People owns this relationship -> mappedBy is needed
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<People> enrolled = new HashSet<>();
+    @JsonIgnore // prevents infinite recursion when serializing to JSON
+    private Set<People> enrolled;
 
     //constructors
-    public Universities() {}
+    public University() {}
 
-    public Universities(String name, String location) {
+    public University(String name, String location) {
         this.name = name;
         this.location = location;
     }

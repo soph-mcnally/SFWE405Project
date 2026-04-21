@@ -1,3 +1,11 @@
+/*
+ * @author Karri Fox
+ *
+ * StudentPrograms entity representing the many-to-many relationship between People and Programs, 
+ * indicating which students are enrolled in which programs.
+ * 
+ */
+
 package SFWE405.Project.entity;
 
 import SFWE405.Project.entity.CompositeKeys.StudentProgramID;
@@ -7,11 +15,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Getter;
 
+@Getter
+@Setter
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentPrograms {

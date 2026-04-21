@@ -2,6 +2,8 @@ package SFWE405.Project.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,11 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data //<- is this annotation needed?
+@Getter
+@Setter
 @Entity
 public class People {
     @Id
@@ -29,6 +32,13 @@ public class People {
     @Column(unique = true, nullable = false) //each person should have a unique email -> no repeating emails
     private String email;
 
+    // added for Student Login -- edit, commenting out as i updated credentials instead
+   // @Column(unique = true, nullable = false)
+  //  private String username;
+
+  //  @Column(nullable = false)
+  //  private String password;
+
     /* adding the relationship here for a join table, but I'm still uncertain how we are doing this
     @ManyToMany
     @JoinTable(
@@ -40,15 +50,15 @@ public class People {
 
     @ManyToOne (optional = false) //this side owns this relationship, as it's the side with the multiplicity
     @JoinColumn (name = "university_id", nullable = false)
-    @ToString.Exclude // excluding these from the @Data annotation to avoid recursion and equality bugs
-    @EqualsAndHashCode.Exclude
-    private Universities enrolledAt;
+    @JsonIgnore
+    private University enrolledAt;
 
     public enum PersonType { // <- we should consider moving these into their own file
         STUDENT,
         FACULTY,
         ADMIN
     }
+
     @Enumerated(EnumType.STRING)
     private PersonType personType; 
 
@@ -56,32 +66,65 @@ public class People {
         UNDERGRADUATE,
         GRADUATE
     }
+
     @Enumerated(EnumType.STRING)
     private DegreeLevel degreeLevel;
 
-    //constructors
+    @OneToOne
+    @JoinColumn(name = "credentialsId") // FK column
+    @JsonIgnore // prevents infinite recursion during JSON serialization
+    public AccountCredentials accountCredentials; 
+
+    @jakarta.persistence.Transient
+    private Long universityId; // Transient field to hold the university ID for input purposes (not persisted in DB)
+
+    //****************************************************Constructors****************************************************
     public People() {}
 
     public People(String firstName, String lastName, String email, PersonType personType, DegreeLevel degreeLevel) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+       // this.username = username;
+       // this.password = password;
         this.personType = personType;
         this.degreeLevel = degreeLevel;
     }
 
+    //****************************************************Functions****************************************************
     // helper to maintain both sides in the database
-    public void setEnrolledAt(Universities newUni) {
-        if (this.enrolledAt != null) {
-            this.enrolledAt.getEnrolled().remove(this);
-        }
+    public void setEnrolledAt(University newUni) {
         this.enrolledAt = newUni;
-        if (newUni != null) {
-            newUni.getEnrolled().add(this);
-        }
     }
 
     @OneToMany(mappedBy = "person")
     private List<StudentPrograms> studentPrograms;
-        
+
+    public void setAccountCredentials(AccountCredentials savedAccount) {
+        this.accountCredentials = savedAccount;
+    }   
+    
+    public Long getUniversityId() {
+        return universityId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public PersonType getPersonType() {
+        return personType;
+    }
+
+    public DegreeLevel getDegreeLevel() {
+        return degreeLevel;
+    }
 }

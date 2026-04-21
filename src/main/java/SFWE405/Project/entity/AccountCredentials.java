@@ -9,8 +9,11 @@
  * authentication data.
  *
  * It is used by the authentication system to validate user login.
+ * 
  */
+
 package SFWE405.Project.entity;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,34 +22,75 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+
+@Getter
+@Setter
 @Entity
 public class AccountCredentials {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long credentialsId;
+    private Long credentialsId;  // Primary key, referenced in People.java as "credentialsId"
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "person_id", nullable = false, unique = true)
-    private People person;
+    @Column(unique = true, nullable = false)
+    private String userName;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String password;  // Note: In production, store hashed passwords (e.g., using BCrypt), not plain text
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
+    private LocalDateTime dateCreated;
+
+    @OneToOne(mappedBy = "accountCredentials")  // Bidirectional relationship with People
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private People person;
+
+    // Enum for account status (add more values as needed)
     public enum AccountStatus {
         ACTIVE,
-        LOCKED,
-        DISABLED
+        INACTIVE,
+        SUSPENDED
+    }
+
+    // Constructors
+    public AccountCredentials() {}
+
+    public AccountCredentials(String userName, String password, AccountStatus accountStatus, LocalDateTime dateCreated) {
+        this.userName = userName;
+        this.password = password;
+        this.accountStatus = accountStatus;
+        this.dateCreated = dateCreated;
+    }
+
+    // Helper method to maintain bidirectional relationship (mirrors People.setAccount)
+    public void setPerson(People person) {
+        this.person = person;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public People getPerson() {
+        return person;
     }
 }

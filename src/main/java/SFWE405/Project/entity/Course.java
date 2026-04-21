@@ -1,22 +1,24 @@
 package SFWE405.Project.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "Courses")
-public class Courses {
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "CourseID")
@@ -24,11 +26,11 @@ public class Courses {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UniversityID", nullable = false)
-    private Universities university;
+    private University university;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SemesterID", nullable = false)
-    private Semesters semester;
+    private Semester semester;
 
     @Column(name = "CourseCode", nullable = false)
     private String courseCode;
@@ -50,5 +52,9 @@ public class Courses {
         LECTURE,
         LAB,
         DISCUSSION
+    }
+
+    public Semester getSemester() {
+        return semester;
     }
 }

@@ -1,32 +1,32 @@
 package SFWE405.Project.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.GenerationType;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
-@Data
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-public class Semesters {
+public class Semester {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long semesterID;
+    private Long semesterId;
 
     private int semesterYear;
 
     @Enumerated(EnumType.STRING)
     private Season season;
+
 
     public enum Season {
         SPRING,
@@ -37,11 +37,11 @@ public class Semesters {
 
     // semesters to courses relationship
     @OneToMany(mappedBy = "semester")
-    private List<Courses> courses;
+    @JsonIgnore  // add this to prevent infinite recursion during JSON serialization - @TravisPotter
+    private List<Course> courses;
 
     // helper method to update both sides of courses relationship
-    public void addCourse(Courses course) {
+    public void addCourse(Course course) {
         courses.add(course);
-        course.setSemester(this);
     }
 }

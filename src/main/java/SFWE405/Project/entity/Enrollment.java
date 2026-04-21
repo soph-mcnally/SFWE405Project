@@ -21,9 +21,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+
+@Getter
+@Setter
 @Entity
 public class Enrollment {
 
@@ -37,7 +40,7 @@ public class Enrollment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "course_id", nullable = false)
-    private Courses course;
+    private Course course;
 
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status;

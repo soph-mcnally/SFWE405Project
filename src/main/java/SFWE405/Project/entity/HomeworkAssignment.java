@@ -1,5 +1,6 @@
 package SFWE405.Project.entity;
 
+
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
@@ -9,14 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;                 //Lombok getters & setters
-import lombok.Data;  //Spring Entity
+import jakarta.validation.constraints.NotNull; 
+import lombok.Setter;
+import lombok.Getter;
 
-
+@Getter
+@Setter
 @SuppressWarnings("unused") //gets rid of unused import warnings
-@Data
 @Entity
-public class HomeworkAssignments {
+public class HomeworkAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long homeworkAssignmentsID;
@@ -31,5 +33,5 @@ public class HomeworkAssignments {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) //FK column in join table references the Courses entity
-    private Courses course;
+    private Course course;
 }
