@@ -4,10 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import SFWE405.Project.dto.AcademicRecordItemResponse;
 import SFWE405.Project.entity.Enrollment;
@@ -25,6 +22,7 @@ import SFWE405.Project.service.AuthenticationService;
  */
 @RestController
 @RequestMapping("/api/academic-record")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AcademicRecordController {
 
     private final AuthenticationService authenticationService;
