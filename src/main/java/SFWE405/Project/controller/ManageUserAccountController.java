@@ -1,3 +1,10 @@
+/*
+ * @author Karri Fox
+ *
+ * Controller to allow the user to manage their account, such as changing their password, email, etc.
+ * 
+ */
+
 package SFWE405.Project.controller;
 
 import java.util.List;
@@ -15,12 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import SFWE405.Project.entity.AccountCredentials;
 import SFWE405.Project.service.ManageUserAccountService;
 
-/*
- * @author Karri Fox
- *
- * Controller to allow the user to manage their account, such as changing their password, email, etc.
- * 
- */
 
 @RestController
 @RequestMapping("/api/accounts")

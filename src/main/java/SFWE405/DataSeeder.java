@@ -14,7 +14,7 @@ import SFWE405.Project.entity.HomeworkAssignment;
 import SFWE405.Project.entity.CourseAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
-import  SFWE405.Project.entity.University;
+import SFWE405.Project.entity.University;
 import SFWE405.Project.repository.AccountCredentialsRepository;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.EnrollmentRepository;
@@ -46,7 +46,7 @@ public class DataSeeder {
             university.setLocation("Tucson");
             university = universityRepository.save(university);
 
-            // 2. Student (People)
+            // 2. Student & Faculty Member (People)
             People student = new People();
             student.setFirstName("Brandon");
             student.setLastName("Sisco");
@@ -56,19 +56,40 @@ public class DataSeeder {
             student.setEnrolledAt(university);
             student = peopleRepository.save(student);
 
-            // 3. Credentials
-            AccountCredentials creds = new AccountCredentials();
-            creds.setUserName("testUser");
-            creds.setPassword("password123");
-            creds.setEmail("brandon@example.com");
-            creds.setPerson(student);
-            creds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
-            creds.setDateCreated(LocalDateTime.now());
-            creds = credentialsRepository.save(creds);
+            People facultyMember = new People();
+            facultyMember.setFirstName("Faculty");
+            facultyMember.setLastName("Member");
+            facultyMember.setEmail("faculty@example.com");
+            facultyMember.setPersonType(People.PersonType.FACULTY);
+            facultyMember.setEnrolledAt(university);
+            facultyMember = peopleRepository.save(facultyMember);
 
-            //Link to student
-            student.setAccountCredentials(creds);
-            student = peopleRepository.save(student); //authetication token requires link between person and credential
+
+            // 3. Credentials
+            AccountCredentials credsI = new AccountCredentials();
+            credsI.setUserName("testUser");
+            credsI.setPassword("password123");
+            credsI.setEmail("brandon@example.com");
+            credsI.setPerson(student);
+            credsI.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
+            credsI.setDateCreated(LocalDateTime.now());
+            credsI = credentialsRepository.save(credsI);
+
+            AccountCredentials credsII = new AccountCredentials();
+            credsII.setUserName("facultyMember");
+            credsII.setPassword("fac123");
+            credsII.setEmail("faculty@example.com");
+            credsII.setPerson(facultyMember);
+            credsII.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
+            credsII.setDateCreated(LocalDateTime.now());
+            credsII = credentialsRepository.save(credsII);
+
+            //Link to student && facultyMember
+            student.setAccountCredentials(credsI);
+            student = peopleRepository.save(student); //authentication token requires link between person and credential
+
+            facultyMember.setAccountCredentials(credsII);
+            facultyMember = peopleRepository.save(facultyMember);
 
             // 4. Semester
             Semester semester = new Semester();
@@ -121,6 +142,7 @@ public class DataSeeder {
             AccountCredentials adminCreds = new AccountCredentials();
             adminCreds.setUserName("adminUser");
             adminCreds.setPassword("faculty123");
+            adminCreds.setEmail("sophie@example.com");
             adminCreds.setPerson(admin);
             adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             adminCreds.setDateCreated(LocalDateTime.now());
@@ -149,6 +171,7 @@ public class DataSeeder {
             AccountCredentials facultyCreds = new AccountCredentials();
             facultyCreds.setUserName("drCerny");
             facultyCreds.setPassword("securePass456");
+            facultyCreds.setEmail("cerny@example.com");
             facultyCreds.setPerson(faculty);
             facultyCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             facultyCreds.setDateCreated(LocalDateTime.now());
