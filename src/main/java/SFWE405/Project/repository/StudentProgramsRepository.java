@@ -1,3 +1,10 @@
+/*
+ * @author Karri Fox
+ *
+ * StudentProgramsRepository interface for accessing the StudentPrograms table in the database, 
+ * allowing us to perform CRUD operations on student-program relationships.
+ * 
+ */
 
 package SFWE405.Project.repository;
 

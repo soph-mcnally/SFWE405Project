@@ -32,6 +32,13 @@ public class People {
     @Column(unique = true, nullable = false) //each person should have a unique email -> no repeating emails
     private String email;
 
+    // added for Student Login -- edit, commenting out as i updated credentials instead
+   // @Column(unique = true, nullable = false)
+  //  private String username;
+
+  //  @Column(nullable = false)
+  //  private String password;
+
     /* adding the relationship here for a join table, but I'm still uncertain how we are doing this
     @ManyToMany
     @JoinTable(
@@ -78,6 +85,8 @@ public class People {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+       // this.username = username;
+       // this.password = password;
         this.personType = personType;
         this.degreeLevel = degreeLevel;
     }
@@ -93,5 +102,29 @@ public class People {
 
     public void setAccountCredentials(AccountCredentials savedAccount) {
         this.accountCredentials = savedAccount;
-    }     
+    }   
+    
+    public Long getUniversityId() {
+        return universityId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public PersonType getPersonType() {
+        return personType;
+    }
+
+    public DegreeLevel getDegreeLevel() {
+        return degreeLevel;
+    }
 }

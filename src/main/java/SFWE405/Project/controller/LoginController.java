@@ -17,6 +17,7 @@ import SFWE405.Project.service.AuthenticationService;
  */
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class LoginController {
 
     private final AuthenticationService authenticationService;
@@ -28,7 +29,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         AuthToken authToken = authenticationService.login(
-                request.getUserName(),
+                request.getUsernameOrEmail(),
                 request.getPassword()
         );
 

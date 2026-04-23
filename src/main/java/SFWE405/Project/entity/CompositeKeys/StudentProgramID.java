@@ -1,3 +1,10 @@
+/*
+ * @author Karri Fox
+ *
+ * Composite keys connecting People and Programs,
+ * 
+ */
+
 package SFWE405.Project.entity.CompositeKeys;
 
 import java.io.Serializable;

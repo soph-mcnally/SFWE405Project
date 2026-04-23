@@ -40,6 +40,9 @@ public class AccountCredentials {
     @Column(unique = true, nullable = false)
     private String userName;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(nullable = false)
     private String password;  // Note: In production, store hashed passwords (e.g., using BCrypt), not plain text
 
