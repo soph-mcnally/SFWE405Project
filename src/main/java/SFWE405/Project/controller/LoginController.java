@@ -17,6 +17,7 @@ import SFWE405.Project.service.AuthenticationService;
  */
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class LoginController {
 
     private final AuthenticationService authenticationService;
