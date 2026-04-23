@@ -1,0 +1,72 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+function LoginPage() {
+    const [usernameOrEmail, setUsernameOrEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
+
+    const navigate = useNavigate(); // used to redirect pages
+
+    const handleLogin = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    usernameOrEmail,
+                    password
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
+
+            const data = await response.json();
+
+            // store token
+            localStorage.setItem("token", data.token);
+
+            setMessage("Login successful!");
+
+            navigate("/enroll");
+
+        } catch (error) {
+            console.error("Login error:", error);
+            setMessage("Login failed. Check credentials.");
+        }
+    };
+
+    return (
+        <div style={{ padding: "20px" }}>
+            <h2>Login</h2>
+
+            <input
+                type="text"
+                placeholder="Username or Email"
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+            />
+
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+            />
+
+            <button onClick={handleLogin} style={{ padding: "8px 12px" }}>
+                Login
+            </button>
+
+            {message && <p><strong>{message}</strong></p>}
+        </div>
+    );
+}
+
+export default LoginPage;
