@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/enrollment")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EnrollCoursesController {
 
     private final AuthenticationService authenticationService;
