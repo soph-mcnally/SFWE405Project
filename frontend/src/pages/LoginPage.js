@@ -6,9 +6,11 @@ function LoginPage() {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
 
-    const navigate = useNavigate(); // used to redirect pages
+    const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
         try {
             const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
@@ -27,7 +29,6 @@ function LoginPage() {
 
             const data = await response.json();
 
-            // store token
             localStorage.setItem("token", data.token);
 
             setMessage("Login successful!");
@@ -44,25 +45,29 @@ function LoginPage() {
         <div style={{ padding: "20px" }}>
             <h2>Login</h2>
 
-            <input
-                type="text"
-                placeholder="Username or Email"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
-                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
-            />
+            {}
+            <form onSubmit={handleLogin}>
+                <input
+                    type="text"
+                    placeholder="Username or Email"
+                    value={usernameOrEmail}
+                    onChange={(e) => setUsernameOrEmail(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+                />
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
-            />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+                />
 
-            <button onClick={handleLogin} style={{ padding: "8px 12px" }}>
-                Login
-            </button>
+                {}
+                <button type="submit" style={{ padding: "8px 12px" }}>
+                    Login
+                </button>
+            </form>
 
             {message && <p><strong>{message}</strong></p>}
         </div>
