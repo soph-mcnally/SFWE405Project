@@ -32,7 +32,7 @@ function LoginPage() {
 
             setMessage("Login successful!");
 
-            navigate("/enroll");
+            navigate("/home");
 
         } catch (error) {
             console.error("Login error:", error);
