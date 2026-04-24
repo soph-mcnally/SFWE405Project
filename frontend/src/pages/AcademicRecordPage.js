@@ -32,19 +32,34 @@ function AcademicRecordPage() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Academic Record</h1>
+    <div
+      style={{
+        minHeight: "calc(100vh - 64px)",
+        backgroundColor: "#f5f5f5",
+        padding: "40px 20px"
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "900px",
+          margin: "0 auto"
+        }}
+      >
+        <h1 style={{ textAlign: "center", marginBottom: "24px" }}>
+          Academic Record
+        </h1>
 
-      {records.length === 0 ? (
-        <p>No academic records found.</p>
-      ) : (
-        records.map((record, index) => (
-          <AcademicRecordCard
-            key={record.enrollmentId}
-            record={record}
-          />
-        ))
-      )}
+        {records.length === 0 ? (
+          <p style={{ textAlign: "center" }}>No academic records found.</p>
+        ) : (
+          records.map((record) => (
+            <AcademicRecordCard
+              key={record.enrollmentId}
+              record={record}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }
