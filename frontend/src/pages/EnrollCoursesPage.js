@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import AvailableCourseCard from "../components/AvailableCourseCard";
+import colors from "../styles/colors";
 
 function EnrollCoursesPage() {
     const [semesters, setSemesters] = useState([]);
@@ -7,14 +8,18 @@ function EnrollCoursesPage() {
     const [courses, setCourses] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [message, setMessage] = useState("");
+    const [search, setSearch] = useState("");
+    const [searchInput, setSearchInput] = useState("");
 
-    const navigate = useNavigate();
+    const [coursePage, setCoursePage] = useState(0);
+    const coursesPerPage = 5;
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
+
     const token = localStorage.getItem("token");
-
-    console.log("TOKEN:", token);
 
     useEffect(() => {
         fetchSemesters();
+        fetchEnrolledCourses();
     }, []);
 
     const fetchSemesters = async () => {
@@ -25,28 +30,23 @@ function EnrollCoursesPage() {
                 }
             });
 
-            console.log("Status:", response.status);
-
             if (!response.ok) {
-                const errorText = await response.text();
-                console.log("Backend error:", errorText);
                 setMessage(`Error: ${response.status}`);
                 return;
             }
 
             const data = await response.json();
-            console.log("Semesters:", data);
             setSemesters(data);
         } catch (error) {
-            console.error("Fetch error:", error);
+            console.error(error);
             setMessage("Failed to load semesters");
         }
     };
 
-    const fetchCourses = async (semesterId) => {
+    const fetchCourses = async (semesterId, searchTerm = "") => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/enrollment/semesters/${semesterId}/courses`,
+                `http://localhost:8080/api/enrollment/semesters/${semesterId}/courses?search=${searchTerm}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -55,8 +55,6 @@ function EnrollCoursesPage() {
             );
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.log("Backend error:", errorText);
                 setMessage(`Error loading courses: ${response.status}`);
                 return;
             }
@@ -69,11 +67,39 @@ function EnrollCoursesPage() {
         }
     };
 
+    const fetchEnrolledCourses = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/enrollment/my-courses", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                setMessage(`Error loading enrolled courses: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+            setEnrolledCourses(data);
+        } catch (error) {
+            console.error(error);
+            setMessage("Failed to load enrolled courses");
+        }
+    };
+
     const handleSemesterChange = (e) => {
         const semesterId = e.target.value;
         setSelectedSemester(semesterId);
         setSelectedCourses([]);
-        fetchCourses(semesterId);
+        setCoursePage(0);
+        fetchCourses(semesterId, search);
+    };
+
+    const handleSearch = () => {
+        setSearch(searchInput);
+        setCoursePage(0);
+        fetchCourses(selectedSemester, searchInput);
     };
 
     const handleCourseSelect = (courseId) => {
@@ -98,69 +124,218 @@ function EnrollCoursesPage() {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.log("Backend error:", errorText);
                 setMessage(`Enrollment failed: ${response.status}`);
                 return;
             }
 
-            const data = await response.json();
-            console.log("Enrollment response:", data);
-            setMessage("Enrollment successful!");
+            setSelectedCourses([]);
+            setMessage("");
+            fetchEnrolledCourses();
         } catch (error) {
             console.error(error);
             setMessage("Enrollment failed");
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
-    };
+    const sortedCourses = [...courses].sort((a, b) => {
+        return a.courseCode.localeCompare(b.courseCode);
+    });
+
+    const totalCourses = sortedCourses.length;
+    const startIndex = coursePage * coursesPerPage;
+    const endIndex = Math.min(startIndex + coursesPerPage, totalCourses);
+    const visibleCourses = sortedCourses.slice(startIndex, endIndex);
+
+    const isFirstCoursePage = coursePage === 0;
+    const isLastCoursePage = endIndex >= totalCourses;
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Enroll in Courses</h1>
+        <div
+            style={{
+                minHeight: "calc(100vh - 64px)",
+                backgroundColor: colors.lightGray,
+                padding: "40px 20px"
+            }}
+        >
+            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+                <h1 style={{ textAlign: "center", marginBottom: "24px" }}>
+                    Enroll in Courses
+                </h1>
 
-            <button onClick={handleLogout} style={{ marginBottom: "20px", padding: "8px 12px" }}>
-                Logout
-            </button>
+                <div style={{ marginBottom: "24px", textAlign: "center" }}>
+                    <h3>Select Semester</h3>
 
-            <h3>Select Semester</h3>
-            <select value={selectedSemester} onChange={handleSemesterChange}>
-                <option value="">-- Select Semester --</option>
-                {semesters.map((semester) => (
-                    <option key={semester.id} value={semester.id}>
-                        {semester.season} {semester.semesterYear}
-                    </option>
-                ))}
-            </select>
+                    <select
+                        value={selectedSemester}
+                        onChange={handleSemesterChange}
+                        style={{ padding: "8px", width: "260px" }}
+                    >
+                        <option value="">-- Select Semester --</option>
+                        {semesters.map((semester) => (
+                            <option key={semester.id} value={semester.id}>
+                                {semester.season} {semester.semesterYear}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-            <h3>Available Courses</h3>
-            {courses.length === 0 ? (
-                <p>No courses loaded</p>
-            ) : (
-                courses.map((course) => (
-                    <div key={course.courseId}>
-                        <input
-                            type="checkbox"
-                            checked={selectedCourses.includes(course.courseId)}
-                            onChange={() => handleCourseSelect(course.courseId)}
+                <div style={{ marginBottom: "20px", textAlign: "center" }}>
+                    <input
+                        type="text"
+                        placeholder="Search by course code or name..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleSearch();
+                            }
+                        }}
+                        style={{
+                            padding: "8px",
+                            width: "250px",
+                            marginRight: "10px"
+                        }}
+                    />
+
+                    <button onClick={handleSearch}>
+                        Search
+                    </button>
+                </div>
+
+                <h3 style={{ textAlign: "center", marginBottom: "16px" }}>
+                    Available Courses
+                </h3>
+
+                {courses.length === 0 ? (
+                    <p style={{ textAlign: "center" }}>No courses loaded.</p>
+                ) : (
+                    visibleCourses.map((course) => (
+                        <AvailableCourseCard
+                            key={course.courseId}
+                            course={course}
+                            selected={selectedCourses.includes(course.courseId)}
+                            onSelect={() => handleCourseSelect(course.courseId)}
                         />
-                        {course.courseCode} - {course.courseName}
+                    ))
+                )}
+
+                {totalCourses > 0 && (
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: "24px",
+                            marginTop: "20px"
+                        }}
+                    >
+                        <button
+                            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 0))}
+                            disabled={isFirstCoursePage}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                fontSize: "32px",
+                                cursor: isFirstCoursePage ? "not-allowed" : "pointer",
+                                color: colors.cardinalRed
+                            }}
+                        >
+                            ‹
+                        </button>
+
+                        <span style={{ fontSize: "20px" }}>
+                            {startIndex + 1}-{endIndex} of {totalCourses}
+                        </span>
+
+                        <button
+                            onClick={() => setCoursePage((prev) => prev + 1)}
+                            disabled={isLastCoursePage}
+                            style={{
+                                border: "none",
+                                background: "none",
+                                fontSize: "32px",
+                                cursor: isLastCoursePage ? "not-allowed" : "pointer",
+                                color: colors.cardinalRed
+                            }}
+                        >
+                            ›
+                        </button>
                     </div>
-                ))
-            )}
+                )}
 
-            <button
-                onClick={handleEnroll}
-                style={{ marginTop: "20px", padding: "8px 12px" }}
-                disabled={selectedCourses.length === 0}
-            >
-                Enroll
-            </button>
+                <div style={{ textAlign: "center", marginTop: "24px" }}>
+                    <button
+                        onClick={handleEnroll}
+                        disabled={selectedCourses.length === 0}
+                        style={{ padding: "8px 12px" }}
+                    >
+                        Enroll
+                    </button>
+                </div>
 
-            {message && <p><strong>{message}</strong></p>}
+                {enrolledCourses.length > 0 && (
+                    <div style={{ marginTop: "32px" }}>
+                        <h2 style={{ textAlign: "center", color: colors.navyBlue }}>
+                            Enrolled Courses
+                        </h2>
+
+                        {enrolledCourses.map((course) => (
+                            <div
+                                key={course.courseId}
+                                style={{
+                                    display: "flex",
+                                    backgroundColor: colors.white,
+                                    border: `1px solid ${colors.borderGray}`,
+                                    borderRadius: "8px",
+                                    marginBottom: "14px",
+                                    overflow: "hidden",
+                                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)"
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        width: "150px",
+                                        backgroundColor: "#f0f0f0",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        padding: "20px"
+                                    }}
+                                >
+                                    <div style={{ fontSize: "42px", color: "#5faf5f" }}>
+                                        ✓
+                                    </div>
+                                    <strong>Enrolled</strong>
+                                </div>
+
+                                <div style={{ padding: "20px", flex: 1 }}>
+                                    <h2
+                                        style={{
+                                            color: colors.navyBlue,
+                                            marginTop: 0,
+                                            marginBottom: "12px"
+                                        }}
+                                    >
+                                        {course.courseName} <br />
+                                        ({course.courseType})
+                                    </h2>
+
+                                    <p><strong>Class:</strong> {course.courseCode}</p>
+                                    <p><strong>Semester:</strong> {course.semester}</p>
+                                    <p><strong>Units:</strong> {course.unitsAmount}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {message && (
+                    <p style={{ textAlign: "center", marginTop: "20px" }}>
+                        <strong>{message}</strong>
+                    </p>
+                )}
+            </div>
         </div>
     );
 }
