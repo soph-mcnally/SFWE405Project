@@ -39,6 +39,7 @@ public class LoginController {
         response.setExpiresAt(authToken.getExpiresAt());
         response.setPersonId(authToken.getPerson().getPersonID());
         response.setRole(authToken.getPerson().getPersonType().name());
+        response.setEmail(authToken.getPerson().getAccountCredentials().getEmail());
 
         return ResponseEntity.ok(response);
     }
