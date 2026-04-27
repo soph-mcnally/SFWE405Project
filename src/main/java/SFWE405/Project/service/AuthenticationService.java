@@ -67,6 +67,20 @@ public class AuthenticationService {
         return authTokenRepository.save(authToken);
     }
 
+    public void logout(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+
+        String tokenValue = authHeader.substring(7);
+
+        AuthToken authToken = authTokenRepository.findByTokenAndActiveTrue(tokenValue)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        authToken.setActive(false); // invalidate token upon logout
+        authTokenRepository.save(authToken);
+    }
+
     public People validateToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Missing or invalid Authorization header");
