@@ -76,6 +76,7 @@ public class EnrollmentService {
         List<Enrollment> enrollments = enrollmentRepository.findByPersonPersonID(personId);
 
         return enrollments.stream()
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED)
                 .map(Enrollment::getCourse)
                 .toList();
     }
