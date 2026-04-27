@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 public class LoginResponse {
     private String token;
+    private String email;
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private Long personId;
