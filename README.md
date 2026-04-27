@@ -91,6 +91,8 @@ The project was updated to use:
 - Global navigation bar
 - Logout button on all pages
 - Consistent color theme (Cardinal Red, Navy Blue)
+- Displays logged-in user's email in navbar
+- Session state managed using localStorage (token, email, expiration)
 
 ---
 
