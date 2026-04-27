@@ -2,6 +2,7 @@ package SFWE405.Project.controller;
 
 import SFWE405.Project.dto.LoginRequest;
 import SFWE405.Project.dto.LoginResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +43,18 @@ public class LoginController {
         response.setEmail(authToken.getPerson().getAccountCredentials().getEmail());
 
         return ResponseEntity.ok(response);
+    }
+
+    // endpoint for handling logout
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+        try {
+            authenticationService.logout(authHeader);
+            return ResponseEntity.ok("Logged out successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 }
