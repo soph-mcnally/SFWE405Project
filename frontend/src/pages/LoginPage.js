@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { login } from "../services/authService";
 
 function LoginPage() {
@@ -8,6 +8,8 @@ function LoginPage() {
     const [message, setMessage] = useState("");
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const sessionMessage = location.state?.message;
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -58,7 +60,17 @@ function LoginPage() {
                 </button>
             </form>
 
-            {message && <p><strong>{message}</strong></p>}
+            {sessionMessage && (
+                <p style={{ color: "red" }}>
+                    <strong>{sessionMessage}</strong>
+                </p>
+            )}
+
+            {message && (
+                <p>
+                    <strong>{message}</strong>
+                </p>
+            )}
         </div>
     );
 }
