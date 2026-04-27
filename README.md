@@ -41,9 +41,16 @@ The system includes a **Spring Boot backend** and a **React frontend**, with tok
 
 ### Authentication
 - Login using username or email
-- Token-based authentication
+- Token-based authentication (stored in browser localStorage)
 - Protected routes in frontend
-- Token expiration handling (30 min)
+- Token expiration handling (30 minutes)
+- Automatic session expiration:
+  - Expired tokens trigger logout
+  - User is redirected to login page
+  - Session expired message is displayed
+- Logout functionality:
+  - Calls backend endpoint to invalidate token
+  - Clears frontend session data
 
 ### Academic Record
 - View academic record (courses, grades, status, semester)
