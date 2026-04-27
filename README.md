@@ -35,6 +35,17 @@ The system includes a **Spring Boot backend** and a **React frontend**, with tok
 - React Router
 - Fetch API
 
+## Important Version Note
+
+The frontend originally used React 19 and React Router 7, but this caused compatibility issues with Create React App (`react-scripts`).
+
+The project was updated to use:
+
+```json
+"react": "^18.2.0",
+"react-dom": "^18.2.0",
+"react-router-dom": "^6.30.1"
+```
 ---
 
 ## Features
