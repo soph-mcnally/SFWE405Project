@@ -35,15 +35,33 @@ The system includes a **Spring Boot backend** and a **React frontend**, with tok
 - React Router
 - Fetch API
 
+## Important Version Note
+
+The frontend originally used React 19 and React Router 7, but this caused compatibility issues with Create React App (`react-scripts`).
+
+The project was updated to use:
+
+```json
+"react": "^18.2.0",
+"react-dom": "^18.2.0",
+"react-router-dom": "^6.30.1"
+```
 ---
 
 ## Features
 
 ### Authentication
 - Login using username or email
-- Token-based authentication
+- Token-based authentication (stored in browser localStorage)
 - Protected routes in frontend
-- Token expiration handling (30 min)
+- Token expiration handling (30 minutes)
+- Automatic session expiration:
+  - Expired tokens trigger logout
+  - User is redirected to login page
+  - Session expired message is displayed
+- Logout functionality:
+  - Calls backend endpoint to invalidate token
+  - Clears frontend session data
 
 ### Academic Record
 - View academic record (courses, grades, status, semester)
@@ -73,6 +91,8 @@ The system includes a **Spring Boot backend** and a **React frontend**, with tok
 - Global navigation bar
 - Logout button on all pages
 - Consistent color theme (Cardinal Red, Navy Blue)
+- Displays logged-in user's email in navbar
+- Session state managed using localStorage (token, email, expiration)
 
 ---
 
