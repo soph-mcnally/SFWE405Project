@@ -50,13 +50,34 @@ public class EnrollmentService {
         return semesters;
     }
 
-    public List<Course> getCoursesForSemester(Long personId, Long semesterId) {
+    public List<Course> getCoursesForSemester(Long personId, Long semesterId, String search) {
         People person = peopleRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("Person not found"));
 
-        return courseRepository.findByUniversityUniversityIdAndSemesterSemesterId(
+        List<Course> courses = courseRepository.findByUniversityUniversityIdAndSemesterSemesterId(
                 person.getEnrolledAt().getUniversityId(),
                 semesterId);
+
+        if (search == null || search.trim().isEmpty()) {
+            return courses;
+        }
+
+        String keyword = search.trim().toLowerCase();
+
+        return courses.stream()
+                .filter(course ->
+                        course.getCourseCode().toLowerCase().contains(keyword)
+                                || course.getCourseName().toLowerCase().contains(keyword)
+                )
+                .toList();
+    }
+
+    public List<Course> getEnrolledCourses(Long personId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByPersonPersonID(personId);
+
+        return enrollments.stream()
+                .map(Enrollment::getCourse)
+                .toList();
     }
 
     public EnrollCoursesResponse enrollStudentInCourses(Long personId, List<Long> courseIds) {
