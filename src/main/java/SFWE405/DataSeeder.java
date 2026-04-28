@@ -6,23 +6,24 @@ import java.time.LocalDateTime;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import SFWE405.Project.entity.AccountCredentials;
 import SFWE405.Project.entity.Course;
+import SFWE405.Project.entity.CourseAssignment;
 import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.HomeworkAssignment;
-import SFWE405.Project.entity.CourseAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.entity.University;
 import SFWE405.Project.repository.AccountCredentialsRepository;
+import SFWE405.Project.repository.CourseAssignmentRepository;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.EnrollmentRepository;
 import SFWE405.Project.repository.HomeworkAssignmentRepository;
 import SFWE405.Project.repository.PeopleRepository;
 import SFWE405.Project.repository.SemesterRepository;
 import SFWE405.Project.repository.UniversityRepository;
-import SFWE405.Project.repository.CourseAssignmentRepository;
 
 @Configuration
 public class DataSeeder {
@@ -36,7 +37,8 @@ public class DataSeeder {
             CourseRepository courseRepository,
             EnrollmentRepository enrollmentRepository,
             HomeworkAssignmentRepository homeworkAssignmentRepository,
-            CourseAssignmentRepository courseAssignmentRepository
+            CourseAssignmentRepository courseAssignmentRepository,
+            PasswordEncoder passwordEncoder
     ) {
         return args -> {
 
@@ -50,7 +52,6 @@ public class DataSeeder {
             People student = new People();
             student.setFirstName("Brandon");
             student.setLastName("Sisco");
-            student.setEmail("brandon@example.com");
             student.setPersonType(People.PersonType.STUDENT);
             student.setDegreeLevel(People.DegreeLevel.UNDERGRADUATE);
             student.setEnrolledAt(university);
@@ -59,7 +60,6 @@ public class DataSeeder {
             People facultyMember = new People();
             facultyMember.setFirstName("Faculty");
             facultyMember.setLastName("Member");
-            facultyMember.setEmail("faculty@example.com");
             facultyMember.setPersonType(People.PersonType.FACULTY);
             facultyMember.setEnrolledAt(university);
             facultyMember = peopleRepository.save(facultyMember);
@@ -68,7 +68,7 @@ public class DataSeeder {
             // 3. Credentials
             AccountCredentials credsI = new AccountCredentials();
             credsI.setUserName("testUser");
-            credsI.setPassword("password123");
+            credsI.setPassword(passwordEncoder.encode("password123"));
             credsI.setEmail("brandon@example.com");
             credsI.setPerson(student);
             credsI.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
@@ -77,7 +77,7 @@ public class DataSeeder {
 
             AccountCredentials credsII = new AccountCredentials();
             credsII.setUserName("facultyMember");
-            credsII.setPassword("fac123");
+            credsII.setPassword(passwordEncoder.encode("fac123"));
             credsII.setEmail("faculty@example.com");
             credsII.setPerson(facultyMember);
             credsII.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
@@ -426,7 +426,6 @@ public class DataSeeder {
             People admin = new People();
             admin.setFirstName("Sophie");
             admin.setLastName("McNally");
-            admin.setEmail("sophie@example.com");
             admin.setPersonType(People.PersonType.ADMIN);
             admin.setDegreeLevel(People.DegreeLevel.GRADUATE);
             admin.setEnrolledAt(university);
@@ -435,7 +434,7 @@ public class DataSeeder {
             // 8. Admin credentials
             AccountCredentials adminCreds = new AccountCredentials();
             adminCreds.setUserName("adminUser");
-            adminCreds.setPassword("faculty123");
+            adminCreds.setPassword(passwordEncoder.encode("faculty123"));
             adminCreds.setEmail("sophie@example.com");
             adminCreds.setPerson(admin);
             adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
@@ -458,13 +457,13 @@ public class DataSeeder {
             homeworkAssignmentRepository.save(hw2);
 
             //10. Faculty Creation & Credetials for Faculty
-            People faculty = new People("Dr. Thomas", "Cerny", "tom@arizona.edu", People.PersonType.FACULTY, null);
+            People faculty = new People("Dr. Thomas", "Cerny", People.PersonType.FACULTY, null);
             faculty.setEnrolledAt(university); //Propbably need to get rid of this requirement
             faculty = peopleRepository.save(faculty);
 
             AccountCredentials facultyCreds = new AccountCredentials();
             facultyCreds.setUserName("drCerny");
-            facultyCreds.setPassword("securePass456");
+            facultyCreds.setPassword(passwordEncoder.encode("securePass456"));
             facultyCreds.setEmail("cerny@example.com");
             facultyCreds.setPerson(faculty);
             facultyCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
