@@ -104,8 +104,8 @@ public class DataSeeder {
 
             // 5. Course
             Course course = new Course();
-            course.setCourseCode("CSE405");
-            course.setCourseName("Software Engineering");
+            course.setCourseCode("CSC355");
+            course.setCourseName("Data Structures & Algorithms");
             course.setCourseType(Course.CourseType.LECTURE);
             course.setSemester(semester);
             course.setUniversity(university);
@@ -134,6 +134,18 @@ public class DataSeeder {
             ece101Spring.setUnitsAmount(3);
             ece101Spring.setUpperDivision(false);
             ece101Spring = courseRepository.save(ece101Spring);
+
+            HomeworkAssignment ece101hw1 = new HomeworkAssignment();
+            ece101hw1.setAssignmentName("Project #1");
+            ece101hw1.setDueDate(LocalDate.now().plusDays(7));  // Must be future date due to @Future validation
+            ece101hw1.setCourse(ece101Spring);
+            homeworkAssignmentRepository.save(ece101hw1);
+
+            HomeworkAssignment ece101hw2 = new HomeworkAssignment();
+            ece101hw2.setAssignmentName("Project #2");
+            ece101hw2.setDueDate(LocalDate.now().plusDays(14));  // Must be future date due to @Future validation
+            ece101hw2.setCourse(ece101Spring);
+            homeworkAssignmentRepository.save(ece101hw2);
 
             Course ece101Fall = new Course();
             ece101Fall.setCourseCode("ECE101");
@@ -405,7 +417,7 @@ public class DataSeeder {
             Enrollment enrollment = new Enrollment();
             enrollment.setPerson(student);
             enrollment.setCourse(course);
-            enrollment.setStatus(Enrollment.EnrollmentStatus.ENROLLED);
+            enrollment.setStatus(Enrollment.EnrollmentStatus.COMPLETED);
             enrollment.setGrade("A");
             enrollment.setEnrolledDate(LocalDate.now());
             enrollmentRepository.save(enrollment);

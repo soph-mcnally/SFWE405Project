@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import colors from "../styles/colors";
+import { logout } from "../services/authService";
 
 function ProtectedLayout({ children }) {
   const navigate = useNavigate();
@@ -9,11 +10,24 @@ function ProtectedLayout({ children }) {
     localStorage.getItem("userEmail") ||
     "Logged in user";
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    localStorage.removeItem("userEmail");
-    navigate("/login");
+  async function handleLogout() {
+    const token = localStorage.getItem("token");
+
+    try {
+      if (token) {
+        await logout(token);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("email");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("expiresAt");
+      localStorage.removeItem("theme");
+
+      navigate("/login");
+    }
   }
 
   return (
@@ -75,11 +89,12 @@ function ProtectedLayout({ children }) {
   );
 }
 
-const navLinkStyle = {
+//no longer used
+/* const navLinkStyle = {
   color: colors.white,
   textDecoration: "none",
   fontWeight: "bold"
-};
+}; */
 
 const navButtonStyle = {
   backgroundColor: "#FFFFFF",
