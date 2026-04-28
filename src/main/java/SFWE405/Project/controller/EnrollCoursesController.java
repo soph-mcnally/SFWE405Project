@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/enrollment")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EnrollCoursesController {
 
     private final AuthenticationService authenticationService;
@@ -53,7 +54,8 @@ public class EnrollCoursesController {
     @GetMapping("/semesters/{semesterId}/courses")
     public ResponseEntity<List<AvailableCourseResponse>> getCoursesForSemester(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable Long semesterId) {
+            @PathVariable Long semesterId,
+            @RequestParam(required = false) String search) {
 
         People person = authenticationService.validateToken(authHeader);
 
@@ -62,7 +64,38 @@ public class EnrollCoursesController {
         }
 
         List<Course> courses = enrollmentService.getCoursesForSemester(
-                person.getPersonID(), semesterId);
+                person.getPersonID(), semesterId, search);
+
+        List<AvailableCourseResponse> response = courses.stream().map(course -> {
+            AvailableCourseResponse item = new AvailableCourseResponse();
+            item.setCourseId(course.getCourseId());
+            item.setCourseCode(course.getCourseCode());
+            item.setCourseName(course.getCourseName());
+            item.setCourseType(course.getCourseType().name());
+            item.setUnitsAmount(course.getUnitsAmount());
+            item.setUpperDivision(course.getUpperDivision());
+            item.setSemester(
+                    course.getSemester().getSeason().name()
+                            + " "
+                            + course.getSemester().getSemesterYear()
+            );
+            return item;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/my-courses")
+    public ResponseEntity<List<AvailableCourseResponse>> getMyEnrolledCourses(
+            @RequestHeader("Authorization") String authHeader) {
+
+        People person = authenticationService.validateToken(authHeader);
+
+        if (person.getPersonType() != People.PersonType.STUDENT) {
+            throw new RuntimeException("Only students can view enrolled courses");
+        }
+
+        List<Course> courses = enrollmentService.getEnrolledCourses(person.getPersonID());
 
         List<AvailableCourseResponse> response = courses.stream().map(course -> {
             AvailableCourseResponse item = new AvailableCourseResponse();

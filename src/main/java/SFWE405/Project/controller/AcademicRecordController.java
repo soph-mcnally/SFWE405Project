@@ -2,19 +2,23 @@ package SFWE405.Project.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import SFWE405.Project.dto.AcademicRecordItemResponse;
 import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.service.AcademicRecordService;
 import SFWE405.Project.service.AuthenticationService;
+import SFWE405.Project.dto.AcademicRecordPageResponse;
 
 /**
+ * @author Brandon Sisco
+ *
  * REST controller for handling academic record requests.
  *
  * This controller validates the user's bearer token and returns
@@ -22,6 +26,7 @@ import SFWE405.Project.service.AuthenticationService;
  */
 @RestController
 @RequestMapping("/api/academic-record")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AcademicRecordController {
 
     private final AuthenticationService authenticationService;
@@ -34,35 +39,96 @@ public class AcademicRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AcademicRecordItemResponse>> getAcademicRecord(
-            @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<?> getAcademicRecord(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String search) {
 
-        People person = authenticationService.validateToken(authHeader);
+        try {
+            People person = authenticationService.validateToken(authHeader);
 
-        if (person.getPersonType() != People.PersonType.STUDENT) {
-            throw new RuntimeException("Only students can view academic records");
+            if (person.getPersonType() != People.PersonType.STUDENT &&
+                    person.getPersonType() != People.PersonType.ADMIN) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Only students or administrators can view academic records");
+            }
+
+            Pageable pageable = PageRequest.of(page, size);
+
+            Page<Enrollment> academicRecordPage =
+                    academicRecordService.getAcademicRecord(person.getPersonID(), search, pageable);
+
+            if (academicRecordPage.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No academic record found for this student");
+            }
+
+            List<AcademicRecordItemResponse> response = academicRecordPage.getContent().stream().map(enrollment -> {
+                AcademicRecordItemResponse item = new AcademicRecordItemResponse();
+                item.setEnrollmentId(enrollment.getEnrollmentId());
+                item.setCourseCode(enrollment.getCourse().getCourseCode());
+                item.setCourseName(enrollment.getCourse().getCourseName());
+                item.setCourseType(enrollment.getCourse().getCourseType().name());
+                item.setUnitsAmount(enrollment.getCourse().getUnitsAmount());
+                item.setSemester(
+                        enrollment.getCourse().getSemester().getSeason().name()
+                                + " "
+                                + enrollment.getCourse().getSemester().getSemesterYear()
+                );
+                item.setGrade(enrollment.getGrade());
+                item.setStatus(enrollment.getStatus().name());
+                return item;
+            }).toList();
+
+            AcademicRecordPageResponse pageResponse = new AcademicRecordPageResponse();
+            pageResponse.setContent(response);
+            pageResponse.setCurrentPage(academicRecordPage.getNumber());
+            pageResponse.setTotalPages(academicRecordPage.getTotalPages());
+            pageResponse.setTotalElements(academicRecordPage.getTotalElements());
+            pageResponse.setFirst(academicRecordPage.isFirst());
+            pageResponse.setLast(academicRecordPage.isLast());
+
+            return ResponseEntity.ok(pageResponse);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-
-        List<Enrollment> academicRecord =
-                academicRecordService.getAcademicRecord(person.getPersonID());
-
-        List<AcademicRecordItemResponse> response = academicRecord.stream().map(enrollment -> {
-            AcademicRecordItemResponse item = new AcademicRecordItemResponse();
-            item.setEnrollmentId(enrollment.getEnrollmentId());
-            item.setCourseCode(enrollment.getCourse().getCourseCode());
-            item.setCourseName(enrollment.getCourse().getCourseName());
-            item.setCourseType(enrollment.getCourse().getCourseType().name());
-            item.setUnitsAmount(enrollment.getCourse().getUnitsAmount());
-            item.setSemester(
-                    enrollment.getCourse().getSemester().getSeason().name()
-                            + " "
-                            + enrollment.getCourse().getSemester().getSemesterYear()
-            );
-            item.setGrade(enrollment.getGrade());
-            item.setStatus(enrollment.getStatus().name());
-            return item;
-        }).toList();
-
-        return ResponseEntity.ok(response);
     }
-}
+
+        @GetMapping("/export")
+        public ResponseEntity<?> exportAcademicRecord(
+                @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+            try {
+                People person = authenticationService.validateToken(authHeader);
+
+                List<Enrollment> academicRecord =
+                        academicRecordService.getAcademicRecord(person.getPersonID());
+
+                StringBuilder csv = new StringBuilder();
+                csv.append("Course Code,Course Name,Course Type,Semester,Grade,Status,Units\n");
+
+                for (Enrollment enrollment : academicRecord) {
+                    csv.append(enrollment.getCourse().getCourseCode()).append(",");
+                    csv.append(enrollment.getCourse().getCourseName()).append(",");
+                    csv.append(enrollment.getCourse().getCourseType().name()).append(",");
+                    csv.append(
+                            enrollment.getCourse().getSemester().getSeason().name() + " " +
+                                    enrollment.getCourse().getSemester().getSemesterYear()
+                    ).append(",");
+                    csv.append(enrollment.getGrade() == null ? "Pending" : enrollment.getGrade()).append(",");
+                    csv.append(enrollment.getStatus().name()).append(",");
+                    csv.append(enrollment.getCourse().getUnitsAmount()).append("\n");
+                }
+
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=academic_record.csv")
+                        .header("Content-Type", "text/csv")
+                        .body(csv.toString());
+
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            }
+        }
+    }
