@@ -17,6 +17,13 @@ function HomePage() {
                         Academic Record
                     </button>
                 </Link>
+
+                <Link to="/requirements">
+                    <button style={{ marginRight: "10px" }}>
+                        University Requirements
+                    </button>
+                </Link>
+
             </div>
         </div>
     );

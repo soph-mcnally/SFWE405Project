@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import EnrollCoursesPage from "./pages/EnrollCoursesPage";
 import AcademicRecordPage from "./pages/AcademicRecordPage";
+import UniversityRequirementsPage from "./pages/UniversityRequirementsPage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -48,6 +49,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+          <Route
+              path="/requirements"
+              element={
+              <ProtectedRoute adminOnly={true}>
+              <UniversityRequirementsPage />
+              </ProtectedRoute>
+          }
+          />
       </Routes>
     </BrowserRouter>
   );

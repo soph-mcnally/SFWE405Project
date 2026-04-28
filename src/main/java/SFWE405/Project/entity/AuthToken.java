@@ -28,7 +28,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class AuthToken {
+public class
+AuthToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
