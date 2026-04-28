@@ -24,9 +24,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Getter
@@ -44,7 +44,7 @@ public class AccountCredentials {
     private String email;
 
     @Column(nullable = false)
-    private String password;  // Note: In production, store hashed passwords (e.g., using BCrypt), not plain text
+    private String password; // stored as hashed value, not plain text
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
@@ -92,5 +92,9 @@ public class AccountCredentials {
 
     public People getPerson() {
         return person;
+    }
+
+    public Long getCredentialsId() {
+        return credentialsId;
     }
 }

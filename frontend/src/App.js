@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import EnrollCoursesPage from "./pages/EnrollCoursesPage";
 import AcademicRecordPage from "./pages/AcademicRecordPage";
+import ManageUserAccountPage from "./pages/ManageUserAccountPage";
 import ManageCoursesPage from "./pages/ManageCoursesPage";
 
 function App() {
@@ -46,6 +47,15 @@ function App() {
           element={
             <ProtectedRoute>
               <AcademicRecordPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/manage-account"
+          element={
+            <ProtectedRoute>
+              <ManageUserAccountPage />
             </ProtectedRoute>
           }
         />

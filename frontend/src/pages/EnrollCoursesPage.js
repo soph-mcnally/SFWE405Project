@@ -8,6 +8,7 @@ function EnrollCoursesPage() {
     const [courses, setCourses] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [message, setMessage] = useState("");
+    const [popup, setPopup] = useState(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
 
@@ -21,6 +22,14 @@ function EnrollCoursesPage() {
         fetchSemesters();
         fetchEnrolledCourses();
     }, []);
+
+    const showPopup = (text) => {
+        setPopup(text);
+
+        setTimeout(() => {
+            setPopup(null);
+        }, 3000);
+    };
 
     const fetchSemesters = async () => {
         try {
@@ -93,6 +102,12 @@ function EnrollCoursesPage() {
         setSelectedSemester(semesterId);
         setSelectedCourses([]);
         setCoursePage(0);
+
+        if (semesterId === "") {
+            setCourses([]);
+            return;
+        }
+
         fetchCourses(semesterId, search);
     };
 
@@ -103,6 +118,15 @@ function EnrollCoursesPage() {
     };
 
     const handleCourseSelect = (courseId) => {
+        const alreadyEnrolled = enrolledCourses.some(
+            (course) => course.courseId === courseId
+        );
+
+        if (alreadyEnrolled) {
+            showPopup("Already in Course");
+            return;
+        }
+
         if (selectedCourses.includes(courseId)) {
             setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
         } else {
@@ -149,6 +173,48 @@ function EnrollCoursesPage() {
     const isFirstCoursePage = coursePage === 0;
     const isLastCoursePage = endIndex >= totalCourses;
 
+    const popupStyle = {
+        position: "fixed",
+        top: "90px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "#fff",
+        color: "#b00020",
+        border: "2px solid #b00020",
+        borderRadius: "10px",
+        padding: "14px 24px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+        zIndex: 1000,
+        animation: "shake 0.35s"
+    };
+
+    const popupIconStyle = {
+        width: "26px",
+        height: "26px",
+        borderRadius: "50%",
+        backgroundColor: "#b00020",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: "bold"
+    };
+
+    const selectedSemesterObject = semesters.find(
+        (semester) => String(semester.id) === String(selectedSemester)
+    );
+
+    const filteredEnrolledCourses = selectedSemesterObject
+        ? enrolledCourses.filter(
+            (course) =>
+                course.semester ===
+                `${selectedSemesterObject.season} ${selectedSemesterObject.semesterYear}`
+        )
+        : [];
+
     return (
         <div
             style={{
@@ -157,6 +223,13 @@ function EnrollCoursesPage() {
                 padding: "40px 20px"
             }}
         >
+            {popup && (
+                <div style={popupStyle}>
+                    <div style={popupIconStyle}>✕</div>
+                    <strong>{popup}</strong>
+                </div>
+            )}
+
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
                 <h1 style={{ textAlign: "center", marginBottom: "24px" }}>
                     Enroll in Courses
@@ -202,132 +275,144 @@ function EnrollCoursesPage() {
                     </button>
                 </div>
 
-                <h3 style={{ textAlign: "center", marginBottom: "16px" }}>
-                    Available Courses
-                </h3>
+                {selectedSemester ? (
+                    <>
+                        <h3 style={{ textAlign: "center", marginBottom: "16px" }}>
+                            Available Courses
+                        </h3>
 
-                {courses.length === 0 ? (
-                    <p style={{ textAlign: "center" }}>No courses loaded.</p>
-                ) : (
-                    visibleCourses.map((course) => (
-                        <AvailableCourseCard
-                            key={course.courseId}
-                            course={course}
-                            selected={selectedCourses.includes(course.courseId)}
-                            onSelect={() => handleCourseSelect(course.courseId)}
-                        />
-                    ))
-                )}
+                        {courses.length === 0 ? (
+                            <p style={{ textAlign: "center" }}>No courses loaded.</p>
+                        ) : (
+                            visibleCourses.map((course) => (
+                                <AvailableCourseCard
+                                    key={course.courseId}
+                                    course={course}
+                                    selected={selectedCourses.includes(course.courseId)}
+                                    onSelect={() => handleCourseSelect(course.courseId)}
+                                />
+                            ))
+                        )}
 
-                {totalCourses > 0 && (
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: "24px",
-                            marginTop: "20px"
-                        }}
-                    >
-                        <button
-                            onClick={() => setCoursePage((prev) => Math.max(prev - 1, 0))}
-                            disabled={isFirstCoursePage}
-                            style={{
-                                border: "none",
-                                background: "none",
-                                fontSize: "32px",
-                                cursor: isFirstCoursePage ? "not-allowed" : "pointer",
-                                color: colors.cardinalRed
-                            }}
-                        >
-                            ‹
-                        </button>
-
-                        <span style={{ fontSize: "20px" }}>
-                            {startIndex + 1}-{endIndex} of {totalCourses}
-                        </span>
-
-                        <button
-                            onClick={() => setCoursePage((prev) => prev + 1)}
-                            disabled={isLastCoursePage}
-                            style={{
-                                border: "none",
-                                background: "none",
-                                fontSize: "32px",
-                                cursor: isLastCoursePage ? "not-allowed" : "pointer",
-                                color: colors.cardinalRed
-                            }}
-                        >
-                            ›
-                        </button>
-                    </div>
-                )}
-
-                <div style={{ textAlign: "center", marginTop: "24px" }}>
-                    <button
-                        onClick={handleEnroll}
-                        disabled={selectedCourses.length === 0}
-                        style={{ padding: "8px 12px" }}
-                    >
-                        Enroll
-                    </button>
-                </div>
-
-                {enrolledCourses.length > 0 && (
-                    <div style={{ marginTop: "32px" }}>
-                        <h2 style={{ textAlign: "center", color: colors.navyBlue }}>
-                            Enrolled Courses
-                        </h2>
-
-                        {enrolledCourses.map((course) => (
+                        {totalCourses > 0 && (
                             <div
-                                key={course.courseId}
                                 style={{
                                     display: "flex",
-                                    backgroundColor: colors.white,
-                                    border: `1px solid ${colors.borderGray}`,
-                                    borderRadius: "8px",
-                                    marginBottom: "14px",
-                                    overflow: "hidden",
-                                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)"
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gap: "24px",
+                                    marginTop: "20px"
                                 }}
                             >
-                                <div
+                                <button
+                                    onClick={() => setCoursePage((prev) => Math.max(prev - 1, 0))}
+                                    disabled={isFirstCoursePage}
                                     style={{
-                                        width: "150px",
-                                        backgroundColor: "#f0f0f0",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        padding: "20px"
+                                        border: "none",
+                                        background: "none",
+                                        fontSize: "32px",
+                                        cursor: isFirstCoursePage ? "not-allowed" : "pointer",
+                                        color: colors.cardinalRed
                                     }}
                                 >
-                                    <div style={{ fontSize: "42px", color: "#5faf5f" }}>
-                                        ✓
-                                    </div>
-                                    <strong>Enrolled</strong>
-                                </div>
+                                    ‹
+                                </button>
 
-                                <div style={{ padding: "20px", flex: 1 }}>
-                                    <h2
+                                <span style={{ fontSize: "20px" }}>
+                    {startIndex + 1}-{endIndex} of {totalCourses}
+                </span>
+
+                                <button
+                                    onClick={() => setCoursePage((prev) => prev + 1)}
+                                    disabled={isLastCoursePage}
+                                    style={{
+                                        border: "none",
+                                        background: "none",
+                                        fontSize: "32px",
+                                        cursor: isLastCoursePage ? "not-allowed" : "pointer",
+                                        color: colors.cardinalRed
+                                    }}
+                                >
+                                    ›
+                                </button>
+                            </div>
+                        )}
+
+                        <div style={{ textAlign: "center", marginTop: "24px" }}>
+                            <button
+                                onClick={handleEnroll}
+                                disabled={selectedCourses.length === 0}
+                                style={{ padding: "8px 12px" }}
+                            >
+                                Enroll
+                            </button>
+                        </div>
+
+                        {filteredEnrolledCourses.length > 0 ? (
+                            <div style={{ marginTop: "32px" }}>
+                                <h2 style={{ textAlign: "center", color: colors.navyBlue }}>
+                                    Enrolled Courses
+                                </h2>
+
+                                {filteredEnrolledCourses.map((course) => (
+                                    <div
+                                        key={course.courseId}
                                         style={{
-                                            color: colors.navyBlue,
-                                            marginTop: 0,
-                                            marginBottom: "12px"
+                                            display: "flex",
+                                            backgroundColor: colors.white,
+                                            border: `1px solid ${colors.borderGray}`,
+                                            borderRadius: "8px",
+                                            marginBottom: "14px",
+                                            overflow: "hidden",
+                                            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)"
                                         }}
                                     >
-                                        {course.courseName} <br />
-                                        ({course.courseType})
-                                    </h2>
+                                        <div
+                                            style={{
+                                                width: "150px",
+                                                backgroundColor: "#f0f0f0",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                padding: "20px"
+                                            }}
+                                        >
+                                            <div style={{ fontSize: "42px", color: "#5faf5f" }}>
+                                                ✓
+                                            </div>
+                                            <strong>Enrolled</strong>
+                                        </div>
 
-                                    <p><strong>Class:</strong> {course.courseCode}</p>
-                                    <p><strong>Semester:</strong> {course.semester}</p>
-                                    <p><strong>Units:</strong> {course.unitsAmount}</p>
-                                </div>
+                                        <div style={{ padding: "20px", flex: 1 }}>
+                                            <h2
+                                                style={{
+                                                    color: colors.navyBlue,
+                                                    marginTop: 0,
+                                                    marginBottom: "12px"
+                                                }}
+                                            >
+                                                {course.courseName} <br />
+                                                ({course.courseType})
+                                            </h2>
+
+                                            <p><strong>Class:</strong> {course.courseCode}</p>
+                                            <p><strong>Semester:</strong> {course.semester}</p>
+                                            <p><strong>Units:</strong> {course.unitsAmount}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        ) : (
+                            <p style={{ textAlign: "center", marginTop: "20px" }}>
+                                No enrolled courses for this semester.
+                            </p>
+                        )}
+                    </>
+                ) : (
+                    <p style={{ textAlign: "center", marginTop: "20px" }}>
+                        Select a semester to view available and enrolled courses.
+                    </p>
                 )}
 
                 {message && (

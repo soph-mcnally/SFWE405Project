@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,25 +28,6 @@ public class People {
     private String firstName;
     private String lastName;
     
-    @Column(unique = true, nullable = false) //each person should have a unique email -> no repeating emails
-    private String email;
-
-    // added for Student Login -- edit, commenting out as i updated credentials instead
-   // @Column(unique = true, nullable = false)
-  //  private String username;
-
-  //  @Column(nullable = false)
-  //  private String password;
-
-    /* adding the relationship here for a join table, but I'm still uncertain how we are doing this
-    @ManyToMany
-    @JoinTable(
-            name = "people_courses",
-            joinColumns = @JoinColumn(name = "") <- need to figure out what the FK is we are joining here
-            inverseJoinColumn = @JoinColumn(name = "") <- same as above
-    */
-    // private Set<Courses> courses = new HashSet<>();
-
     @ManyToOne (optional = false) //this side owns this relationship, as it's the side with the multiplicity
     @JoinColumn (name = "university_id", nullable = false)
     @JsonIgnore
@@ -81,12 +61,9 @@ public class People {
     //****************************************************Constructors****************************************************
     public People() {}
 
-    public People(String firstName, String lastName, String email, PersonType personType, DegreeLevel degreeLevel) {
+    public People(String firstName, String lastName, PersonType personType, DegreeLevel degreeLevel) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-       // this.username = username;
-       // this.password = password;
         this.personType = personType;
         this.degreeLevel = degreeLevel;
     }
@@ -114,10 +91,6 @@ public class People {
 
     public String getLastName() {
         return lastName;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public PersonType getPersonType() {
