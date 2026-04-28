@@ -9,9 +9,11 @@ function HomePage() {
     const currentSemester = getCurrentSemester();
 
     const [enrolledCourses, setEnrolledCourses] = useState([]);
+    const [homeworkAssignments, setHomeworkAssignments] = useState([]);
 
     useEffect(() => {
         fetchEnrolledCourses();
+        fetchHomeworkAssignments();
     }, []);
 
     const fetchEnrolledCourses = async () => {
@@ -34,6 +36,32 @@ function HomePage() {
         }
     };
 
+    const fetchHomeworkAssignments = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/homework-assignment/my-assignments", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 204) {
+                setHomeworkAssignments([]);
+                return;
+            }
+
+            if (!response.ok) {
+                console.error(`Error loading homework assignments: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+            console.log("Homework assignments:", data);
+            setHomeworkAssignments(data);
+        } catch (error) {
+            console.error("Failed to load homework assignments", error);
+        }
+    };
+
     const currentSemesterCourses = enrolledCourses.filter(course => {
         return course.semester?.toLowerCase() === currentSemester.toLowerCase();
     });
@@ -41,6 +69,10 @@ function HomePage() {
     const totalCurrentUnits = currentSemesterCourses.reduce((total, course) => {
         return total + (course.unitsAmount || 0);
     }, 0);
+
+    const sortedHomeworkAssignments = [...homeworkAssignments].sort((a, b) => {
+        return new Date(a.dueDate) - new Date(b.dueDate);
+    });
 
     return (
         <div style={pageStyle}>
@@ -89,13 +121,34 @@ function HomePage() {
                     <div style={cardStyle}>
                         <h2 style={cardTitleStyle}>Upcoming Homework</h2>
 
-                        <p style={subTextStyle}>
-                            Homework assignments will display here once implemented.
+                        <p style={{ ...subTextStyle, fontSize: "14px" }}>
+                            Assignments for your enrolled courses
                         </p>
 
-                        <div style={placeholderStyle}>
-                            Upcoming homework layout placeholder
-                        </div>
+                        {sortedHomeworkAssignments.length > 0 ? (
+                            sortedHomeworkAssignments.map(assignment => (
+                                <div
+                                    key={assignment.homeworkAssignmentsID}
+                                    style={homeworkItemStyle}
+                                >
+                                    <strong style={homeworkTitleStyle}>
+                                        {assignment.assignmentName}
+                                    </strong>
+
+                                    <p style={homeworkCourseStyle}>
+                                        {assignment.course?.courseCode} - {assignment.course?.courseName}
+                                    </p>
+
+                                    <p style={homeworkDueDateStyle}>
+                                        Due: {formatDate(assignment.dueDate)}
+                                    </p>
+                                </div>
+                            ))
+                        ) : (
+                            <div style={placeholderStyle}>
+                                No upcoming homework assignments.
+                            </div>
+                        )}
                     </div>
                 </section>
             )}
@@ -117,6 +170,16 @@ function getCurrentSemester() {
     }
 
     return `No active semester`;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+    });
 }
 
 const pageStyle = {
@@ -211,6 +274,33 @@ const courseNameStyle = {
 };
 
 const courseUnitsStyle = {
+    margin: "4px 0 0",
+    color: "#666"
+};
+
+const homeworkItemStyle = {
+    padding: "12px",
+    marginTop: "12px",
+    borderRadius: "8px",
+    backgroundColor: colors.lightGray,
+    borderLeft: `6px solid ${colors.navyBlue}`,
+    borderTop: `1px solid ${colors.borderGray}`,
+    borderRight: `1px solid ${colors.borderGray}`,
+    borderBottom: `1px solid ${colors.borderGray}`
+};
+
+const homeworkTitleStyle = {
+    color: colors.cardinalRed,
+    fontSize: "16px"
+};
+
+const homeworkCourseStyle = {
+    margin: "4px 0 0",
+    color: colors.navyBlue,
+    fontWeight: "bold"
+};
+
+const homeworkDueDateStyle = {
     margin: "4px 0 0",
     color: "#666"
 };
