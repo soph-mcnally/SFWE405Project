@@ -1,39 +1,31 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { login } from "../services/authService";
 
 function LoginPage() {
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
+    const location = useLocation();
+    const sessionMessage = location.state?.message;
 
-    const navigate = useNavigate(); // used to redirect pages
+    const handleLogin = async (e) => {
+        e.preventDefault();
 
-    const handleLogin = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    usernameOrEmail,
-                    password
-                })
-            });
+            const data = await login(usernameOrEmail, password);
 
-            if (!response.ok) {
-                throw new Error("Login failed");
-            }
-
-            const data = await response.json();
-
-            // store token
+            // store auth data
             localStorage.setItem("token", data.token);
+            localStorage.setItem("email", data.email);
+            localStorage.setItem("expiresAt", data.expiresAt);
+            localStorage.setItem("personId", data.personId);
+            localStorage.setItem("credentialsId", data.credentialsId);
 
             setMessage("Login successful!");
 
-            navigate("/enroll");
-
+            navigate("/home");
         } catch (error) {
             console.error("Login error:", error);
             setMessage("Login failed. Check credentials.");
@@ -44,27 +36,39 @@ function LoginPage() {
         <div style={{ padding: "20px" }}>
             <h2>Login</h2>
 
-            <input
-                type="text"
-                placeholder="Username or Email"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
-                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
-            />
+            {}
+            <form onSubmit={handleLogin}>
+                <input
+                    type="text"
+                    placeholder="Username or Email"
+                    value={usernameOrEmail}
+                    onChange={(e) => setUsernameOrEmail(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
+                />
+                {}
+                <button type="submit" style={{ padding: "8px 12px" }}>
+                    Login
+                </button>
+            </form>
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
-            />
+            {sessionMessage && (
+                <p style={{ color: "red" }}>
+                    <strong>{sessionMessage}</strong>
+                </p>
+            )}
 
-            <button onClick={handleLogin} style={{ padding: "8px 12px" }}>
-                Login
-            </button>
-
-            {message && <p><strong>{message}</strong></p>}
+            {message && (
+                <p>
+                    <strong>{message}</strong>
+                </p>
+            )}
         </div>
     );
 }

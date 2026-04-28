@@ -27,6 +27,7 @@ import SFWE405.Project.repository.EnrollmentRepository;
 import SFWE405.Project.repository.HomeworkAssignmentRepository;
 import SFWE405.Project.repository.CourseAssignmentRepository;
 import SFWE405.Project.repository.CourseRepository;
+import SFWE405.Project.entity.Enrollment;
 
 
 @Service
@@ -48,13 +49,27 @@ public class HomeworkAssignmentService {
     public List<HomeworkAssignment> getHomeworkForCourseIfEnrolled(Long personId, Long courseId) {
         //Student --> Course Enrolled --> Course has HW assignments
 
-        boolean enrolled = enrollmentRepo.existsByPersonPersonIDAndCourseCourseId(personId, courseId);
+        boolean enrolled = enrollmentRepo.findByPersonPersonIDAndCourseCourseId(personId, courseId)
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED)
+                .isPresent();
 
         if (!enrolled) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Student is not enrolled in the specified course");
         }
 
         return hwAsgnRepo.findByCourse_CourseId(courseId);
+    }
+
+    public List<HomeworkAssignment> getHomeworkForEnrolledCourses(Long personId) {
+        return enrollmentRepo.findByPersonPersonID(personId)
+                .stream()
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED)
+                .flatMap(enrollment ->
+                        hwAsgnRepo.findByCourse_CourseId(
+                                enrollment.getCourse().getCourseId()
+                        ).stream()
+                )
+                .toList();
     }
 
     //Faculty - View HW by course 

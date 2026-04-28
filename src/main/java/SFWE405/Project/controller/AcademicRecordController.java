@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import SFWE405.Project.dto.AcademicRecordItemResponse;
@@ -11,6 +14,7 @@ import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.service.AcademicRecordService;
 import SFWE405.Project.service.AuthenticationService;
+import SFWE405.Project.dto.AcademicRecordPageResponse;
 
 /**
  * @author Brandon Sisco
@@ -36,25 +40,31 @@ public class AcademicRecordController {
 
     @GetMapping
     public ResponseEntity<?> getAcademicRecord(
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String search) {
 
         try {
             People person = authenticationService.validateToken(authHeader);
 
-            if (person.getPersonType() != People.PersonType.STUDENT && person.getPersonType() != People.PersonType.ADMIN) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN) // 403 error, shows lack of permission; persists after authentication
+            if (person.getPersonType() != People.PersonType.STUDENT &&
+                    person.getPersonType() != People.PersonType.ADMIN) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("Only students or administrators can view academic records");
             }
 
-            List<Enrollment> academicRecord =
-                    academicRecordService.getAcademicRecord(person.getPersonID());
+            Pageable pageable = PageRequest.of(page, size);
 
-            if (academicRecord.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404 not found error, self-explanatory
+            Page<Enrollment> academicRecordPage =
+                    academicRecordService.getAcademicRecord(person.getPersonID(), search, pageable);
+
+            if (academicRecordPage.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("No academic record found for this student");
             }
 
-            List<AcademicRecordItemResponse> response = academicRecord.stream().map(enrollment -> {
+            List<AcademicRecordItemResponse> response = academicRecordPage.getContent().stream().map(enrollment -> {
                 AcademicRecordItemResponse item = new AcademicRecordItemResponse();
                 item.setEnrollmentId(enrollment.getEnrollmentId());
                 item.setCourseCode(enrollment.getCourse().getCourseCode());
@@ -71,10 +81,54 @@ public class AcademicRecordController {
                 return item;
             }).toList();
 
-            return ResponseEntity.ok(response); // 200 response, everything is gtg!
+            AcademicRecordPageResponse pageResponse = new AcademicRecordPageResponse();
+            pageResponse.setContent(response);
+            pageResponse.setCurrentPage(academicRecordPage.getNumber());
+            pageResponse.setTotalPages(academicRecordPage.getTotalPages());
+            pageResponse.setTotalElements(academicRecordPage.getTotalElements());
+            pageResponse.setFirst(academicRecordPage.isFirst());
+            pageResponse.setLast(academicRecordPage.isLast());
+
+            return ResponseEntity.ok(pageResponse);
 
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage()); //401 unauthorized error
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-}
+
+        @GetMapping("/export")
+        public ResponseEntity<?> exportAcademicRecord(
+                @RequestHeader(value = "Authorization", required = false) String authHeader) {
+
+            try {
+                People person = authenticationService.validateToken(authHeader);
+
+                List<Enrollment> academicRecord =
+                        academicRecordService.getAcademicRecord(person.getPersonID());
+
+                StringBuilder csv = new StringBuilder();
+                csv.append("Course Code,Course Name,Course Type,Semester,Grade,Status,Units\n");
+
+                for (Enrollment enrollment : academicRecord) {
+                    csv.append(enrollment.getCourse().getCourseCode()).append(",");
+                    csv.append(enrollment.getCourse().getCourseName()).append(",");
+                    csv.append(enrollment.getCourse().getCourseType().name()).append(",");
+                    csv.append(
+                            enrollment.getCourse().getSemester().getSeason().name() + " " +
+                                    enrollment.getCourse().getSemester().getSemesterYear()
+                    ).append(",");
+                    csv.append(enrollment.getGrade() == null ? "Pending" : enrollment.getGrade()).append(",");
+                    csv.append(enrollment.getStatus().name()).append(",");
+                    csv.append(enrollment.getCourse().getUnitsAmount()).append("\n");
+                }
+
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=academic_record.csv")
+                        .header("Content-Type", "text/csv")
+                        .body(csv.toString());
+
+            } catch (RuntimeException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            }
+        }
+    }

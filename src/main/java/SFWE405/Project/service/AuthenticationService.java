@@ -3,6 +3,7 @@ package SFWE405.Project.service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import SFWE405.Project.entity.AccountCredentials;
@@ -27,17 +28,17 @@ public class AuthenticationService {
 
     private final AccountCredentialsRepository accountCredentialsRepository;
     private final AuthTokenRepository authTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthenticationService(AccountCredentialsRepository accountCredentialsRepository,
-                                 AuthTokenRepository authTokenRepository) {
+                                 AuthTokenRepository authTokenRepository,
+                                 PasswordEncoder passwordEncoder) {
         this.accountCredentialsRepository = accountCredentialsRepository;
         this.authTokenRepository = authTokenRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public AuthToken login(String usernameOrEmail, String password) {
-      //  AccountCredentials credentials = accountCredentialsRepository.findByUserName(usernameOrEmail)
-      //          .orElseThrow(() -> new RuntimeException("Invalid user name or password"));
-
         // student login use case has username or email, so adding that functionality -- JA
         AccountCredentials credentials;
         if (usernameOrEmail.contains("@")) {
@@ -53,7 +54,7 @@ public class AuthenticationService {
             throw new RuntimeException("Account is locked or disabled");
         }
 
-        if (!credentials.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, credentials.getPassword())) {
             throw new RuntimeException("Invalid user name or password");
         }
 
@@ -65,6 +66,20 @@ public class AuthenticationService {
         authToken.setActive(true);
 
         return authTokenRepository.save(authToken);
+    }
+
+    public void logout(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+
+        String tokenValue = authHeader.substring(7);
+
+        AuthToken authToken = authTokenRepository.findByTokenAndActiveTrue(tokenValue)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        authToken.setActive(false); // invalidate token upon logout
+        authTokenRepository.save(authToken);
     }
 
     public People validateToken(String authHeader) {
