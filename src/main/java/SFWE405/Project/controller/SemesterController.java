@@ -25,7 +25,6 @@ import SFWE405.Project.service.SemesterService;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/semester")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SemesterController {
     private final SemesterService semesterService;
     private final AuthenticationService authenticationService;
