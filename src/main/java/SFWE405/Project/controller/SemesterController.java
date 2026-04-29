@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import SFWE405.Project.dto.AvailableSemesterResponse;
 import SFWE405.Project.entity.Course;
@@ -21,9 +22,9 @@ import SFWE405.Project.entity.Semester;
 import SFWE405.Project.service.AuthenticationService;
 import SFWE405.Project.service.SemesterService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/semester")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SemesterController {
     private final SemesterService semesterService;
     private final AuthenticationService authenticationService;

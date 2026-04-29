@@ -4,6 +4,7 @@ import { logout } from "../services/authService";
 
 function ProtectedLayout({ children }) {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
   const userEmail =
     localStorage.getItem("email") ||
@@ -25,6 +26,7 @@ function ProtectedLayout({ children }) {
       localStorage.removeItem("userEmail");
       localStorage.removeItem("expiresAt");
       localStorage.removeItem("theme");
+      localStorage.removeItem("role");
 
       navigate("/login");
     }
@@ -57,6 +59,17 @@ function ProtectedLayout({ children }) {
             Home
           </Link>
 
+          {role === "ADMIN" ? (
+            <Link
+              to="/manage-courses"
+              style={navButtonStyle}
+              onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+              onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+            >
+              Manage Courses
+            </Link>
+          ) : (
+           <>
           <Link
             to="/academic"
             style={navButtonStyle}
@@ -92,7 +105,9 @@ function ProtectedLayout({ children }) {
           >
             Homework
           </Link>
-          
+
+        </>
+          )}
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>

@@ -1,24 +1,35 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
-    const location = useLocation();
-    const sessionMessage = location.state?.message;
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const data = await login(usernameOrEmail, password);
+            const response = await fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    usernameOrEmail,
+                    password
+                })
+            });
 
-            // store auth data
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
+
+            const data = await response.json();
+
             localStorage.setItem("token", data.token);
-            localStorage.setItem("email", data.email);
+            localStorage.setItem("role", data.role)
             localStorage.setItem("expiresAt", data.expiresAt);
             localStorage.setItem("personId", data.personId);
             localStorage.setItem("credentialsId", data.credentialsId);
@@ -59,17 +70,7 @@ function LoginPage() {
                 </button>
             </form>
 
-            {sessionMessage && (
-                <p style={{ color: "red" }}>
-                    <strong>{sessionMessage}</strong>
-                </p>
-            )}
-
-            {message && (
-                <p>
-                    <strong>{message}</strong>
-                </p>
-            )}
+            {message && <p><strong>{message}</strong></p>}
         </div>
     );
 }
