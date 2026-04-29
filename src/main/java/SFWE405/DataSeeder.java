@@ -3,6 +3,7 @@ package SFWE405;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import SFWE405.Project.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +17,7 @@ import SFWE405.Project.entity.HomeworkAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.entity.University;
-import SFWE405.Project.repository.AccountCredentialsRepository;
-import SFWE405.Project.repository.CourseAssignmentRepository;
-import SFWE405.Project.repository.CourseRepository;
-import SFWE405.Project.repository.EnrollmentRepository;
-import SFWE405.Project.repository.HomeworkAssignmentRepository;
-import SFWE405.Project.repository.PeopleRepository;
-import SFWE405.Project.repository.SemesterRepository;
-import SFWE405.Project.repository.UniversityRepository;
+import SFWE405.Project.entity.UniversityRequirements;
 
 @Configuration
 public class DataSeeder {
