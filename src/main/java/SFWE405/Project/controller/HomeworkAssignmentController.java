@@ -17,11 +17,12 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ import SFWE405.Project.service.HomeworkAssignmentService;
 
 @RestController
 @RequestMapping("/api/homework-assignment")
+@CrossOrigin(origins = "http://localhost:3000")
 public class HomeworkAssignmentController {
     
     private final AuthenticationService authenticationService;
@@ -70,6 +72,26 @@ public class HomeworkAssignmentController {
         }
 
         return ResponseEntity.ok(homeworkAssignments);
+    }
+
+    @GetMapping("/my-assignments")
+    public ResponseEntity<List<HomeworkAssignment>> getMyHomeworkAssignments(
+            @RequestHeader("Authorization") String authHeader) {
+
+        People person = authenticationService.validateToken(authHeader);
+
+        if (person.getPersonType() != People.PersonType.STUDENT) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only students allowed");
+        }
+
+        List<HomeworkAssignment> assignments =
+                homeworkAssignmentService.getHomeworkForEnrolledCourses(person.getPersonID());
+
+        if (assignments.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(assignments);
     }
 
     //Faculty View HW of course

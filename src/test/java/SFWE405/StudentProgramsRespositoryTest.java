@@ -67,7 +67,6 @@ class StudentProgramsRepositoryTest {
         People person = new People();
         person.setFirstName("John");
         person.setLastName("Doe");
-        person.setEmail("john.doe@test.com");
         person.setEnrolledAt(uOfA);
         person = peopleRepository.save(person);
 
@@ -100,7 +99,7 @@ class StudentProgramsRepositoryTest {
                 new Programs(null, "Engineering", 130, null)
         );
 
-        People person = new People("Jane", "Smith", "jane@test.com",
+        People person = new People("Jane", "Smith",
                         People.PersonType.STUDENT,
                         People.DegreeLevel.UNDERGRADUATE);
         person.setEnrolledAt(uOfA);
@@ -132,7 +131,7 @@ class StudentProgramsRepositoryTest {
                 new Programs(null, "Biology", 100, null)
         );
 
-        People person = new People("Alice", "Brown", "alice@test.com",
+        People person = new People("Alice", "Brown",
                         People.PersonType.STUDENT,
                         People.DegreeLevel.GRADUATE);
         person.setEnrolledAt(uOfA);

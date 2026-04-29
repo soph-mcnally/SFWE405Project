@@ -6,15 +6,15 @@
  */
 
 package SFWE405.Project.service;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.University;
 import SFWE405.Project.repository.PeopleRepository;
 import SFWE405.Project.repository.UniversityRepository;
-
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -61,10 +61,9 @@ public class ManageUserService {
                 .map(existing -> {
                     existing.setFirstName(updatedPerson.getFirstName());
                     existing.setLastName(updatedPerson.getLastName());
-                    existing.setEmail(updatedPerson.getEmail());
                     existing.setPersonType(updatedPerson.getPersonType());
                     existing.setDegreeLevel(updatedPerson.getDegreeLevel());
-
+                    
                     return peopleRepository.save(existing);
                 });
     }

@@ -1,0 +1,41 @@
+package SFWE405.Project.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import SFWE405.Project.entity.UniversityRequirements;
+import SFWE405.Project.service.UniversityRequirementsService;
+
+/*
+
+Created By: Gavin Hernandez
+
+Handles communications for UniverityRequirements
+
+ */
+@RestController
+@RequestMapping("/api/university-requirements")
+@CrossOrigin(origins = "http://localhost:3000")
+public class UniversityRequirementsController {
+    private final UniversityRequirementsService requirementsService;
+
+    public  UniversityRequirementsController(UniversityRequirementsService requirementsService) {
+        this.requirementsService = requirementsService;
+    }
+
+    @GetMapping
+    public List<UniversityRequirements> getAll() {
+        return requirementsService.getRequirements(null, null);
+    }
+
+    @PostMapping
+    public UniversityRequirements add(@RequestBody UniversityRequirements requirements) {
+        return requirementsService.addRequirements(requirements);
+    }
+}
