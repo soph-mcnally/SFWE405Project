@@ -8,6 +8,8 @@ import HomePage from "./pages/HomePage";
 import EnrollCoursesPage from "./pages/EnrollCoursesPage";
 import AcademicRecordPage from "./pages/AcademicRecordPage";
 import ManageUserAccountPage from "./pages/ManageUserAccountPage";
+import HomeworkPage from "./pages/HomeworkPage";
+import ManageCoursesPage from "./pages/ManageCoursesPage";
 
 function App() {
   const token = localStorage.getItem("token");

@@ -34,6 +34,7 @@ function LoginPage() {
             localStorage.setItem("personId", data.personId);
             localStorage.setItem("credentialsId", data.credentialsId);
             localStorage.setItem("role", data.role);
+            localStorage.setItem("userEmail", data.email)
 
             setMessage("Login successful!");
 
