@@ -116,6 +116,37 @@ public class EnrollCoursesController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/completed-courses")
+    public ResponseEntity<List<AvailableCourseResponse>> getMyCompletedCourses(
+            @RequestHeader("Authorization") String authHeader) {
+
+        People person = authenticationService.validateToken(authHeader);
+
+        if (person.getPersonType() != People.PersonType.STUDENT) {
+            throw new RuntimeException("Only students can view completed courses");
+        }
+
+        List<Course> courses = enrollmentService.getCompletedCourses(person.getPersonID());
+
+        List<AvailableCourseResponse> response = courses.stream().map(course -> {
+            AvailableCourseResponse item = new AvailableCourseResponse();
+            item.setCourseId(course.getCourseId());
+            item.setCourseCode(course.getCourseCode());
+            item.setCourseName(course.getCourseName());
+            item.setCourseType(course.getCourseType().name());
+            item.setUnitsAmount(course.getUnitsAmount());
+            item.setUpperDivision(course.getUpperDivision());
+            item.setSemester(
+                    course.getSemester().getSeason().name()
+                            + " "
+                            + course.getSemester().getSemesterYear()
+            );
+            return item;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     public ResponseEntity<EnrollCoursesResponse> enrollStudentInCourses(
             @RequestHeader("Authorization") String authHeader,
@@ -131,5 +162,21 @@ public class EnrollCoursesController {
                 person.getPersonID(), request.getCourseIds());
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> unenrollStudentFromCourse(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long courseId) {
+
+        People person = authenticationService.validateToken(authHeader);
+
+        if (person.getPersonType() != People.PersonType.STUDENT) {
+            throw new RuntimeException("Only students can drop courses");
+        }
+
+        enrollmentService.unenrollStudentFromCourse(person.getPersonID(), courseId);
+
+        return ResponseEntity.noContent().build();
     }
 }

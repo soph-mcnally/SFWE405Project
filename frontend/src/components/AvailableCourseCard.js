@@ -12,7 +12,7 @@ function AvailableCourseCard({ course, selected, onSelect }) {
                 backgroundColor: colors.white,
                 boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
                 display: "flex",
-                alignItems: "center",
+                alignItems: "flex-start",
                 gap: "12px"
             }}
         >
@@ -20,6 +20,13 @@ function AvailableCourseCard({ course, selected, onSelect }) {
                 type="checkbox"
                 checked={selected}
                 onChange={onSelect}
+                style={{
+                    width: "22px",
+                    height: "22px",
+                    cursor: "pointer",
+                    accentColor: colors.cardinalRed,
+                    flexShrink: 0
+                }}
             />
 
             <div>
