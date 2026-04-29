@@ -106,15 +106,6 @@ function ProtectedLayout({ children }) {
           )}
 
             <Link
-                to="/academic"
-                style={navButtonStyle}
-                onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
-                onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
-            >
-                Academic Record
-            </Link>
-
-            <Link
                 to="/requirements"
                 style={navButtonStyle}
                 onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
