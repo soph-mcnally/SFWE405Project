@@ -9,6 +9,7 @@
 
 package SFWE405.Project.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,10 +19,15 @@ import SFWE405.Project.entity.CourseAssignment;
 
 import java.util.List;
 
+@Transactional
 public interface CourseAssignmentRepository extends JpaRepository<CourseAssignment, Long> {
     boolean existsByFaculty_PersonIDAndCourse_CourseId(Long personId, Long courseId);
 
     @Query("SELECT ca.course FROM CourseAssignment ca WHERE ca.faculty.personID = :personId")
     List<Course> findCoursesByFacultyPersonID(@Param("personId") Long personId);
+
+    List<CourseAssignment> findByCourse_CourseId(Long courseId);
+    void deleteByFaculty_PersonIDAndCourse_CourseId(Long personId, Long courseId);
+    void deleteByCourse_CourseId(Long courseId);
     
 }

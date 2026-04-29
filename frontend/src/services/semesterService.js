@@ -55,3 +55,43 @@ export async function deleteCourse(token, semesterId, courseId){
     });
     if (!response.ok) throw new Error("Failed to delete course");
 }
+
+export async function getFacultyForCourse(token, semesterId, courseId) {
+    const response = await fetch(`${BASE_URL}/${semesterId}/courses/${courseId}/faculty`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!response.ok) throw new Error("Failed to fetch faculty");
+    return response.json();
+}
+
+export async function getAllFaculty(token) {
+    const response = await fetch(`${BASE_URL}/faculty`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!response.ok) throw new Error("Failed to fetch faculty list");
+    return response.json();
+}
+
+export async function assignFaculty(token, semesterId, courseId, personId) {
+    const response = await fetch(`${BASE_URL}/${semesterId}/courses/${courseId}/faculty/${personId}`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!response.ok) throw new Error("Failed to assign faculty");
+}
+
+export async function removeFaculty(token, semesterId, courseId, personId) {
+    const response = await fetch(`${BASE_URL}/${semesterId}/courses/${courseId}/faculty/${personId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if (!response.ok) throw new Error("Failed to remove faculty");
+}

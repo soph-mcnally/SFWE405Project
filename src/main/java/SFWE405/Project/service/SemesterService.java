@@ -4,6 +4,7 @@ import SFWE405.Project.dto.AvailableSemesterResponse;
 import SFWE405.Project.entity.Course;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.entity.University;
+import SFWE405.Project.repository.CourseAssignmentRepository;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.SemesterRepository;
 import SFWE405.Project.repository.UniversityRepository;
@@ -17,12 +18,16 @@ public class SemesterService {
     private final SemesterRepository semesterRepository;
     private final CourseRepository courseRepository;
     private final UniversityRepository universityRepository;
+    private final CourseAssignmentRepository courseAssignmentRepository;
 
     public SemesterService(SemesterRepository semesterRepository,
-                           CourseRepository courseRepository, UniversityRepository universityRepository){
+                           CourseRepository courseRepository,
+                           UniversityRepository universityRepository,
+                           CourseAssignmentRepository courseAssignmentRepository){
         this.semesterRepository = semesterRepository;
         this.courseRepository = courseRepository;
         this.universityRepository = universityRepository;
+        this.courseAssignmentRepository = courseAssignmentRepository;
     }
 
     // semester CRUD
@@ -108,8 +113,13 @@ public class SemesterService {
         if (!existing.getSemester().getSemesterId().equals(semesterId)){
             throw new RuntimeException("Course does not belong to this semester");
         }
-
+        courseAssignmentRepository.deleteByCourse_CourseId(courseId);
         courseRepository.deleteById(courseId);
+    }
+    // adding faculty to course
+    public Course getCourseById(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
     // helper
