@@ -1,11 +1,16 @@
 package SFWE405.Project.controller;
 
-import SFWE405.Project.dto.LoginRequest;
-import SFWE405.Project.dto.LoginResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import SFWE405.Project.dto.LoginRequest;
+import SFWE405.Project.dto.LoginResponse;
 import SFWE405.Project.entity.AuthToken;
 import SFWE405.Project.service.AuthenticationService;
 
@@ -39,6 +44,7 @@ public class LoginController {
         response.setCreatedAt(authToken.getCreatedAt());
         response.setExpiresAt(authToken.getExpiresAt());
         response.setPersonId(authToken.getPerson().getPersonID());
+        response.setCredentialsId(authToken.getPerson().getAccountCredentials().getCredentialsId());
         response.setRole(authToken.getPerson().getPersonType().name());
         response.setEmail(authToken.getPerson().getAccountCredentials().getEmail());
 

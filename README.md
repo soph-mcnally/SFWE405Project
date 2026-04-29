@@ -174,6 +174,7 @@ Available pages:
 /home
 /academic
 /enroll
+/manage-account
 ```
 
 Academic Record features:

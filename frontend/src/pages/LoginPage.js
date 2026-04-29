@@ -6,7 +6,6 @@ function LoginPage() {
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
-
     const navigate = useNavigate();
     const location = useLocation();
     const sessionMessage = location.state?.message;
@@ -21,11 +20,12 @@ function LoginPage() {
             localStorage.setItem("token", data.token);
             localStorage.setItem("email", data.email);
             localStorage.setItem("expiresAt", data.expiresAt);
+            localStorage.setItem("personId", data.personId);
+            localStorage.setItem("credentialsId", data.credentialsId);
 
             setMessage("Login successful!");
 
             navigate("/home");
-
         } catch (error) {
             console.error("Login error:", error);
             setMessage("Login failed. Check credentials.");
@@ -45,7 +45,6 @@ function LoginPage() {
                     onChange={(e) => setUsernameOrEmail(e.target.value)}
                     style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
                 />
-
                 <input
                     type="password"
                     placeholder="Password"
@@ -53,7 +52,6 @@ function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
                 />
-
                 {}
                 <button type="submit" style={{ padding: "8px 12px" }}>
                     Login
