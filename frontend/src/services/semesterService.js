@@ -1,3 +1,9 @@
+/*
+ * @author Sophie McNally
+ *
+ * Service module for semester related API calls
+ * Handles communication with nbackend semester endpoints
+*/
 const BASE_URL = "http://localhost:8080/api/semester";
 
 export async function getSemesters(token) {

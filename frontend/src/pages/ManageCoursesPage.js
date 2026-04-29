@@ -1,3 +1,10 @@
+/*
+ * @author Sophie McNally
+ *
+ * Admin page for managing courses by semester
+ * Allow admin to view, search, add, edit, delete courses within a selected semester
+ * Allows admin to assign and remove faculty from courses
+*/
 import React, { useState, useEffect } from "react";
 import { getSemesters, getCoursesBySemester, addCourse, updateCourse, deleteCourse,getFacultyForCourse, getAllFaculty,
                                                 assignFaculty, removeFaculty} from "../services/semesterService";

@@ -13,6 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * @author Sophie McNally
+ *
+ * Service class for semester business logic
+ * Handles semester CRUD operations and managing courses
+ * Enforces duplicate course code validation within a semester
+ *
+ */
 @Service
 public class SemesterService {
     private final SemesterRepository semesterRepository;

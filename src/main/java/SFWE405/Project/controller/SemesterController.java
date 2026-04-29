@@ -24,6 +24,15 @@ import SFWE405.Project.entity.Semester;
 import SFWE405.Project.service.AuthenticationService;
 import SFWE405.Project.service.SemesterService;
 
+/*
+ * @author Sophie McNally
+ *
+ * Controller for handling semester related endpoints
+ * CRUD operations for semester and manages courses within each semester
+ * Handles faculty assignment to courses
+ * Admin authorization is required
+ *
+ */
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/semester")
