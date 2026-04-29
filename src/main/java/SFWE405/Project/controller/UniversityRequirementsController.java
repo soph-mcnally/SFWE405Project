@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import SFWE405.Project.entity.UniversityRequirements;
 import SFWE405.Project.service.UniversityRequirementsService;
+
 
 /*
 
 Created By: Gavin Hernandez
 
-Handles communications for UniverityRequirements
+Handles communications for Univerity Requirements
 
  */
 @RestController
@@ -36,6 +36,17 @@ public class UniversityRequirementsController {
 
     @PostMapping
     public UniversityRequirements add(@RequestBody UniversityRequirements requirements) {
-        return requirementsService.addRequirements(requirements);
+        try{
+            return requirementsService.addRequirements(requirements);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        requirementsService.deleteRequirements(id);
+    }
+
 }

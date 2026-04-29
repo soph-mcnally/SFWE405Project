@@ -38,7 +38,8 @@ public class DataSeeder {
             EnrollmentRepository enrollmentRepository,
             HomeworkAssignmentRepository homeworkAssignmentRepository,
             CourseAssignmentRepository courseAssignmentRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            UniversityRequirementsRepository universityRequirementsRepository
     ) {
         return args -> {
 
@@ -477,6 +478,43 @@ public class DataSeeder {
             //11. Course Assignment for Faculty
             CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
             courseAssignmentRepository.save(courseAssignment);
+
+            //12. Populated University Requirements
+            UniversityRequirements req1 = new UniversityRequirements();
+            req1.setRequirementDescription("Minimum 3.0 GPA for Software Engineering enrollment.");
+            req1.setCategory(101L);
+            req1.setUniversity(university);
+            universityRequirementsRepository.save(req1);
+
+            UniversityRequirements req2 = new UniversityRequirements();
+            req2.setRequirementDescription("Must complete Software Programming II with a C or better.");
+            req2.setCategory(101L);
+            req2.setUniversity(university);
+            universityRequirementsRepository.save(req2);
+
+            UniversityRequirements req3 = new UniversityRequirements();
+            req3.setRequirementDescription("Must complete 45 credit hours.");
+            req3.setCategory(202L);
+            req3.setUniversity(university);
+            universityRequirementsRepository.save(req3);
+
+            UniversityRequirements req4 = new UniversityRequirements();
+            req4.setRequirementDescription("Must complete SFWE 405.");
+            req4.setCategory(202L);
+            req4.setUniversity(university);
+            universityRequirementsRepository.save(req4);
+
+            UniversityRequirements req5 = new UniversityRequirements();
+            req5.setRequirementDescription("Submit official transcripts from all previous institutions.");
+            req5.setCategory(202L);
+            req5.setUniversity(university);
+            universityRequirementsRepository.save(req5);
+
+            UniversityRequirements req6 = new UniversityRequirements();
+            req6.setRequirementDescription("Department Consent Required to enroll.");
+            req6.setCategory(303L);
+            req6.setUniversity(university);
+            universityRequirementsRepository.save(req6);
 
             System.out.println("Database seeded successfully!");
 
