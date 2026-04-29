@@ -1,0 +1,176 @@
+{
+  "info": {
+    "_postman_id": "2cffa78b-d742-4c6b-9d3e-bffc17c1ad08",
+    "name": "ManageCourseBySemester",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51739963",
+    "_collection_link": "https://go.postman.co/collection/51739963-2cffa78b-d742-4c6b-9d3e-bffc17c1ad08?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetCoursesForASemester",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer ",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/semester/1/courses",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "semester",
+            "1",
+            "courses"
+          ],
+          "query": [
+            {
+              "key": "",
+              "value": null,
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AddACourseToASemester",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"courseCode\": \"CSE310\",\r\n    \"courseName\": \"Data Structures\",\r\n    \"courseType\": \"LECTURE\",\r\n    \"unitsAmount\": 3,\r\n    \"upperDivision\": false,\r\n    \"university\": {\r\n        \"universityId\": 1\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/semester/1/courses",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "semester",
+            "1",
+            "courses"
+          ],
+          "query": [
+            {
+              "key": "",
+              "value": null,
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateCourseInASemester",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer ",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"courseCode\": \"CSE310\",\r\n    \"courseName\": \"Data Structures and Algorithms\",\r\n    \"courseType\": \"LECTURE\",\r\n    \"unitsAmount\": 3,\r\n    \"upperDivision\": true,\r\n    \"university\": {\r\n        \"universityId\": 1\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/semester/1/courses/3",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "semester",
+            "1",
+            "courses",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteACourseFromASemester",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer ",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/semester/1/courses/3",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "semester",
+            "1",
+            "courses",
+            "3"
+          ],
+          "query": [
+            {
+              "key": "",
+              "value": null,
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

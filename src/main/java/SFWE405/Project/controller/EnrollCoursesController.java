@@ -9,8 +9,12 @@ import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.service.AuthenticationService;
 import SFWE405.Project.service.EnrollmentService;
+import SFWE405.Project.repository.CourseAssignmentRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -21,11 +25,13 @@ public class EnrollCoursesController {
 
     private final AuthenticationService authenticationService;
     private final EnrollmentService enrollmentService;
+    private final CourseAssignmentRepository courseAssignmentRepository;
 
     public EnrollCoursesController(AuthenticationService authenticationService,
-                                   EnrollmentService enrollmentService) {
+                                   EnrollmentService enrollmentService, CourseAssignmentRepository courseAssignmentRepository) {
         this.authenticationService = authenticationService;
         this.enrollmentService = enrollmentService;
+        this.courseAssignmentRepository = courseAssignmentRepository;
     }
 
     @GetMapping("/semesters")
@@ -146,6 +152,20 @@ public class EnrollCoursesController {
 
         return ResponseEntity.ok(response);
     }
+
+    //Faculty - Get courses they are assigned to teach ; @TravisPotter
+    @GetMapping("/my-assigned-courses")
+    public ResponseEntity<List<Course>> getAssignedCourses(
+    @RequestHeader("Authorization") String authHeader) {
+        People faculty = authenticationService.validateToken(authHeader);
+        if (faculty.getPersonType() != People.PersonType.FACULTY) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Faculty allowed");
+        }
+
+        List<Course> courses = courseAssignmentRepository.findCoursesByFacultyPersonID(faculty.getPersonID());
+
+        return ResponseEntity.ok(courses);
+}
 
     @PostMapping
     public ResponseEntity<EnrollCoursesResponse> enrollStudentInCourses(
