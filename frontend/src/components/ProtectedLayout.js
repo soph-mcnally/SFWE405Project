@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import colors from "../styles/colors";
 import { logout } from "../services/authService";
+import { clearSession } from "../services/sessionService"; //added to clean up "remove items" and increase modularity
 
 function ProtectedLayout({ children }) {
   const navigate = useNavigate();
@@ -21,12 +22,7 @@ function ProtectedLayout({ children }) {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("email");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("expiresAt");
-      localStorage.removeItem("theme");
-      localStorage.removeItem("role");
+      clearSession();
 
       navigate("/login");
     }

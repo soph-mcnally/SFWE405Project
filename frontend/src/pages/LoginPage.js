@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function LoginPage() {
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const sessionMessage = location.state?.message;
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,12 +33,11 @@ function LoginPage() {
             const data = await response.json();
 
             localStorage.setItem("token", data.token);
-            localStorage.setItem("role", data.role)
+            localStorage.setItem("role", data.role);
             localStorage.setItem("expiresAt", data.expiresAt);
             localStorage.setItem("personId", data.personId);
             localStorage.setItem("credentialsId", data.credentialsId);
-            localStorage.setItem("role", data.role);
-            localStorage.setItem("userEmail", data.email)
+            localStorage.setItem("userEmail", data.email);
 
             setMessage("Login successful!");
 
@@ -49,7 +52,6 @@ function LoginPage() {
         <div style={{ padding: "20px" }}>
             <h2>Login</h2>
 
-            {}
             <form onSubmit={handleLogin}>
                 <input
                     type="text"
@@ -58,6 +60,7 @@ function LoginPage() {
                     onChange={(e) => setUsernameOrEmail(e.target.value)}
                     style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
                 />
+
                 <input
                     type="password"
                     placeholder="Password"
@@ -65,13 +68,23 @@ function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     style={{ display: "block", marginBottom: "10px", padding: "8px", width: "250px" }}
                 />
-                {}
+
                 <button type="submit" style={{ padding: "8px 12px" }}>
                     Login
                 </button>
             </form>
 
-            {message && <p><strong>{message}</strong></p>}
+            {sessionMessage && (
+                <p style={{ color: "red" }}>
+                    <strong>{sessionMessage}</strong>
+                </p>
+            )}
+
+            {message && (
+                <p>
+                    <strong>{message}</strong>
+                </p>
+            )}
         </div>
     );
 }
