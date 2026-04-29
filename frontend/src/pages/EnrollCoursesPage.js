@@ -9,18 +9,22 @@ function EnrollCoursesPage() {
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [message, setMessage] = useState("");
     const [popup, setPopup] = useState(null);
+    const [successPopup, setSuccessPopup] = useState(null);
     const [search, setSearch] = useState("");
     const [searchInput, setSearchInput] = useState("");
 
     const [coursePage, setCoursePage] = useState(0);
     const coursesPerPage = 5;
     const [enrolledCourses, setEnrolledCourses] = useState([]);
+    const [completedCourses, setCompletedCourses] = useState([]);
+    const [courseToUnenroll, setCourseToUnenroll] = useState(null);
 
     const token = localStorage.getItem("token");
 
     useEffect(() => {
         fetchSemesters();
         fetchEnrolledCourses();
+        fetchCompletedCourses();
     }, []);
 
     const showPopup = (text) => {
@@ -28,6 +32,14 @@ function EnrollCoursesPage() {
 
         setTimeout(() => {
             setPopup(null);
+        }, 3000);
+    };
+
+    const showSuccessPopup = (text) => {
+        setSuccessPopup(text);
+
+        setTimeout(() => {
+            setSuccessPopup(null);
         }, 3000);
     };
 
@@ -97,6 +109,27 @@ function EnrollCoursesPage() {
         }
     };
 
+    const fetchCompletedCourses = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/enrollment/completed-courses", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                setMessage(`Error loading completed courses: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+            setCompletedCourses(data);
+        } catch (error) {
+            console.error(error);
+            setMessage("Failed to load completed courses");
+        }
+    };
+
     const handleSemesterChange = (e) => {
         const semesterId = e.target.value;
         setSelectedSemester(semesterId);
@@ -127,6 +160,15 @@ function EnrollCoursesPage() {
             return;
         }
 
+        const alreadyCompleted = completedCourses.some(
+            (course) => course.courseId === courseId
+        );
+
+        if (alreadyCompleted) {
+            showPopup("Course Already Completed");
+            return;
+        }
+
         if (selectedCourses.includes(courseId)) {
             setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
         } else {
@@ -152,12 +194,48 @@ function EnrollCoursesPage() {
                 return;
             }
 
-            setSelectedCourses([]);
-            setMessage("");
-            fetchEnrolledCourses();
+            const data = await response.json();
+
+            if (data.errors && data.errors.length > 0) {
+                showPopup(data.errors[0]);
+            }
+
+            if (data.enrolledCourseIds && data.enrolledCourseIds.length > 0) {
+                setSelectedCourses([]);
+                setMessage("");
+                fetchEnrolledCourses();
+            }
+
         } catch (error) {
             console.error(error);
             setMessage("Enrollment failed");
+        }
+    };
+
+    const handleUnenroll = async (courseId) => {
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/enrollment/${courseId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                showPopup("Unable to unenroll from course");
+                return;
+            }
+
+            showSuccessPopup("Successfully Unenrolled");
+
+            fetchEnrolledCourses();
+
+        } catch (error) {
+            console.error(error);
+            showPopup("Unenrollment failed");
         }
     };
 
@@ -203,6 +281,35 @@ function EnrollCoursesPage() {
         fontWeight: "bold"
     };
 
+    const successPopupStyle = {
+        position: "fixed",
+        top: "90px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "#fff",
+        color: "#2e7d32",
+        border: "2px solid #2e7d32",
+        borderRadius: "10px",
+        padding: "14px 24px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+        zIndex: 1000
+    };
+
+    const successIconStyle = {
+        width: "26px",
+        height: "26px",
+        borderRadius: "50%",
+        backgroundColor: "#2e7d32",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: "bold"
+    };
+
     const selectedSemesterObject = semesters.find(
         (semester) => String(semester.id) === String(selectedSemester)
     );
@@ -214,6 +321,45 @@ function EnrollCoursesPage() {
                 `${selectedSemesterObject.season} ${selectedSemesterObject.semesterYear}`
         )
         : [];
+
+    const overlayStyle = {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.45)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 2000
+    };
+
+    const modalStyle = {
+        backgroundColor: "white",
+        padding: "28px",
+        borderRadius: "12px",
+        width: "400px",
+        textAlign: "center",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.25)"
+    };
+
+    const cancelButtonStyle = {
+        padding: "10px 18px",
+        border: "none",
+        borderRadius: "6px",
+        backgroundColor: "#d3d3d3",
+        cursor: "pointer"
+    };
+
+    const confirmButtonStyle = {
+        padding: "10px 18px",
+        border: "none",
+        borderRadius: "6px",
+        backgroundColor: "#b00020",
+        color: "white",
+        cursor: "pointer"
+    };
 
     return (
         <div
@@ -227,6 +373,54 @@ function EnrollCoursesPage() {
                 <div style={popupStyle}>
                     <div style={popupIconStyle}>✕</div>
                     <strong>{popup}</strong>
+                </div>
+            )}
+
+            {successPopup && (
+                <div style={successPopupStyle}>
+                    <div style={successIconStyle}>✓</div>
+                    <strong>{successPopup}</strong>
+                </div>
+            )}
+
+            {courseToUnenroll && (
+                <div style={overlayStyle}>
+                    <div style={modalStyle}>
+                        <h2 style={{ marginTop: 0 }}>
+                            Confirm Unenrollment
+                        </h2>
+
+                        <p>
+                            Are you sure you want to unenroll from{" "}
+                            <strong>{courseToUnenroll.courseCode}</strong>?
+                        </p>
+
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                gap: "16px",
+                                marginTop: "20px"
+                            }}
+                        >
+                            <button
+                                onClick={() => setCourseToUnenroll(null)}
+                                style={cancelButtonStyle}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    handleUnenroll(courseToUnenroll.courseId);
+                                    setCourseToUnenroll(null);
+                                }}
+                                style={confirmButtonStyle}
+                            >
+                                Unenroll
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -354,11 +548,20 @@ function EnrollCoursesPage() {
                                     Enrolled Courses
                                 </h2>
 
-                                {filteredEnrolledCourses.map((course) => (
+                                <div
+                                    style={{
+                                        display: "grid",
+                                        gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
+                                        gap: "20px",
+                                        marginTop: "20px"
+                                    }}
+                                >
+                                    {filteredEnrolledCourses.map((course) => (
                                     <div
                                         key={course.courseId}
                                         style={{
                                             display: "flex",
+                                            flexDirection: "column",
                                             backgroundColor: colors.white,
                                             border: `1px solid ${colors.borderGray}`,
                                             borderRadius: "8px",
@@ -369,13 +572,14 @@ function EnrollCoursesPage() {
                                     >
                                         <div
                                             style={{
-                                                width: "150px",
+                                                width: "100%",
                                                 backgroundColor: "#f0f0f0",
                                                 display: "flex",
                                                 flexDirection: "column",
                                                 alignItems: "center",
                                                 justifyContent: "center",
-                                                padding: "20px"
+                                                padding: "20px",
+                                                borderBottom: `1px solid ${colors.borderGray}`
                                             }}
                                         >
                                             <div style={{ fontSize: "42px", color: "#5faf5f" }}>
@@ -399,9 +603,24 @@ function EnrollCoursesPage() {
                                             <p><strong>Class:</strong> {course.courseCode}</p>
                                             <p><strong>Semester:</strong> {course.semester}</p>
                                             <p><strong>Units:</strong> {course.unitsAmount}</p>
+                                            <button
+                                                onClick={() => setCourseToUnenroll(course)}
+                                                style={{
+                                                    marginTop: "12px",
+                                                    padding: "8px 14px",
+                                                    backgroundColor: "#b00020",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "6px",
+                                                    cursor: "pointer"
+                                                }}
+                                            >
+                                                Unenroll
+                                            </button>
                                         </div>
                                     </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         ) : (
                             <p style={{ textAlign: "center", marginTop: "20px" }}>

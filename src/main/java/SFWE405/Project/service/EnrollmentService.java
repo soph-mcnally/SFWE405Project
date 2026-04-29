@@ -81,6 +81,15 @@ public class EnrollmentService {
                 .toList();
     }
 
+    public List<Course> getCompletedCourses(Long personId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByPersonPersonID(personId);
+
+        return enrollments.stream()
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.COMPLETED)
+                .map(Enrollment::getCourse)
+                .toList();
+    }
+
     public EnrollCoursesResponse enrollStudentInCourses(Long personId, List<Long> courseIds) {
         People person = peopleRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("Person not found"));
@@ -88,6 +97,12 @@ public class EnrollmentService {
         EnrollCoursesResponse response = new EnrollCoursesResponse();
         List<Long> enrolledCourseIds = new ArrayList<>();
         List<String> errors = new ArrayList<>();
+
+        int currentUnits = enrollmentRepository.findByPersonPersonID(personId)
+                .stream()
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED)
+                .mapToInt(enrollment -> enrollment.getCourse().getUnitsAmount())
+                .sum();
 
         for (Long courseId : courseIds) {
             Course course = courseRepository.findById(courseId).orElse(null);
@@ -97,12 +112,20 @@ public class EnrollmentService {
                 continue;
             }
 
-            boolean alreadyEnrolled = enrollmentRepository
+            boolean existingEnrollment = enrollmentRepository
                     .findByPersonPersonIDAndCourseCourseId(personId, courseId)
                     .isPresent();
 
-            if (alreadyEnrolled) {
-                errors.add("Already enrolled in course ID: " + courseId);
+            if (existingEnrollment) {
+                errors.add("Already enrolled in or completed course ID: " + courseId);
+                continue;
+            }
+
+            int courseUnits = course.getUnitsAmount();
+
+            if (currentUnits + courseUnits > 20) {
+                errors.add("Cannot enroll in " + course.getCourseCode() +
+                        ". Maximum allowed units is 20.");
                 continue;
             }
 
@@ -114,11 +137,25 @@ public class EnrollmentService {
 
             enrollmentRepository.save(enrollment);
             enrolledCourseIds.add(courseId);
+
+            currentUnits += courseUnits;
         }
 
         response.setEnrolledCourseIds(enrolledCourseIds);
         response.setErrors(errors);
 
         return response;
+    }
+
+    public void unenrollStudentFromCourse(Long personId, Long courseId) {
+        Enrollment enrollment = enrollmentRepository
+                .findByPersonPersonIDAndCourseCourseId(personId, courseId)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+
+        if (enrollment.getStatus() != Enrollment.EnrollmentStatus.ENROLLED) {
+            throw new RuntimeException("Only currently enrolled courses can be dropped");
+        }
+
+        enrollmentRepository.delete(enrollment);
     }
 }
