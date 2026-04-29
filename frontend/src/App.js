@@ -8,6 +8,8 @@ import HomePage from "./pages/HomePage";
 import EnrollCoursesPage from "./pages/EnrollCoursesPage";
 import AcademicRecordPage from "./pages/AcademicRecordPage";
 import ManageUserAccountPage from "./pages/ManageUserAccountPage";
+import HomeworkPage from "./pages/HomeworkPage";
+import ManageCoursesPage from "./pages/ManageCoursesPage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -22,7 +24,7 @@ function App() {
 
         <Route path="/login" element={<LoginPage />} />
 
-        //cleaned up route paths; now uses protected route
+        //cleaned up route paths -> now uses protected route
         <Route
           path="/home"
           element={
@@ -57,7 +59,26 @@ function App() {
               <ManageUserAccountPage />
             </ProtectedRoute>
           }
-        />  
+        />
+
+        <Route
+          path="/homework"
+          element={
+            <ProtectedRoute>
+              <HomeworkPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/manage-courses"
+          element={
+            <ProtectedRoute>
+              <ManageCoursesPage />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
