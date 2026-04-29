@@ -70,6 +70,13 @@ public class SemesterService {
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
         University university = universityRepository.findById(course.getUniversity().getUniversityId())
                 .orElseThrow(() -> new RuntimeException("University not found"));
+        boolean duplicate = courseRepository.findBySemesterSemesterId(semesterId)
+                .stream()
+                .anyMatch(c -> c.getCourseCode().equalsIgnoreCase(course.getCourseCode()));
+
+        if (duplicate) {
+            throw new RuntimeException("Course with code " + course.getCourseCode() + " already exists in this semester");
+        }
         course.setSemester(semester);
         course.setUniversity(university);
         return courseRepository.save(course);

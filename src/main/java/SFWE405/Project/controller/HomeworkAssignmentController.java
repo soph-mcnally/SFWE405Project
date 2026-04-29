@@ -17,7 +17,15 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import SFWE405.Project.entity.HomeworkAssignment;
@@ -107,7 +115,6 @@ public class HomeworkAssignmentController {
     }
 
     //Faculty - Create HW for course
-    //TODO: Catch duplicates
     @PostMapping("/facultyCreateAssignmentByCourse/{courseId}")
     public ResponseEntity<HomeworkAssignment> createAssignmentByCourse(
         @RequestHeader("Authorization") String authHeader,
@@ -128,10 +135,6 @@ public class HomeworkAssignmentController {
         
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAssignment);
     }
-
-
-    //TODO: Faculty - Update Assignment
-
 
     //Faculty - Delete Assignment
     @DeleteMapping("/facultyDeleteAssignment/{courseId}/{asgnId}")

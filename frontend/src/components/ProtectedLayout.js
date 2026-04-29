@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import colors from "../styles/colors";
 import { logout } from "../services/authService";
+import { clearSession } from "../services/sessionService"; //added to clean up "remove items" and increase modularity
 
 function ProtectedLayout({ children }) {
   const navigate = useNavigate();
+  const role = localStorage.getItem("role");
 
   const userEmail =
     localStorage.getItem("email") ||
@@ -20,11 +22,7 @@ function ProtectedLayout({ children }) {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("email");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("expiresAt");
-      localStorage.removeItem("theme");
+      clearSession();
 
       navigate("/login");
     }
@@ -57,6 +55,17 @@ function ProtectedLayout({ children }) {
             Home
           </Link>
 
+          {role === "ADMIN" ? (
+            <Link
+              to="/manage-courses"
+              style={navButtonStyle}
+              onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+              onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+            >
+              Manage Courses
+            </Link>
+          ) : (
+           <>
           <Link
             to="/academic"
             style={navButtonStyle}
@@ -74,6 +83,27 @@ function ProtectedLayout({ children }) {
           >
             Enroll Courses
           </Link>
+
+          <Link
+            to="/manage-account"
+            style={navButtonStyle}
+            onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+            onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+          >
+            Manage Account
+          </Link>
+
+          <Link
+            to="/homework"
+            style={navButtonStyle}
+            onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+            onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+          >
+            Homework
+          </Link>
+
+        </>
+          )}
 
             <Link
                 to="/academic"

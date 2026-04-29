@@ -7,6 +7,9 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import EnrollCoursesPage from "./pages/EnrollCoursesPage";
 import AcademicRecordPage from "./pages/AcademicRecordPage";
+import ManageUserAccountPage from "./pages/ManageUserAccountPage";
+import HomeworkPage from "./pages/HomeworkPage";
+import ManageCoursesPage from "./pages/ManageCoursesPage";
 import UniversityRequirementsPage from "./pages/UniversityRequirementsPage";
 
 function App() {
@@ -49,6 +52,34 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/manage-account"
+          element={
+            <ProtectedRoute>
+              <ManageUserAccountPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/homework"
+          element={
+            <ProtectedRoute>
+              <HomeworkPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/manage-courses"
+          element={
+            <ProtectedRoute>
+              <ManageCoursesPage />
+            </ProtectedRoute>
+          }
+        />
+
 
           <Route
               path="/requirements"

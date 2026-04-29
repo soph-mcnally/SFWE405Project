@@ -9,7 +9,8 @@ function ProtectedRoute({ children }) {
 
   if (!token || !expiresAt) {
     clearSession();
-    return <Navigate to="/login" state={{ message: "Session expired. Please log in again." }} />;
+    return <Navigate to="/login" state={{ message: "Session expired. Please log in again." }} replace />;
+    // "replace" protects against the user pressing the back button and re-accessing the protected endpoint
   }
 
   const expirationTime = new Date(expiresAt).getTime();
@@ -17,7 +18,7 @@ function ProtectedRoute({ children }) {
 
   if (currentTime >= expirationTime) {
     clearSession();
-    return <Navigate to="/login" state={{ message: "Session expired. Please log in again." }} />;
+    return <Navigate to="/login" state={{ message: "Session expired. Please log in again." }} replace />;
   }
 
   return (
