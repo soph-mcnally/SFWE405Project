@@ -1,21 +1,37 @@
+/*
+
+Created By: Gavin Hernandez
+
+Frontend page for University Requirements
+
+ */
+
 import React, { useState, useEffect } from "react";
+import colors from "../styles/colors";
 
 function UniversityRequirementsPage() {
     const [requirements, setRequirements] = useState([]);
     const [universities, setUniversities] = useState([]);
     const [newReq, setNewReq] = useState({ requirementDescription: "", universityId: "", category: "" });
 
-    // Retrieve the token and role saved during login
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     useEffect(() => {
-        // Only attempt to fetch data if the user has the correct role
         if (role === "ADMIN" || role === "FACULTY") {
             fetchRequirements();
             fetchUniversities();
         }
     }, [role, token]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     const fetchRequirements = async () => {
         try {
@@ -49,85 +65,248 @@ function UniversityRequirementsPage() {
             university: { universityId: parseInt(newReq.universityId) }
         };
 
-        await fetch("http://localhost:8080/api/university-requirements", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-        });
-        setNewReq({ requirementDescription: "", universityId: "", category: "" });
-        fetchRequirements();
+        try {
+            const response = await fetch("http://localhost:8080/api/university-requirements", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Server Error Detail:", errorData);
+                return;
+            }
+
+            setNewReq({ requirementDescription: "", universityId: "", category: "" });
+            fetchRequirements();
+
+        } catch (err) {
+            console.error("Network error:", err);
+        }
     };
 
+    const handleDelete = async (requirementID) => {
+        if (!window.confirm("Are you sure you want to delete this requirement?")) return;
 
+        try {
+            const response = await fetch(`http://localhost:8080/api/university-requirements/${requirementID}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                fetchRequirements();
+            } else {
+                alert("Failed to delete the requirement.");
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
+    };
+
+    const filteredRequirements = requirements.filter(req => {
+        const desc = req.requirementDescription?.toLowerCase() || "";
+        const uniName = req.university?.name?.toLowerCase() || "";
+        const cat = req.category?.toString() || "";
+        const search = searchTerm.toLowerCase();
+
+        return desc.includes(search) || uniName.includes(search) || cat.includes(search);
+    });
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredRequirements.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredRequirements.length / itemsPerPage);
+
+    const nextPage = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
+    const prevPage = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
+
+    //Forbidden State
     if (role !== "ADMIN" && role !== "FACULTY") {
         return (
-            <div style={{ padding: "50px", textAlign: "center", border: "2px solid red", margin: "20px" }}>
-                <h1 style={{ color: "red" }}>403 - Forbidden</h1>
-                <p>Access Denied: You do not have permission to manage university requirements.</p>
-                <p>Current Role: <strong>{role || "None"}</strong></p>
-                <button onClick={() => window.history.back()}>Go Back</button>
+            <div style={pageStyle}>
+                <div style={{ ...containerStyle, textAlign: "center", borderTop: `6px solid ${colors.cardinalRed}` }}>
+                    <h1 style={{ color: colors.cardinalRed }}>403 - Forbidden</h1>
+                    <p>Access Denied: You do not have permission to manage university requirements.</p>
+                    <button
+                        onClick={() => window.history.back()}
+                        style={buttonStyle}
+                    >
+                        Go Back
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2>University Requirements Management</h2>
-            <p>Logged in as: <strong>{role}</strong></p>
+        <div style={pageStyle}>
+            <section style={containerStyle}>
+                <h2 style={{ color: colors.navyBlue, marginTop: 0 }}>University Requirements Management</h2>
+                <p style={{ color: "#666" }}>Logged in as: <strong>{role}</strong></p>
 
-            <form onSubmit={handleAddRequirement} style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px", borderRadius: "8px" }}>
-                <h3>Add New Requirement</h3>
-                <input
-                    placeholder="Requirement Description"
-                    value={newReq.requirementDescription}
-                    onChange={(e) => setNewReq({...newReq, requirementDescription: e.target.value})}
-                    style={{ display: "block", marginBottom: "10px", width: "98%", padding: "8px" }}
-                    required
-                />
-                <select
-                    value={newReq.universityId}
-                    onChange={(e) => setNewReq({...newReq, universityId: e.target.value})}
-                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "99%" }}
-                    required
-                >
-                    <option value="">Select University</option>
-                    {universities.map(u => (
-                        <option key={u.universityId} value={u.universityId}>{u.name}</option>
-                    ))}
-                </select>
-                <input
-                    placeholder="Category ID (Number)"
-                    type="number"
-                    value={newReq.category}
-                    onChange={(e) => setNewReq({...newReq, category: e.target.value})}
-                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "98%" }}
-                    required
-                />
-                <button type="submit" style={{ padding: "10px 20px", cursor: "pointer" }}>Save Requirement</button>
-            </form>
+                <form onSubmit={handleAddRequirement} style={formStyle}>
+                    <h3 style={{ color: colors.navyBlue }}>Add New Requirement</h3>
+                    <input
+                        placeholder="Requirement Description"
+                        value={newReq.requirementDescription}
+                        onChange={(e) => setNewReq({...newReq, requirementDescription: e.target.value})}
+                        style={inputStyle}
+                        required
+                    />
+                    <select
+                        value={newReq.universityId}
+                        onChange={(e) => setNewReq({...newReq, universityId: e.target.value})}
+                        style={inputStyle}
+                        required
+                    >
+                        <option value="">Select University</option>
+                        {universities.map(u => (<option key={u.universityId} value={u.universityId}>{u.name}</option>))}
+                    </select>
+                    <input
+                        placeholder="Category ID (Number)"
+                        type="number"
+                        value={newReq.category}
+                        onChange={(e) => setNewReq({...newReq, category: e.target.value})}
+                        style={inputStyle}
+                        required
+                    />
+                    <button type="submit" style={buttonStyle}>Save Requirement</button>
+                </form>
 
-            <h3>Existing Requirements</h3>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                <tr style={{ borderBottom: "2px solid #333" }}>
-                    <th style={{ textAlign: "left" }}>University</th>
-                    <th style={{ textAlign: "left" }}>Description</th>
-                    <th style={{ textAlign: "left" }}>Category</th>
-                </tr>
-                </thead>
-                <tbody>
-                {requirements.map((req) => (
-                    <li key={req.requirementID} style={{ marginBottom: "10px" }}>
-                        <strong>{req.university?.name || "Unknown University"}:</strong> {req.requirementDescription} (Category: {req.category})
-                    </li>
-                ))}
-                </tbody>
-            </table>
+                <h3 style={{ color: colors.navyBlue }}>Existing Requirements</h3>
+                <input
+                    type="text"
+                    placeholder="Search by description, university, or category..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ ...inputStyle, marginBottom: "20px", borderColor: colors.navyBlue }}
+                />
+
+                <div style={{ marginTop: "20px" }}>
+                    {currentItems.length > 0 ? (
+                        currentItems.map((req) => (
+                            <div key={req.requirementID} style={listItemStyle}>
+                                <div>
+                                    <strong style={{ color: colors.cardinalRed }}>
+                                        {req.university?.name || "Unknown University"}:
+                                    </strong>
+                                    <span style={{ marginLeft: "8px" }}>
+                        {req.requirementDescription} (Category: {req.category})
+                    </span>
+                                </div>
+
+                                <button
+                                    onClick={() => handleDelete(req.requirementID)}
+                                    style={{
+                                        ...buttonStyle,
+                                        backgroundColor: colors.cardinalRed,
+                                        padding: "6px 12px",
+                                        fontSize: "12px",
+                                        marginLeft: "10px"
+                                    }}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        ))
+                    ) : (
+                        <p style={{ textAlign: "center", color: "#666", fontStyle: "italic" }}>
+                            No requirements match your search.
+                        </p>
+                    )}
+                </div>
+
+                {totalPages > 1 && (
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
+                        <button onClick={prevPage} disabled={currentPage === 1} style={currentPage === 1 ? disabledButtonStyle : arrowButtonStyle}>
+                            ← Previous
+                        </button>
+                        <span style={{ margin: "0 15px", fontWeight: "bold" }}>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                        <button onClick={nextPage} disabled={currentPage === totalPages} style={currentPage === totalPages ? disabledButtonStyle : arrowButtonStyle}>
+                            Next →
+                        </button>
+                    </div>
+                )}
+            </section>
         </div>
     );
 }
+
+const pageStyle = {
+    minHeight: "100vh",
+    backgroundColor: colors.lightGray,
+    padding: "32px"
+};
+
+const containerStyle = {
+    maxWidth: "900px",
+    margin: "0 auto",
+    backgroundColor: colors.white,
+    padding: "32px",
+    borderRadius: "12px",
+    borderTop: `6px solid ${colors.cardinalRed}`,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+};
+
+const formStyle = {
+    marginBottom: "30px",
+    border: `1px solid ${colors.borderGray}`,
+    padding: "20px",
+    borderRadius: "8px",
+    backgroundColor: "#f9f9f9"
+};
+
+const inputStyle = {
+    display: "block",
+    marginBottom: "12px",
+    width: "98%",
+    padding: "10px",
+    borderRadius: "4px",
+    border: `1px solid ${colors.borderGray}`
+};
+
+const buttonStyle = {
+    backgroundColor: colors.navyBlue,
+    color: colors.white,
+    padding: "10px 20px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold"
+};
+
+const listItemStyle = {
+    padding: "12px",
+    marginBottom: "8px",
+    backgroundColor: colors.lightGray,
+    borderRadius: "6px",
+    borderLeft: `4px solid ${colors.navyBlue}`,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+};
+
+const arrowButtonStyle = {
+    backgroundColor: colors.navyBlue,
+    color: colors.white,
+    padding: "8px 16px",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "bold"
+};
+
+const disabledButtonStyle = {
+    ...arrowButtonStyle,
+    backgroundColor: "#ccc",
+    cursor: "not-allowed"
+};
 
 export default UniversityRequirementsPage;

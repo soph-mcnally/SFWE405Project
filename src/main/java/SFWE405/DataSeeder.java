@@ -3,26 +3,11 @@ package SFWE405;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import SFWE405.Project.entity.*;
+import SFWE405.Project.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import SFWE405.Project.entity.AccountCredentials;
-import SFWE405.Project.entity.Course;
-import SFWE405.Project.entity.Enrollment;
-import SFWE405.Project.entity.HomeworkAssignment;
-import SFWE405.Project.entity.CourseAssignment;
-import SFWE405.Project.entity.People;
-import SFWE405.Project.entity.Semester;
-import SFWE405.Project.entity.University;
-import SFWE405.Project.repository.AccountCredentialsRepository;
-import SFWE405.Project.repository.CourseRepository;
-import SFWE405.Project.repository.EnrollmentRepository;
-import SFWE405.Project.repository.HomeworkAssignmentRepository;
-import SFWE405.Project.repository.PeopleRepository;
-import SFWE405.Project.repository.SemesterRepository;
-import SFWE405.Project.repository.UniversityRepository;
-import SFWE405.Project.repository.CourseAssignmentRepository;
 
 @Configuration
 public class DataSeeder {
@@ -36,7 +21,8 @@ public class DataSeeder {
             CourseRepository courseRepository,
             EnrollmentRepository enrollmentRepository,
             HomeworkAssignmentRepository homeworkAssignmentRepository,
-            CourseAssignmentRepository courseAssignmentRepository
+            CourseAssignmentRepository courseAssignmentRepository,
+            UniversityRequirementsRepository universityRequirementsRepository
     ) {
         return args -> {
 
@@ -479,8 +465,44 @@ public class DataSeeder {
             CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
             courseAssignmentRepository.save(courseAssignment);
 
-            System.out.println("Database seeded successfully!");
+            //12. Populated University Requirements
+            UniversityRequirements req1 = new UniversityRequirements();
+            req1.setRequirementDescription("Minimum 3.0 GPA for Software Engineering enrollment.");
+            req1.setCategory(101L);
+            req1.setUniversity(university);
+            universityRequirementsRepository.save(req1);
 
+            UniversityRequirements req2 = new UniversityRequirements();
+            req2.setRequirementDescription("Must complete Software Programming II with a C or better.");
+            req2.setCategory(101L);
+            req2.setUniversity(university);
+            universityRequirementsRepository.save(req2);
+
+            UniversityRequirements req3 = new UniversityRequirements();
+            req3.setRequirementDescription("Must complete 45 credit hours.");
+            req3.setCategory(202L);
+            req3.setUniversity(university);
+            universityRequirementsRepository.save(req3);
+
+            UniversityRequirements req4 = new UniversityRequirements();
+            req4.setRequirementDescription("Must complete SFWE 405.");
+            req4.setCategory(202L);
+            req4.setUniversity(university);
+            universityRequirementsRepository.save(req4);
+
+            UniversityRequirements req5 = new UniversityRequirements();
+            req5.setRequirementDescription("Submit official transcripts from all previous institutions.");
+            req5.setCategory(202L);
+            req5.setUniversity(university);
+            universityRequirementsRepository.save(req5);
+
+            UniversityRequirements req6 = new UniversityRequirements();
+            req6.setRequirementDescription("Department Consent Required to enroll.");
+            req6.setCategory(303L);
+            req6.setUniversity(university);
+            universityRequirementsRepository.save(req6);
+
+            System.out.println("Database seeded successfully!");
         };
     }
 }

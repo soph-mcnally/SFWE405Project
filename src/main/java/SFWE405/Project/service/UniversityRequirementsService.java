@@ -1,5 +1,6 @@
 package SFWE405.Project.service;
 
+import SFWE405.Project.entity.University;
 import SFWE405.Project.entity.UniversityRequirements;
 import SFWE405.Project.repository.UniversityRepository;
 import SFWE405.Project.repository.UniversityRequirementsRepository;
@@ -35,6 +36,9 @@ public class UniversityRequirementsService {
 
     @Transactional
     public UniversityRequirements addRequirements(UniversityRequirements requirements) {
+        Long incomingId = requirements.getUniversity().getUniversityId();
+        University managedUni = universityRepository.findById(incomingId).orElseThrow(() -> new RuntimeException("University ID " + incomingId + " not found"));
+        requirements.setUniversity(managedUni);
         return requirementsRepository.save(requirements);
     }
 
@@ -44,7 +48,7 @@ public class UniversityRequirementsService {
     }
 
     @Transactional
-    public void deleteRequirements(UniversityRequirements requirements) {
-        requirementsRepository.delete(requirements);
+    public void deleteRequirements(Long id) {
+        requirementsRepository.deleteById(id);
     }
 }
