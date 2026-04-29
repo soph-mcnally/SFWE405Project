@@ -53,8 +53,8 @@ public class DataSeeder {
             student = peopleRepository.save(student);
 
             People facultyMember = new People();
-            facultyMember.setFirstName("Faculty");
-            facultyMember.setLastName("Member");
+            facultyMember.setFirstName("Diana");
+            facultyMember.setLastName("Saldana");
             facultyMember.setPersonType(People.PersonType.FACULTY);
             facultyMember.setEnrolledAt(university);
             facultyMember = peopleRepository.save(facultyMember);
@@ -73,7 +73,7 @@ public class DataSeeder {
             AccountCredentials credsII = new AccountCredentials();
             credsII.setUserName("facultyMember");
             credsII.setPassword(passwordEncoder.encode("fac123"));
-            credsII.setEmail("faculty@example.com");
+            credsII.setEmail("saldana@example.com");
             credsII.setPerson(facultyMember);
             credsII.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             credsII.setDateCreated(LocalDateTime.now());
@@ -83,8 +83,8 @@ public class DataSeeder {
             student.setAccountCredentials(credsI);
             student = peopleRepository.save(student); //authentication token requires link between person and credential
 
-            facultyMember.setAccountCredentials(credsII);
-            facultyMember = peopleRepository.save(facultyMember);
+             facultyMember.setAccountCredentials(credsII);
+             facultyMember = peopleRepository.save(facultyMember);
 
             // 4. Semester
             Semester semester = new Semester();
@@ -429,7 +429,7 @@ public class DataSeeder {
             // 8. Admin credentials
             AccountCredentials adminCreds = new AccountCredentials();
             adminCreds.setUserName("adminUser");
-            adminCreds.setPassword(passwordEncoder.encode("faculty123"));
+            adminCreds.setPassword(passwordEncoder.encode("Pass123"));
             adminCreds.setEmail("sophie@example.com");
             adminCreds.setPerson(admin);
             adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);

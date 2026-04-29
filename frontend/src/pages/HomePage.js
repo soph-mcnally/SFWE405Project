@@ -84,25 +84,6 @@ function HomePage() {
                 </p>
             </section>
 
-            {userRole.toLowerCase() === "admin" && (
-                <section style={{ maxWidth: "700px", margin: "32px auto 0", textAlign: "center" }}>
-                    <h2 style={{ color: colors.navyBlue, marginBottom: "20px" }}>Admin Controls</h2>
-                    <Link to="/manage-courses">
-                        <button style={{
-                            padding: "12px 24px",
-                            backgroundColor: colors.cardinalRed,
-                            color: colors.white,
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontSize: "16px"
-                        }}>
-                            Manage Courses
-                        </button>
-                    </Link>
-                </section>
-            )}
-
             {userRole.toLowerCase() === "student" && (
                 <section style={contentGridStyle}>
                     <div style={cardStyle}>
