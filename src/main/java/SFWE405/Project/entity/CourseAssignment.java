@@ -5,7 +5,7 @@
  * Primary Author: @TravisPotter 
  * 
  * 
- * Representing a Faculty that is assigned to teachg a course.
+ * Representing a Faculty that is assigned to teaching a course.
  */
 
 package SFWE405.Project.entity;

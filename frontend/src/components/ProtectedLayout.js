@@ -83,6 +83,16 @@ function ProtectedLayout({ children }) {
           >
             Manage Account
           </Link>
+
+          <Link
+            to="/homework"
+            style={navButtonStyle}
+            onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+            onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+          >
+            Homework
+          </Link>
+          
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
