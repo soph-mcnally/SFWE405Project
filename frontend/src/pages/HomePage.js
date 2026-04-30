@@ -11,23 +11,26 @@ function HomePage() {
     const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [homeworkAssignments, setHomeworkAssignments] = useState([]);
 
+    const [teachingCourses, setTeachingCourses] = useState([]);
+
     useEffect(() => {
-        fetchEnrolledCourses();
-        fetchHomeworkAssignments();
+        if (userRole.toLowerCase() === "student") {
+            fetchEnrolledCourses();
+            fetchHomeworkAssignments();
+        }
+
+        if (userRole.toLowerCase() === "faculty") {
+            fetchTeachingCourses();
+        }
     }, []);
 
     const fetchEnrolledCourses = async () => {
         try {
             const response = await fetch("http://localhost:8080/api/enrollment/my-courses", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (!response.ok) {
-                console.error(`Error loading enrolled courses: ${response.status}`);
-                return;
-            }
+            if (!response.ok) return;
 
             const data = await response.json();
             setEnrolledCourses(data);
@@ -39,9 +42,7 @@ function HomePage() {
     const fetchHomeworkAssignments = async () => {
         try {
             const response = await fetch("http://localhost:8080/api/homework-assignment/my-assignments", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.status === 204) {
@@ -49,35 +50,73 @@ function HomePage() {
                 return;
             }
 
-            if (!response.ok) {
-                console.error(`Error loading homework assignments: ${response.status}`);
-                return;
-            }
+            if (!response.ok) return;
 
             const data = await response.json();
-            console.log("Homework assignments:", data);
             setHomeworkAssignments(data);
         } catch (error) {
             console.error("Failed to load homework assignments", error);
         }
     };
 
-    const currentSemesterCourses = enrolledCourses.filter(course => {
-        return course.semester?.toLowerCase() === currentSemester.toLowerCase();
-    });
+    const fetchTeachingCourses = async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:8080/api/enrollment/my-assigned-courses",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                console.error(`Error loading teaching courses: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+
+            console.log("Teaching courses:", data);
+
+            setTeachingCourses(data);
+
+        } catch (error) {
+            console.error("Failed to load teaching courses", error);
+        }
+    };
+
+
+    const currentSemesterCourses = enrolledCourses.filter(course =>
+        course.semester?.toLowerCase() === currentSemester.toLowerCase()
+    );
 
     const totalCurrentUnits = currentSemesterCourses.reduce((total, course) => {
         return total + (course.unitsAmount || 0);
     }, 0);
 
-    const sortedHomeworkAssignments = [...homeworkAssignments].sort((a, b) => {
-        return new Date(a.dueDate) - new Date(b.dueDate);
-    });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const sevenDaysFromNow = new Date(today);
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+
+    const sortedUpcomingHomeworkAssignments = homeworkAssignments
+        .filter(assignment => {
+            const dueDate = new Date(assignment.dueDate);
+            dueDate.setHours(0, 0, 0, 0);
+            return dueDate >= today && dueDate <= sevenDaysFromNow;
+        })
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
     return (
         <div style={pageStyle}>
             <section style={dashboardStyle}>
-                <h1 style={dashboardTitleStyle}>Dashboard</h1>
+                <h1 style={dashboardTitleStyle}>Welcome back!</h1>
+
+                <p style={dashboardSubtitleStyle}>
+                    Here is your {formatRole(userRole)} dashboard.
+                </p>
 
                 <p style={semesterStyle}>
                     Current Semester: <strong>{currentSemester}</strong>
@@ -88,15 +127,7 @@ function HomePage() {
                 <section style={{ maxWidth: "700px", margin: "32px auto 0", textAlign: "center" }}>
                     <h2 style={{ color: colors.navyBlue, marginBottom: "20px" }}>Admin Controls</h2>
                     <Link to="/manage-courses">
-                        <button style={{
-                            padding: "12px 24px",
-                            backgroundColor: colors.cardinalRed,
-                            color: colors.white,
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer",
-                            fontSize: "16px"
-                        }}>
+                        <button style={adminButtonStyle}>
                             Manage Courses
                         </button>
                     </Link>
@@ -118,19 +149,7 @@ function HomePage() {
 
                         {currentSemesterCourses.length > 0 ? (
                             currentSemesterCourses.map(course => (
-                                <div key={course.courseId} style={courseItemStyle}>
-                                    <strong style={courseCodeStyle}>
-                                        {course.courseCode}
-                                    </strong>
-
-                                    <p style={courseNameStyle}>
-                                        {course.courseName}
-                                    </p>
-
-                                    <p style={courseUnitsStyle}>
-                                        {course.unitsAmount} units
-                                    </p>
-                                </div>
+                                <CourseCard key={course.courseId} course={course} />
                             ))
                         ) : (
                             <p>No enrolled courses for this semester.</p>
@@ -141,36 +160,84 @@ function HomePage() {
                         <h2 style={cardTitleStyle}>Upcoming Homework</h2>
 
                         <p style={{ ...subTextStyle, fontSize: "14px" }}>
-                            Assignments for your enrolled courses
+                            {sortedUpcomingHomeworkAssignments.length} assignment
+                            {sortedUpcomingHomeworkAssignments.length !== 1 ? "s" : ""} due within the next 7 days
                         </p>
 
-                        {sortedHomeworkAssignments.length > 0 ? (
-                            sortedHomeworkAssignments.map(assignment => (
-                                <div
+                        {sortedUpcomingHomeworkAssignments.length > 0 ? (
+                            sortedUpcomingHomeworkAssignments.map(assignment => (
+                                <AssignmentCard
                                     key={assignment.homeworkAssignmentsID}
-                                    style={homeworkItemStyle}
-                                >
-                                    <strong style={homeworkTitleStyle}>
-                                        {assignment.assignmentName}
-                                    </strong>
-
-                                    <p style={homeworkCourseStyle}>
-                                        {assignment.course?.courseCode} - {assignment.course?.courseName}
-                                    </p>
-
-                                    <p style={homeworkDueDateStyle}>
-                                        Due: {formatDate(assignment.dueDate)}
-                                    </p>
-                                </div>
+                                    assignment={assignment}
+                                />
                             ))
                         ) : (
                             <div style={placeholderStyle}>
-                                No upcoming homework assignments.
+                                No assignments due within the next 7 days.
                             </div>
                         )}
                     </div>
                 </section>
             )}
+
+            {userRole.toLowerCase() === "faculty" && (
+                <section style={singleCardGridStyle}>
+                    <div style={cardStyle}>
+                        <h2 style={cardTitleStyle}>Courses I’m Teaching</h2>
+
+                        <p style={{ ...subTextStyle, fontSize: "14px" }}>
+                            Teaching {teachingCourses.length} course
+                            {teachingCourses.length !== 1 ? "s" : ""} this semester
+                        </p>
+
+                        {teachingCourses.length > 0 ? (
+                            teachingCourses.map(course => (
+                                <CourseCard key={course.courseId} course={course} />
+                            ))
+                        ) : (
+                            <div style={placeholderStyle}>
+                                No teaching courses found.
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+        </div>
+    );
+}
+
+function CourseCard({ course }) {
+    return (
+        <div style={courseItemStyle}>
+            <strong style={courseCodeStyle}>
+                {course.courseCode}
+            </strong>
+
+            <p style={courseNameStyle}>
+                {course.courseName}
+            </p>
+
+            <p style={courseUnitsStyle}>
+                {course.unitsAmount} units
+            </p>
+        </div>
+    );
+}
+
+function AssignmentCard({ assignment }) {
+    return (
+        <div style={homeworkItemStyle}>
+            <strong style={homeworkTitleStyle}>
+                {assignment.assignmentName}
+            </strong>
+
+            <p style={homeworkCourseStyle}>
+                {assignment.course?.courseCode} - {assignment.course?.courseName}
+            </p>
+
+            <p style={homeworkDueDateStyle}>
+                Due: {formatDate(assignment.dueDate)}
+            </p>
         </div>
     );
 }
@@ -199,6 +266,13 @@ function formatDate(dateString) {
         day: "numeric",
         year: "numeric"
     });
+}
+function formatRole(role) {
+    if (!role) {
+        return "user";
+    }
+
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 }
 
 const pageStyle = {
@@ -236,7 +310,7 @@ const contentGridStyle = {
     maxWidth: "1100px",
     margin: "32px auto 0",
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
     gap: "24px"
 };
 
@@ -332,6 +406,28 @@ const placeholderStyle = {
     textAlign: "center",
     color: colors.navyBlue,
     backgroundColor: colors.lightGray
+};
+
+const adminButtonStyle = {
+    padding: "12px 24px",
+    backgroundColor: colors.cardinalRed,
+    color: colors.white,
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "16px"
+};
+
+const dashboardSubtitleStyle = {
+    fontSize: "16px",
+    color: "#666",
+    marginTop: "-4px",
+    marginBottom: "12px"
+};
+
+const singleCardGridStyle = {
+    maxWidth: "700px",
+    margin: "32px auto 0"
 };
 
 export default HomePage;

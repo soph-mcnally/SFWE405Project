@@ -478,6 +478,9 @@ public class DataSeeder {
             CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
             courseAssignmentRepository.save(courseAssignment);
 
+            CourseAssignment courseAssignment2 = new CourseAssignment(faculty, sfwe405Spring);
+            courseAssignmentRepository.save(courseAssignment2);
+
             System.out.println("Database seeded successfully!");
 
         };

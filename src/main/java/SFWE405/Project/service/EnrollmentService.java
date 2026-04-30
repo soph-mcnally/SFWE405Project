@@ -1,7 +1,9 @@
 package SFWE405.Project.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.People;
@@ -98,11 +100,21 @@ public class EnrollmentService {
         List<Long> enrolledCourseIds = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        int currentUnits = enrollmentRepository.findByPersonPersonID(personId)
-                .stream()
-                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED)
-                .mapToInt(enrollment -> enrollment.getCourse().getUnitsAmount())
-                .sum();
+        List<Enrollment> existingEnrollments = enrollmentRepository.findByPersonPersonID(personId);
+
+        Map<Long, Integer> semesterUnits = new HashMap<>();
+
+        for (Enrollment enrollment : existingEnrollments) {
+            if (enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED) {
+                Long semesterId = enrollment.getCourse().getSemester().getSemesterId();
+                int units = enrollment.getCourse().getUnitsAmount();
+
+                semesterUnits.put(
+                        semesterId,
+                        semesterUnits.getOrDefault(semesterId, 0) + units
+                );
+            }
+        }
 
         for (Long courseId : courseIds) {
             Course course = courseRepository.findById(courseId).orElse(null);
@@ -121,11 +133,17 @@ public class EnrollmentService {
                 continue;
             }
 
+            Long semesterId = course.getSemester().getSemesterId();
+            int currentUnitsForSemester = semesterUnits.getOrDefault(semesterId, 0);
             int courseUnits = course.getUnitsAmount();
 
-            if (currentUnits + courseUnits > 20) {
-                errors.add("Cannot enroll in " + course.getCourseCode() +
-                        ". Maximum allowed units is 20.");
+            if (currentUnitsForSemester + courseUnits > 20) {
+                errors.add("Cannot enroll in " + course.getCourseCode()
+                        + ". Maximum allowed units is 20 for "
+                        + course.getSemester().getSeason().name()
+                        + " "
+                        + course.getSemester().getSemesterYear()
+                        + ".");
                 continue;
             }
 
@@ -138,7 +156,7 @@ public class EnrollmentService {
             enrollmentRepository.save(enrollment);
             enrolledCourseIds.add(courseId);
 
-            currentUnits += courseUnits;
+            semesterUnits.put(semesterId, currentUnitsForSemester + courseUnits);
         }
 
         response.setEnrolledCourseIds(enrolledCourseIds);
