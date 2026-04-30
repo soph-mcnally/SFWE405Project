@@ -236,7 +236,7 @@ function UniversityRequirementsPage() {
                             ‹
                         </Button>
 
-                        <span style={{ margin: "0 15px", fontWeight: "bold", fontSize: "20px" }}>
+                        <span style={{ margin: "0 15px", fontSize: "20px" }}>
                         Page {currentPage} of {totalPages}
                     </span>
 
