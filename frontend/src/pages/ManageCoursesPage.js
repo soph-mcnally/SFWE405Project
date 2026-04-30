@@ -8,7 +8,16 @@
 import React, { useState, useEffect } from "react";
 import { getSemesters, getCoursesBySemester, addCourse, updateCourse, deleteCourse,getFacultyForCourse, getAllFaculty,
                                                 assignFaculty, removeFaculty} from "../services/semesterService";
+import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    pageStyle,
+    containerStyle,
+    pageTitleStyle,
+    selectStyle,
+    inputStyle,
+    formCardStyle
+} from "../styles/sharedStyles";
 
 function ManageCoursesPage() {
     const [semesters, setSemesters] = useState([]);
@@ -168,9 +177,9 @@ function ManageCoursesPage() {
 
 
     return (
-        <div style={{ minHeight: "calc(100vh - 64px)", backgroundColor: colors.lightGray, padding: "40px 20px" }}>
-            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-                <h1 style={{ textAlign: "center", marginBottom: "24px", color: colors.navyBlue }}>
+        <div style={pageStyle}>
+            <div style={containerStyle}>
+                <h1 style={pageTitleStyle}>
                     Manage Courses by Semester
                 </h1>
 
@@ -179,7 +188,7 @@ function ManageCoursesPage() {
                     <select
                         value={selectedSemester}
                         onChange={handleSemesterChange}
-                        style={{ padding: "8px", width: "260px" }}
+                        style={selectStyle}
                     >
                         <option value="">-- Select Semester --</option>
                         {semesters.map((semester) => (
@@ -199,21 +208,26 @@ function ManageCoursesPage() {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") setSearch(searchInput); }}
-                            style={{ padding: "8px", width: "250px", marginRight: "10px" }}
+                            style={{
+                                ...inputStyle,
+                                width: "250px",
+                                marginRight: "10px"
+                            }}
                         />
-                        <button
+                        <Button
                             onClick={() => { setSearch(searchInput); setCoursePage(0);}}
-                            style={{ padding: "8px 12px", backgroundColor: colors.navyBlue, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                            variant="primary"
                         >
                             Search
-                        </button>
+                        </Button>
                         {search && (
-                            <button
+                            <Button
                                 onClick={() => { setSearch(""); setSearchInput(""); setCoursePage(0); }}
-                                style={{ marginLeft: "8px", padding: "8px 12px", border: `1px solid ${colors.borderGray}`, borderRadius: "6px", cursor: "pointer" }}
+                                variant="secondary"
+                                style={{ marginLeft: "8px" }}
                             >
                                 Clear
-                            </button>
+                            </Button>
                         )}
                     </div>
                 )}
@@ -221,35 +235,51 @@ function ManageCoursesPage() {
                 {/* add course button */}
                 {selectedSemester && !showAddForm && !editingCourse && (
                     <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                        <button
+                        <Button
                             onClick={() => setShowAddForm(true)}
-                            style={{ padding: "8px 16px", backgroundColor: colors.navyBlue, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                            variant="primary"
+                            size="medium"
                         >
                             + Add Course
-                        </button>
+                        </Button>
                     </div>
                 )}
 
                 {/* add course form */}
                 {showAddForm && (
-                    <div style={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: "8px", padding: "20px", marginBottom: "24px" }}>
+                    <div style={{ ...formCardStyle, marginBottom: "24px" }}>
                         <h3 style={{ color: colors.navyBlue }}>Add New Course</h3>
                         <input
                             placeholder="Course Code (e.g. CSE310)"
                             value={newCourse.courseCode}
                             onChange={(e) => setNewCourse({ ...newCourse, courseCode: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <input
                             placeholder="Course Name"
                             value={newCourse.courseName}
                             onChange={(e) => setNewCourse({ ...newCourse, courseName: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <select
                             value={newCourse.courseType}
                             onChange={(e) => setNewCourse({ ...newCourse, courseType: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         >
                             <option value="LECTURE">LECTURE</option>
                             <option value="LAB">LAB</option>
@@ -260,7 +290,12 @@ function ManageCoursesPage() {
                             placeholder="Units"
                             value={newCourse.unitsAmount}
                             onChange={(e) => setNewCourse({ ...newCourse, unitsAmount: Number(e.target.value) })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <label style={{ display: "block", marginBottom: "10px" }}>
                             <input
@@ -271,41 +306,59 @@ function ManageCoursesPage() {
                             />
                             Upper Division
                         </label>
-                        <button
+                        <Button
                             onClick={handleAddCourse}
-                            style={{ marginRight: "10px", padding: "8px 16px", backgroundColor: colors.cardinalRed, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                            variant="cardinal"
+                            size="medium"
+                            style={{ marginRight: "10px" }}
                         >
                             Save
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setShowAddForm(false)}
-                            style={{ padding: "8px 16px", border: `1px solid ${colors.borderGray}`, borderRadius: "6px", cursor: "pointer" }}
+                            variant="secondary"
+                            size="medium"
                         >
                             Cancel
-                        </button>
+                        </Button>
                     </div>
                 )}
 
                 {/* Edit Course Form */}
                 {editingCourse && (
-                    <div style={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: "8px", padding: "20px", marginBottom: "24px" }}>
+                    <div style={{ ...formCardStyle, marginBottom: "24px" }}>
                         <h3 style={{ color: colors.navyBlue }}>Edit Course</h3>
                         <input
                             placeholder="Course Code"
                             value={editingCourse.courseCode}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseCode: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <input
                             placeholder="Course Name"
                             value={editingCourse.courseName}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseName: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <select
                             value={editingCourse.courseType}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseType: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         >
                             <option value="LECTURE">LECTURE</option>
                             <option value="LAB">LAB</option>
@@ -316,7 +369,12 @@ function ManageCoursesPage() {
                             placeholder="Units"
                             value={editingCourse.unitsAmount}
                             onChange={(e) => setEditingCourse({ ...editingCourse, unitsAmount: Number(e.target.value) })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <label style={{ display: "block", marginBottom: "10px" }}>
                             <input
@@ -327,18 +385,21 @@ function ManageCoursesPage() {
                             />
                             Upper Division
                         </label>
-                        <button
+                        <Button
                             onClick={handleUpdateCourse}
-                            style={{ marginRight: "10px", padding: "8px 16px", backgroundColor: colors.cardinalRed, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                            variant="cardinal"
+                            size="medium"
+                            style={{ marginRight: "10px" }}
                         >
                             Save
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => setEditingCourse(null)}
-                            style={{ padding: "8px 16px", border: `1px solid ${colors.borderGray}`, borderRadius: "6px", cursor: "pointer" }}
+                            variant="secondary"
+                            size="medium"
                         >
                             Cancel
-                        </button>
+                        </Button>
                     </div>
                 )}
 
@@ -359,18 +420,21 @@ function ManageCoursesPage() {
                         <p style={{ margin: "4px 0" }}><strong>Units:</strong> {course.unitsAmount}</p>
                         <p style={{ margin: "4px 0" }}><strong>Upper Division:</strong> {course.upperDivision ? "Yes" : "No"}</p>
                         <div style={{ marginTop: "12px" }}>
-                            <button
+                            <Button
                                 onClick={() => handleEditCourse(course)}
-                                style={{ marginRight: "10px", padding: "6px 14px", backgroundColor: colors.navyBlue, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                                variant="primary"
+                                size="small"
+                                style={{ marginRight: "10px" }}
                             >
                                 Edit
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={() => handleDeleteCourse(course.courseId)}
-                                style={{ padding: "6px 14px", backgroundColor: colors.cardinalRed, color: colors.white, border: "none", borderRadius: "6px", cursor: "pointer" }}
+                                variant="danger"
+                                size="small"
                             >
                                 Delete
-                            </button>
+                            </Button>
                         </div>
                         <div style={{ marginTop: "12px", borderTop: `1px solid ${colors.borderGray}`, paddingTop: "12px" }}>
                             <strong>Assigned Faculty:</strong>
@@ -380,12 +444,13 @@ function ManageCoursesPage() {
                                 (courseFaculty[course.courseId] || []).map(f => (
                                     <div key={f.personID} style={{ display: "flex", alignItems: "center", gap: "8px", margin: "4px 0" }}>
                                         <span>{f.firstName} {f.lastName}</span>
-                                        <button
+                                        <Button
                                             onClick={() => handleRemoveFaculty(course.courseId, f.personID)}
-                                            style={{ padding: "2px 8px", backgroundColor: colors.cardinalRed, color: colors.white, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "12px" }}
+                                            variant="danger"
+                                            size="xs"
                                         >
                                             Remove
-                                        </button>
+                                        </Button>
                                     </div>
                                 ))
                             )}
@@ -402,12 +467,13 @@ function ManageCoursesPage() {
                                         </option>
                                     ))}
                                 </select>
-                                <button
+                                <Button
                                     onClick={() => handleAssignFaculty(course.courseId)}
-                                    style={{ padding: "4px 12px", backgroundColor: colors.navyBlue, color: colors.white, border: "none", borderRadius: "4px", cursor: "pointer" }}
+                                    variant="primary"
+                                    size="xs"
                                 >
                                     Assign
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -421,37 +487,25 @@ function ManageCoursesPage() {
                         gap: "24px",
                         marginTop: "20px"
                     }}>
-                        <button
+                        <Button
                             onClick={() => setCoursePage((prev) => Math.max(prev - 1, 0))}
                             disabled={isFirstPage}
-                            style={{
-                                border: "none",
-                                background: "none",
-                                fontSize: "32px",
-                                cursor: isFirstPage ? "not-allowed" : "pointer",
-                                color: colors.cardinalRed
-                            }}
+                            variant="pagination"
                         >
                             ‹
-                        </button>
+                        </Button>
 
                         <span style={{ fontSize: "20px" }}>
                             {startIndex + 1}-{endIndex} of {totalCourses}
                         </span>
 
-                        <button
+                        <Button
                             onClick={() => setCoursePage((prev) => prev + 1)}
                             disabled={isLastPage}
-                            style={{
-                                border: "none",
-                                background: "none",
-                                fontSize: "32px",
-                                cursor: isLastPage ? "not-allowed" : "pointer",
-                                color: colors.cardinalRed
-                            }}
+                            variant="pagination"
                         >
                             ›
-                        </button>
+                        </Button>
                     </div>
                 )}
 

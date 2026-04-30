@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { fetchAcademicRecord } from "../services/academicRecord";
 import AcademicRecordCard from "../components/AcademicRecordCard";
+import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+  pageStyle,
+  containerStyle,
+  pageTitleStyle,
+  errorCardStyle
+} from "../styles/sharedStyles";
 
 function AcademicRecordPage() {
   const [records, setRecords] = useState([]);
@@ -44,26 +51,9 @@ function AcademicRecordPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "calc(100vh - 64px)",
-        backgroundColor: "#f5f5f5",
-        padding: "40px 20px"
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto"
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "24px",
-            color: colors.navyBlue
-          }}
-        >
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <h1 style={pageTitleStyle}>
           Academic Record
         </h1>
 
@@ -81,24 +71,17 @@ function AcademicRecordPage() {
               }}
             />
 
-            <button
+            <Button
               onClick={() => {
                 setPage(0);
                 setSearch(searchInput);
               }}
-              style={{
-                padding: "8px 12px",
-                backgroundColor: colors.navyBlue,
-                color: colors.white,
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
+              variant="primary"
             >
               Search
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={async () => {
                 const token = localStorage.getItem("token");
 
@@ -119,32 +102,16 @@ function AcademicRecordPage() {
                 a.download = "academic_record.csv";
                 a.click();
               }}
-              style={{
-                marginLeft: "10px",
-                padding: "8px 12px",
-                backgroundColor: colors.navyBlue,
-                color: colors.white,
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
+              variant="primary"
+              style={{ marginLeft: "10px" }}
             >
               Export CSV
-            </button>
+            </Button>
           </div>
         )}
 
         {error ? (
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "24px",
-              borderRadius: "8px",
-              border: `1px solid ${colors.borderGray}`,
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              textAlign: "center"
-            }}
-          >
+          <div style={errorCardStyle}>
             <h2 style={{ marginBottom: "12px", color: colors.cardinalRed }}>
               Academic Record Unavailable
             </h2>
@@ -164,39 +131,27 @@ function AcademicRecordPage() {
 
         {!error && records.length > 0 && (
           <div style={{ textAlign: "center", marginTop: "20px" }}>
-            <button
+            <Button
               onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
               disabled={isFirstPage}
-              style={{
-                marginRight: "10px",
-                border: "none",
-                background: "none",
-                fontSize: "32px",
-                cursor: isFirstPage ? "not-allowed" : "pointer",
-                color: colors.cardinalRed
-              }}
+              variant="pagination"
+              style={{ marginRight: "10px" }}
             >
               ‹
-            </button>
+            </Button>
 
             <span style={{ fontSize: "20px" }}>
               Page {page + 1} of {totalPages}
             </span>
 
-            <button
+            <Button
               onClick={() => setPage((prev) => prev + 1)}
               disabled={isLastPage}
-              style={{
-                marginLeft: "10px",
-                border: "none",
-                background: "none",
-                fontSize: "32px",
-                cursor: isLastPage ? "not-allowed" : "pointer",
-                color: colors.cardinalRed
-              }}
+              variant="pagination"
+              style={{ marginLeft: "10px" }}
             >
               ›
-            </button>
+            </Button>
           </div>
         )}
       </div>
