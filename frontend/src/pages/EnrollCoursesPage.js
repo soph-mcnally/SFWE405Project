@@ -464,7 +464,17 @@ function EnrollCoursesPage() {
                         }}
                     />
 
-                    <button onClick={handleSearch}>
+                    <button
+                        onClick={handleSearch}
+                        style={{
+                            padding: "8px 12px",
+                            backgroundColor: colors.navyBlue,
+                            color: colors.white,
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer"
+                        }}
+                    >
                         Search
                     </button>
                 </div>

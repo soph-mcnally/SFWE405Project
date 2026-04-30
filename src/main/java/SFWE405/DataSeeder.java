@@ -473,6 +473,9 @@ public class DataSeeder {
             CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
             courseAssignmentRepository.save(courseAssignment);
 
+            CourseAssignment courseAssignment2 = new CourseAssignment(faculty, sfwe405Spring);
+            courseAssignmentRepository.save(courseAssignment2);
+
             //12. Populated University Requirements
             UniversityRequirements req1 = new UniversityRequirements();
             req1.setRequirementDescription("Minimum 3.0 GPA for Software Engineering enrollment.");
