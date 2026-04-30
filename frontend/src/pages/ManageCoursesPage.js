@@ -10,6 +10,14 @@ import { getSemesters, getCoursesBySemester, addCourse, updateCourse, deleteCour
                                                 assignFaculty, removeFaculty} from "../services/semesterService";
 import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    pageStyle,
+    containerStyle,
+    pageTitleStyle,
+    selectStyle,
+    inputStyle,
+    formCardStyle
+} from "../styles/sharedStyles";
 
 function ManageCoursesPage() {
     const [semesters, setSemesters] = useState([]);
@@ -169,9 +177,9 @@ function ManageCoursesPage() {
 
 
     return (
-        <div style={{ minHeight: "calc(100vh - 64px)", backgroundColor: colors.lightGray, padding: "40px 20px" }}>
-            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-                <h1 style={{ textAlign: "center", marginBottom: "24px", color: colors.navyBlue }}>
+        <div style={pageStyle}>
+            <div style={containerStyle}>
+                <h1 style={pageTitleStyle}>
                     Manage Courses by Semester
                 </h1>
 
@@ -180,7 +188,7 @@ function ManageCoursesPage() {
                     <select
                         value={selectedSemester}
                         onChange={handleSemesterChange}
-                        style={{ padding: "8px", width: "260px" }}
+                        style={selectStyle}
                     >
                         <option value="">-- Select Semester --</option>
                         {semesters.map((semester) => (
@@ -200,7 +208,11 @@ function ManageCoursesPage() {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") setSearch(searchInput); }}
-                            style={{ padding: "8px", width: "250px", marginRight: "10px" }}
+                            style={{
+                                ...inputStyle,
+                                width: "250px",
+                                marginRight: "10px"
+                            }}
                         />
                         <Button
                             onClick={() => { setSearch(searchInput); setCoursePage(0);}}
@@ -235,24 +247,39 @@ function ManageCoursesPage() {
 
                 {/* add course form */}
                 {showAddForm && (
-                    <div style={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: "8px", padding: "20px", marginBottom: "24px" }}>
+                    <div style={{ ...formCardStyle, marginBottom: "24px" }}>
                         <h3 style={{ color: colors.navyBlue }}>Add New Course</h3>
                         <input
                             placeholder="Course Code (e.g. CSE310)"
                             value={newCourse.courseCode}
                             onChange={(e) => setNewCourse({ ...newCourse, courseCode: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <input
                             placeholder="Course Name"
                             value={newCourse.courseName}
                             onChange={(e) => setNewCourse({ ...newCourse, courseName: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <select
                             value={newCourse.courseType}
                             onChange={(e) => setNewCourse({ ...newCourse, courseType: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         >
                             <option value="LECTURE">LECTURE</option>
                             <option value="LAB">LAB</option>
@@ -263,7 +290,12 @@ function ManageCoursesPage() {
                             placeholder="Units"
                             value={newCourse.unitsAmount}
                             onChange={(e) => setNewCourse({ ...newCourse, unitsAmount: Number(e.target.value) })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <label style={{ display: "block", marginBottom: "10px" }}>
                             <input
@@ -294,24 +326,39 @@ function ManageCoursesPage() {
 
                 {/* Edit Course Form */}
                 {editingCourse && (
-                    <div style={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: "8px", padding: "20px", marginBottom: "24px" }}>
+                    <div style={{ ...formCardStyle, marginBottom: "24px" }}>
                         <h3 style={{ color: colors.navyBlue }}>Edit Course</h3>
                         <input
                             placeholder="Course Code"
                             value={editingCourse.courseCode}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseCode: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <input
                             placeholder="Course Name"
                             value={editingCourse.courseName}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseName: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <select
                             value={editingCourse.courseType}
                             onChange={(e) => setEditingCourse({ ...editingCourse, courseType: e.target.value })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         >
                             <option value="LECTURE">LECTURE</option>
                             <option value="LAB">LAB</option>
@@ -322,7 +369,12 @@ function ManageCoursesPage() {
                             placeholder="Units"
                             value={editingCourse.unitsAmount}
                             onChange={(e) => setEditingCourse({ ...editingCourse, unitsAmount: Number(e.target.value) })}
-                            style={{ display: "block", marginBottom: "10px", padding: "8px", width: "100%" }}
+                            style={{
+                                ...inputStyle,
+                                display: "block",
+                                marginBottom: "10px",
+                                width: "100%"
+                            }}
                         />
                         <label style={{ display: "block", marginBottom: "10px" }}>
                             <input

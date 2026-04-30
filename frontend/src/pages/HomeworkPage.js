@@ -12,6 +12,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import colors from "../styles/colors";
 import Button from "../components/Button";
 import {
+    pageStyle,
+    dashboardCardStyle,
+    cardStyle,
+    fullWidthInputStyle,
+    labelStyle,
+    placeholderStyle
+} from "../styles/sharedStyles";
+import {
     getHomeworkForCourse,
     getFacultyHomeworkForCourse,
     createAssignment,
@@ -28,35 +36,16 @@ function formatDate(dateString) {
 
 // ── styles (matching existing pages) ─────────────────────────────────────────
 
-const pageStyle = {
-    minHeight: "calc(100vh - 64px)",
-    backgroundColor: colors.lightGray,
-    padding: "40px 20px"
-};
-
 const containerStyle = {
     maxWidth: "860px",
     margin: "0 auto"
 };
 
 const headerCardStyle = {
-    backgroundColor: colors.white,
+    ...dashboardCardStyle,
     padding: "28px 32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
     marginBottom: "28px",
     textAlign: "center"
-};
-
-const cardStyle = {
-    backgroundColor: colors.white,
-    padding: "24px",
-    borderRadius: "12px",
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-    marginBottom: "24px"
 };
 
 const sectionTitleStyle = {
@@ -67,29 +56,15 @@ const sectionTitleStyle = {
 };
 
 const selectStyle = {
-    padding: "8px 12px",
-    border: `1px solid ${colors.borderGray}`,
-    borderRadius: "6px",
-    fontSize: "14px",
+    ...fullWidthInputStyle,
     width: "100%",
     marginTop: "6px"
 };
 
 const inputStyle = {
-    padding: "8px 12px",
-    border: `1px solid ${colors.borderGray}`,
-    borderRadius: "6px",
-    fontSize: "14px",
+    ...fullWidthInputStyle,
     width: "100%",
-    marginTop: "6px",
-    boxSizing: "border-box"
-};
-
-const labelStyle = {
-    display: "block",
-    fontWeight: "bold",
-    color: colors.navyBlue,
-    marginBottom: "12px"
+    marginTop: "6px"
 };
 
 const assignmentCardStyle = {
@@ -103,16 +78,6 @@ const assignmentCardStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start"
-};
-
-const placeholderStyle = {
-    marginTop: "16px",
-    padding: "28px",
-    borderRadius: "8px",
-    border: `2px dashed ${colors.cardinalRed}`,
-    textAlign: "center",
-    color: colors.navyBlue,
-    backgroundColor: colors.lightGray
 };
 
 const toastBase = {

@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import AvailableCourseCard from "../components/AvailableCourseCard";
 import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    pageStyle,
+    containerStyle,
+    selectStyle,
+    inputStyle
+} from "../styles/sharedStyles";
 
 function EnrollCoursesPage() {
     const [semesters, setSemesters] = useState([]);
@@ -346,13 +352,7 @@ function EnrollCoursesPage() {
     };
 
     return (
-        <div
-            style={{
-                minHeight: "calc(100vh - 64px)",
-                backgroundColor: colors.lightGray,
-                padding: "40px 20px"
-            }}
-        >
+        <div style={pageStyle}>
             {popup && (
                 <div style={popupStyle}>
                     <div style={popupIconStyle}>✕</div>
@@ -410,7 +410,7 @@ function EnrollCoursesPage() {
                 </div>
             )}
 
-            <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+            <div style={containerStyle}>
                 <h1 style={{ textAlign: "center", marginBottom: "24px" }}>
                     Enroll in Courses
                 </h1>
@@ -421,7 +421,7 @@ function EnrollCoursesPage() {
                     <select
                         value={selectedSemester}
                         onChange={handleSemesterChange}
-                        style={{ padding: "8px", width: "260px" }}
+                        style={selectStyle}
                     >
                         <option value="">-- Select Semester --</option>
                         {semesters.map((semester) => (
@@ -444,7 +444,7 @@ function EnrollCoursesPage() {
                             }
                         }}
                         style={{
-                            padding: "8px",
+                            ...inputStyle,
                             width: "250px",
                             marginRight: "10px"
                         }}

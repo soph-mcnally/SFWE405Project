@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    fullPageStyle,
+    dashboardCardStyle,
+    cardStyle,
+    placeholderStyle
+} from "../styles/sharedStyles";
 
 function HomePage() {
     const userRole = localStorage.getItem("role") || "student";
@@ -111,7 +117,7 @@ function HomePage() {
         .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
     return (
-        <div style={pageStyle}>
+        <div style={fullPageStyle}>
             <section style={dashboardStyle}>
                 <h1 style={dashboardTitleStyle}>Welcome back!</h1>
 
@@ -276,24 +282,11 @@ function formatRole(role) {
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 }
 
-const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: colors.lightGray,
-    padding: "32px"
-};
-
 const dashboardStyle = {
+    ...dashboardCardStyle,
     maxWidth: "700px",
     margin: "0 auto",
-    textAlign: "center",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    borderLeft: `1px solid ${colors.borderGray}`,
-    borderRight: `1px solid ${colors.borderGray}`,
-    borderBottom: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    textAlign: "center"
 };
 
 const dashboardTitleStyle = {
@@ -313,14 +306,6 @@ const contentGridStyle = {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
     gap: "24px"
-};
-
-const cardStyle = {
-    backgroundColor: colors.white,
-    padding: "24px",
-    borderRadius: "12px",
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
 };
 
 const cardTitleStyle = {
@@ -397,16 +382,6 @@ const homeworkCourseStyle = {
 const homeworkDueDateStyle = {
     margin: "4px 0 0",
     color: "#666"
-};
-
-const placeholderStyle = {
-    marginTop: "16px",
-    padding: "32px",
-    borderRadius: "8px",
-    border: `2px dashed ${colors.cardinalRed}`,
-    textAlign: "center",
-    color: colors.navyBlue,
-    backgroundColor: colors.lightGray
 };
 
 const dashboardSubtitleStyle = {

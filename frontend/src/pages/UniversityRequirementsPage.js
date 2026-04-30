@@ -9,6 +9,12 @@ Frontend page for University Requirements
 import React, { useState, useEffect } from "react";
 import colors from "../styles/colors";
 import Button from "../components/Button";
+import {
+    fullPageStyle,
+    dashboardCardStyle,
+    formCardStyle,
+    inputStyle
+} from "../styles/sharedStyles";
 
 function UniversityRequirementsPage() {
     const [requirements, setRequirements] = useState([]);
@@ -129,8 +135,8 @@ function UniversityRequirementsPage() {
     //Forbidden State
     if (role !== "ADMIN" && role !== "FACULTY") {
         return (
-            <div style={pageStyle}>
-                <div style={{ ...containerStyle, textAlign: "center", borderTop: `6px solid ${colors.cardinalRed}` }}>
+            <div style={fullPageStyle}>
+                <div style={{ ...containerStyle, textAlign: "center" }}>
                     <h1 style={{ color: colors.cardinalRed }}>403 - Forbidden</h1>
                     <p>Access Denied: You do not have permission to manage university requirements.</p>
                     <Button
@@ -145,7 +151,7 @@ function UniversityRequirementsPage() {
     }
 
     return (
-        <div style={pageStyle}>
+        <div style={fullPageStyle}>
             <section style={containerStyle}>
                 <h2 style={{ color: colors.navyBlue, marginTop: 0 }}>University Requirements Management</h2>
                 <p style={{ color: "#666" }}>Logged in as: <strong>{role}</strong></p>
@@ -156,13 +162,13 @@ function UniversityRequirementsPage() {
                         placeholder="Requirement Description"
                         value={newReq.requirementDescription}
                         onChange={(e) => setNewReq({...newReq, requirementDescription: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     />
                     <select
                         value={newReq.universityId}
                         onChange={(e) => setNewReq({...newReq, universityId: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     >
                         <option value="">Select University</option>
@@ -173,7 +179,7 @@ function UniversityRequirementsPage() {
                         type="number"
                         value={newReq.category}
                         onChange={(e) => setNewReq({...newReq, category: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     />
                     <Button type="submit" variant="primary">
@@ -187,7 +193,7 @@ function UniversityRequirementsPage() {
                     placeholder="Search by description, university, or category..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ ...inputStyle, marginBottom: "20px", borderColor: colors.navyBlue }}
+                    style={{ ...formInputStyle, marginBottom: "20px", borderColor: colors.navyBlue }}
                 />
 
                 <div style={{ marginTop: "20px" }}>
@@ -230,9 +236,9 @@ function UniversityRequirementsPage() {
                             ‹
                         </Button>
 
-                        <span style={{ margin: "0 15px", fontSize: "20px" }}>
-                            Page {currentPage} of {totalPages}
-                        </span>
+                        <span style={{ margin: "0 15px", fontWeight: "bold", fontSize: "20px" }}>
+                        Page {currentPage} of {totalPages}
+                    </span>
 
                         <Button
                             onClick={nextPage}
@@ -248,37 +254,25 @@ function UniversityRequirementsPage() {
     );
 }
 
-const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: colors.lightGray,
-    padding: "32px"
-};
-
 const containerStyle = {
+    ...dashboardCardStyle,
     maxWidth: "900px",
-    margin: "0 auto",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    margin: "0 auto"
 };
 
 const formStyle = {
+    ...formCardStyle,
     marginBottom: "30px",
-    border: `1px solid ${colors.borderGray}`,
-    padding: "20px",
-    borderRadius: "8px",
     backgroundColor: "#f9f9f9"
 };
 
-const inputStyle = {
+const formInputStyle = {
+    ...inputStyle,
     display: "block",
     marginBottom: "12px",
     width: "98%",
     padding: "10px",
-    borderRadius: "4px",
-    border: `1px solid ${colors.borderGray}`
+    borderRadius: "4px"
 };
 
 const listItemStyle = {

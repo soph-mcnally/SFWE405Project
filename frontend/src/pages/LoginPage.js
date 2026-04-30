@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    pageStyle,
+    dashboardCardStyle,
+    fullWidthInputStyle
+} from "../styles/sharedStyles";
 
 function LoginPage() {
     const [usernameOrEmail, setUsernameOrEmail] = useState("");
@@ -51,7 +56,7 @@ function LoginPage() {
     };
 
     return (
-        <div style={pageStyle}>
+        <div style={loginPageStyle}>
             <section style={loginCardStyle}>
                 <h1 style={titleStyle}>Course Management System</h1>
 
@@ -115,26 +120,17 @@ function LoginPage() {
     );
 }
 
-const pageStyle = {
-    minHeight: "calc(100vh - 64px)",
-    backgroundColor: colors.lightGray,
-    padding: "40px 20px",
+const loginPageStyle = {
+    ...pageStyle,
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start"
 };
 
 const loginCardStyle = {
+    ...dashboardCardStyle,
     width: "100%",
-    maxWidth: "420px",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    borderLeft: `1px solid ${colors.borderGray}`,
-    borderRight: `1px solid ${colors.borderGray}`,
-    borderBottom: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    maxWidth: "420px"
 };
 
 const titleStyle = {
@@ -164,13 +160,9 @@ const labelStyle = {
 };
 
 const inputStyle = {
-    width: "100%",
+    ...fullWidthInputStyle,
     padding: "10px",
-    marginTop: "6px",
-    borderRadius: "6px",
-    border: `1px solid ${colors.borderGray}`,
-    boxSizing: "border-box",
-    fontSize: "14px"
+    marginTop: "6px"
 };
 
 const errorMessageStyle = {

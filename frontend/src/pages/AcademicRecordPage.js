@@ -3,6 +3,12 @@ import { fetchAcademicRecord } from "../services/academicRecord";
 import AcademicRecordCard from "../components/AcademicRecordCard";
 import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+  pageStyle,
+  containerStyle,
+  pageTitleStyle,
+  errorCardStyle
+} from "../styles/sharedStyles";
 
 function AcademicRecordPage() {
   const [records, setRecords] = useState([]);
@@ -45,26 +51,9 @@ function AcademicRecordPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "calc(100vh - 64px)",
-        backgroundColor: "#f5f5f5",
-        padding: "40px 20px"
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "900px",
-          margin: "0 auto"
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "24px",
-            color: colors.navyBlue
-          }}
-        >
+    <div style={pageStyle}>
+      <div style={containerStyle}>
+        <h1 style={pageTitleStyle}>
           Academic Record
         </h1>
 
@@ -122,16 +111,7 @@ function AcademicRecordPage() {
         )}
 
         {error ? (
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "24px",
-              borderRadius: "8px",
-              border: `1px solid ${colors.borderGray}`,
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              textAlign: "center"
-            }}
-          >
+          <div style={errorCardStyle}>
             <h2 style={{ marginBottom: "12px", color: colors.cardinalRed }}>
               Academic Record Unavailable
             </h2>
