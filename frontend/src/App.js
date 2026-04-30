@@ -10,6 +10,7 @@ import AcademicRecordPage from "./pages/AcademicRecordPage";
 import ManageUserAccountPage from "./pages/ManageUserAccountPage";
 import HomeworkPage from "./pages/HomeworkPage";
 import ManageCoursesPage from "./pages/ManageCoursesPage";
+import UniversityRequirementsPage from "./pages/UniversityRequirementsPage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -79,6 +80,15 @@ function App() {
           }
         />
 
+
+          <Route
+              path="/requirements"
+              element={
+              <ProtectedRoute adminOnly={true}>
+              <UniversityRequirementsPage />
+              </ProtectedRoute>
+          }
+          />
       </Routes>
     </BrowserRouter>
   );

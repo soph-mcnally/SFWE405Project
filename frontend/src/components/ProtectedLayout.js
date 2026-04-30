@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import colors from "../styles/colors";
 import { logout } from "../services/authService";
+import { clearSession } from "../services/sessionService"; //added to clean up "remove items" and increase modularity
 
 function ProtectedLayout({ children }) {
     const navigate = useNavigate();
@@ -14,19 +15,14 @@ function ProtectedLayout({ children }) {
     async function handleLogout() {
         const token = localStorage.getItem("token");
 
-        try {
-            if (token) {
-                await logout(token);
-            }
-        } catch (error) {
-            console.error("Logout error:", error);
-        } finally {
-            localStorage.removeItem("token");
-            localStorage.removeItem("email");
-            localStorage.removeItem("userEmail");
-            localStorage.removeItem("expiresAt");
-            localStorage.removeItem("theme");
-            localStorage.removeItem("role");
+    try {
+      if (token) {
+        await logout(token);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      clearSession();
 
             navigate("/login");
         }
@@ -64,21 +60,20 @@ function ProtectedLayout({ children }) {
                     </Link>
 
                     <Link
-                        to="/manage-account"
-                        style={navButtonStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        Manage Account
-                    </Link>
-
-                    <Link
                         to="/homework"
                         style={navButtonStyle}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
                         Homework
+                    </Link>
+                    <Link
+                        to="/manage-account"
+                        style={navButtonStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        Manage Account
                     </Link>
 
                     {role === "ADMIN" && (
@@ -89,8 +84,17 @@ function ProtectedLayout({ children }) {
                             onMouseLeave={handleMouseLeave}
                         >
                             Manage Courses
+                        </Link>,
+                            <Link
+                            to="/requirements"
+                            style={navButtonStyle}
+                            onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
+                            onMouseLeave={e => e.target.style.backgroundColor = "#FFFFFF"}
+                        >
+                            University Requirements
                         </Link>
                     )}
+
                 </nav>
 
                 <div style={userSectionStyle}>

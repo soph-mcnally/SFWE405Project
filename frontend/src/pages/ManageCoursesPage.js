@@ -1,5 +1,13 @@
+/*
+ * @author Sophie McNally
+ *
+ * Admin page for managing courses by semester
+ * Allow admin to view, search, add, edit, delete courses within a selected semester
+ * Allows admin to assign and remove faculty from courses
+*/
 import React, { useState, useEffect } from "react";
-import { getSemesters, getCoursesBySemester, addCourse, updateCourse, deleteCourse } from "../services/semesterService";
+import { getSemesters, getCoursesBySemester, addCourse, updateCourse, deleteCourse,getFacultyForCourse, getAllFaculty,
+                                                assignFaculty, removeFaculty} from "../services/semesterService";
 import colors from "../styles/colors";
 
 function ManageCoursesPage() {
@@ -19,6 +27,9 @@ function ManageCoursesPage() {
     });
     const [searchInput, setSearchInput] = useState("");
     const [search, setSearch] = useState("");
+    const [allFaculty, setAllFaculty] = useState([]);
+    const [courseFaculty, setCourseFaculty] = useState({});
+    const [selectedFaculty, setSelectedFaculty] = useState({});
     const [coursePage, setCoursePage] = useState(0);
     const coursesPerPage = 5;
 
@@ -41,8 +52,25 @@ function ManageCoursesPage() {
         try {
             const data = await getCoursesBySemester(token, semesterId);
             setCourses(data);
+            await loadFacultyData(data, semesterId);
         } catch (error) {
             setMessage("Failed to load courses");
+        }
+    };
+
+    const loadFacultyData = async (courses, semesterId) => {
+        try {
+            const faculty = await getAllFaculty(token);
+            setAllFaculty(faculty);
+
+            const facultyMap = {};
+            for (const course of courses) {
+                const assigned = await getFacultyForCourse(token, semesterId, course.courseId);
+                facultyMap[course.courseId] = assigned;
+            }
+            setCourseFaculty(facultyMap);
+        } catch (error) {
+            console.error("Failed to load faculty data", error);
         }
     };
 
@@ -101,6 +129,28 @@ function ManageCoursesPage() {
             loadCourses(selectedSemester);
         } catch (error) {
             setMessage("Failed to delete course");
+        }
+    };
+
+    const handleAssignFaculty = async (courseId) => {
+        const personId = selectedFaculty[courseId];
+        if (!personId) return;
+        try {
+            await assignFaculty(token, selectedSemester, courseId, personId);
+            setMessage("Faculty assigned successfully!");
+            await loadFacultyData(courses, selectedSemester);
+        } catch (error) {
+            setMessage("Failed to assign faculty");
+        }
+    };
+
+    const handleRemoveFaculty = async (courseId, personId) => {
+        try {
+            await removeFaculty(token, selectedSemester, courseId, personId);
+            setMessage("Faculty removed successfully!");
+            await loadFacultyData(courses, selectedSemester);
+        } catch (error) {
+            setMessage("Failed to remove faculty");
         }
     };
 
@@ -321,6 +371,44 @@ function ManageCoursesPage() {
                             >
                                 Delete
                             </button>
+                        </div>
+                        <div style={{ marginTop: "12px", borderTop: `1px solid ${colors.borderGray}`, paddingTop: "12px" }}>
+                            <strong>Assigned Faculty:</strong>
+                            {(courseFaculty[course.courseId] || []).length === 0 ? (
+                                <p style={{ margin: "4px 0", color: "#666" }}>No faculty assigned</p>
+                            ) : (
+                                (courseFaculty[course.courseId] || []).map(f => (
+                                    <div key={f.personID} style={{ display: "flex", alignItems: "center", gap: "8px", margin: "4px 0" }}>
+                                        <span>{f.firstName} {f.lastName}</span>
+                                        <button
+                                            onClick={() => handleRemoveFaculty(course.courseId, f.personID)}
+                                            style={{ padding: "2px 8px", backgroundColor: colors.cardinalRed, color: colors.white, border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "12px" }}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                            <div style={{ marginTop: "8px", display: "flex", gap: "8px" }}>
+                                <select
+                                    value={selectedFaculty[course.courseId] || ""}
+                                    onChange={(e) => setSelectedFaculty({ ...selectedFaculty, [course.courseId]: e.target.value })}
+                                    style={{ padding: "4px", flex: 1 }}
+                                >
+                                    <option value="">-- Select Faculty --</option>
+                                    {allFaculty.map(f => (
+                                        <option key={f.personID} value={f.personID}>
+                                            {f.firstName} {f.lastName}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    onClick={() => handleAssignFaculty(course.courseId)}
+                                    style={{ padding: "4px 12px", backgroundColor: colors.navyBlue, color: colors.white, border: "none", borderRadius: "4px", cursor: "pointer" }}
+                                >
+                                    Assign
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}

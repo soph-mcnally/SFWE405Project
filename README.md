@@ -54,6 +54,7 @@ The project was updated to use:
 - Login using username or email
 - Token-based authentication (stored in browser localStorage)
 - Protected routes in frontend
+- Role returned on login (`ADMIN`, `STUDENT`, `FACULTY`)
 - Token expiration handling (30 minutes)
 - Automatic session expiration:
   - Expired tokens trigger logout
@@ -82,12 +83,21 @@ The project was updated to use:
 - Export academic record as CSV file
 - Endpoint: `/api/academic-record/export`
 
+### Course Management
+- Admin can select a semester to view its courses
+- Search courses by course code or name
+- Add new courses to a semester (course code, name, type, units, upper division)
+- Edit existing course details
+- Delete courses
+- Assign/remove faculty members from courses
+
 ### UI / UX
 - Multi-page React app with routing:
   - `/login`
   - `/home`
   - `/academic`
   - `/enroll`
+  - `/manage-courses`
 - Global navigation bar
 - Logout button on all pages
 - Consistent color theme (Cardinal Red, Navy Blue)

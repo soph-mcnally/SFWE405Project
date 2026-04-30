@@ -1,3 +1,11 @@
+/*
+
+Created By: Gavin Hernandez
+
+Entity for University Requirements
+
+ */
+
 package SFWE405.Project.entity;
 
 import jakarta.persistence.*;
@@ -17,8 +25,8 @@ public class UniversityRequirements {
 
     private String requirementDescription;
 
-    @ManyToOne(cascade = CascadeType.PERSIST) // universities is owner of relationship
-    @JoinColumn(name = "universityID") // creates the FK column (points to universities)
+    @ManyToOne // universities is owner of relationship
+    @JoinColumn(name = "universityId") // creates the FK column (points to universities)
     private University university;
 
     private Long category;
