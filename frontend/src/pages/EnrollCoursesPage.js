@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AvailableCourseCard from "../components/AvailableCourseCard";
+import Button from "../components/Button";
 import colors from "../styles/colors";
 
 function EnrollCoursesPage() {
@@ -344,23 +345,6 @@ function EnrollCoursesPage() {
         boxShadow: "0 8px 24px rgba(0,0,0,0.25)"
     };
 
-    const cancelButtonStyle = {
-        padding: "10px 18px",
-        border: "none",
-        borderRadius: "6px",
-        backgroundColor: "#d3d3d3",
-        cursor: "pointer"
-    };
-
-    const confirmButtonStyle = {
-        padding: "10px 18px",
-        border: "none",
-        borderRadius: "6px",
-        backgroundColor: "#b00020",
-        color: "white",
-        cursor: "pointer"
-    };
-
     return (
         <div
             style={{
@@ -403,22 +387,24 @@ function EnrollCoursesPage() {
                                 marginTop: "20px"
                             }}
                         >
-                            <button
+                            <Button
                                 onClick={() => setCourseToUnenroll(null)}
-                                style={cancelButtonStyle}
+                                variant="modalCancel"
+                                size="modal"
                             >
                                 Cancel
-                            </button>
+                            </Button>
 
-                            <button
+                            <Button
                                 onClick={() => {
                                     handleUnenroll(courseToUnenroll.courseId);
                                     setCourseToUnenroll(null);
                                 }}
-                                style={confirmButtonStyle}
+                                variant="modalDanger"
+                                size="modal"
                             >
                                 Unenroll
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -464,19 +450,9 @@ function EnrollCoursesPage() {
                         }}
                     />
 
-                    <button
-                        onClick={handleSearch}
-                        style={{
-                            padding: "8px 12px",
-                            backgroundColor: colors.navyBlue,
-                            color: colors.white,
-                            border: "none",
-                            borderRadius: "6px",
-                            cursor: "pointer"
-                        }}
-                    >
+                    <Button onClick={handleSearch} variant="primary">
                         Search
-                    </button>
+                    </Button>
                 </div>
 
                 {selectedSemester ? (
@@ -508,48 +484,36 @@ function EnrollCoursesPage() {
                                     marginTop: "20px"
                                 }}
                             >
-                                <button
+                                <Button
                                     onClick={() => setCoursePage((prev) => Math.max(prev - 1, 0))}
                                     disabled={isFirstCoursePage}
-                                    style={{
-                                        border: "none",
-                                        background: "none",
-                                        fontSize: "32px",
-                                        cursor: isFirstCoursePage ? "not-allowed" : "pointer",
-                                        color: colors.cardinalRed
-                                    }}
+                                    variant="pagination"
                                 >
                                     ‹
-                                </button>
+                                </Button>
 
                                 <span style={{ fontSize: "20px" }}>
-                    {startIndex + 1}-{endIndex} of {totalCourses}
-                </span>
+                                    {startIndex + 1}-{endIndex} of {totalCourses}
+                                </span>
 
-                                <button
+                                <Button
                                     onClick={() => setCoursePage((prev) => prev + 1)}
                                     disabled={isLastCoursePage}
-                                    style={{
-                                        border: "none",
-                                        background: "none",
-                                        fontSize: "32px",
-                                        cursor: isLastCoursePage ? "not-allowed" : "pointer",
-                                        color: colors.cardinalRed
-                                    }}
+                                    variant="pagination"
                                 >
                                     ›
-                                </button>
+                                </Button>
                             </div>
                         )}
 
                         <div style={{ textAlign: "center", marginTop: "24px" }}>
-                            <button
+                            <Button
                                 onClick={handleEnroll}
                                 disabled={selectedCourses.length === 0}
-                                style={{ padding: "8px 12px" }}
+                                variant="primary"
                             >
                                 Enroll
-                            </button>
+                            </Button>
                         </div>
 
                         {filteredEnrolledCourses.length > 0 ? (
@@ -567,68 +531,62 @@ function EnrollCoursesPage() {
                                     }}
                                 >
                                     {filteredEnrolledCourses.map((course) => (
-                                    <div
-                                        key={course.courseId}
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            backgroundColor: colors.white,
-                                            border: `1px solid ${colors.borderGray}`,
-                                            borderRadius: "8px",
-                                            marginBottom: "14px",
-                                            overflow: "hidden",
-                                            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)"
-                                        }}
-                                    >
                                         <div
+                                            key={course.courseId}
                                             style={{
-                                                width: "100%",
-                                                backgroundColor: "#f0f0f0",
                                                 display: "flex",
                                                 flexDirection: "column",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                padding: "20px",
-                                                borderBottom: `1px solid ${colors.borderGray}`
+                                                backgroundColor: colors.white,
+                                                border: `1px solid ${colors.borderGray}`,
+                                                borderRadius: "8px",
+                                                marginBottom: "14px",
+                                                overflow: "hidden",
+                                                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)"
                                             }}
                                         >
-                                            <div style={{ fontSize: "42px", color: "#5faf5f" }}>
-                                                ✓
+                                            <div
+                                                style={{
+                                                    width: "100%",
+                                                    backgroundColor: "#f0f0f0",
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    padding: "20px",
+                                                    borderBottom: `1px solid ${colors.borderGray}`
+                                                }}
+                                            >
+                                                <div style={{ fontSize: "42px", color: "#5faf5f" }}>
+                                                    ✓
+                                                </div>
+                                                <strong>Enrolled</strong>
                                             </div>
-                                            <strong>Enrolled</strong>
-                                        </div>
 
-                                        <div style={{ padding: "20px", flex: 1 }}>
-                                            <h2
-                                                style={{
-                                                    color: colors.navyBlue,
-                                                    marginTop: 0,
-                                                    marginBottom: "12px"
-                                                }}
-                                            >
-                                                {course.courseName} <br />
-                                                ({course.courseType})
-                                            </h2>
+                                            <div style={{ padding: "20px", flex: 1 }}>
+                                                <h2
+                                                    style={{
+                                                        color: colors.navyBlue,
+                                                        marginTop: 0,
+                                                        marginBottom: "12px"
+                                                    }}
+                                                >
+                                                    {course.courseName} <br />
+                                                    ({course.courseType})
+                                                </h2>
 
-                                            <p><strong>Class:</strong> {course.courseCode}</p>
-                                            <p><strong>Semester:</strong> {course.semester}</p>
-                                            <p><strong>Units:</strong> {course.unitsAmount}</p>
-                                            <button
-                                                onClick={() => setCourseToUnenroll(course)}
-                                                style={{
-                                                    marginTop: "12px",
-                                                    padding: "8px 14px",
-                                                    backgroundColor: "#b00020",
-                                                    color: "white",
-                                                    border: "none",
-                                                    borderRadius: "6px",
-                                                    cursor: "pointer"
-                                                }}
-                                            >
-                                                Unenroll
-                                            </button>
+                                                <p><strong>Class:</strong> {course.courseCode}</p>
+                                                <p><strong>Semester:</strong> {course.semester}</p>
+                                                <p><strong>Units:</strong> {course.unitsAmount}</p>
+
+                                                <Button
+                                                    onClick={() => setCourseToUnenroll(course)}
+                                                    variant="danger"
+                                                    style={{ marginTop: "12px" }}
+                                                >
+                                                    Unenroll
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
                                     ))}
                                 </div>
                             </div>

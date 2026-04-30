@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Button from "../components/Button";
 import colors from "../styles/colors";
 
 function HomePage() {
@@ -127,9 +128,9 @@ function HomePage() {
                 <section style={{ maxWidth: "700px", margin: "32px auto 0", textAlign: "center" }}>
                     <h2 style={{ color: colors.navyBlue, marginBottom: "20px" }}>Admin Controls</h2>
                     <Link to="/manage-courses">
-                        <button style={adminButtonStyle}>
+                        <Button variant="cardinal" size="large">
                             Manage Courses
-                        </button>
+                        </Button>
                     </Link>
                 </section>
             )}
@@ -406,16 +407,6 @@ const placeholderStyle = {
     textAlign: "center",
     color: colors.navyBlue,
     backgroundColor: colors.lightGray
-};
-
-const adminButtonStyle = {
-    padding: "12px 24px",
-    backgroundColor: colors.cardinalRed,
-    color: colors.white,
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "16px"
 };
 
 const dashboardSubtitleStyle = {

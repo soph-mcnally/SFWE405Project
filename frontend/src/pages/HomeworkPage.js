@@ -1,15 +1,16 @@
 /*
  * HomeworkPage.js
  *Last Update: 2026-04-28
- * 
+ *
  * Primary Author: @TravisPotter
  * Secondary Author: @N/A
- * 
- * 
+ *
+ *
  */
 
 import React, { useState, useEffect, useCallback } from "react";
 import colors from "../styles/colors";
+import Button from "../components/Button";
 import {
     getHomeworkForCourse,
     getFacultyHomeworkForCourse,
@@ -91,28 +92,6 @@ const labelStyle = {
     marginBottom: "12px"
 };
 
-const btnPrimary = {
-    backgroundColor: colors.cardinalRed,
-    color: colors.white,
-    border: "none",
-    padding: "9px 20px",
-    borderRadius: "6px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    fontSize: "14px"
-};
-
-const btnDanger = {
-    backgroundColor: "transparent",
-    color: colors.cardinalRed,
-    border: `1px solid ${colors.cardinalRed}`,
-    padding: "5px 12px",
-    borderRadius: "6px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    fontSize: "13px"
-};
-
 const assignmentCardStyle = {
     padding: "14px 16px",
     marginTop: "12px",
@@ -191,12 +170,13 @@ function AssignmentItem({ assignment, isFaculty, onDelete, courseId }) {
                 </p>
             </div>
             {isFaculty && (
-                <button
-                    style={btnDanger}
+                <Button
+                    variant="outlineDanger"
+                    size="small"
                     onClick={() => onDelete(courseId, assignment.homeworkAssignmentsID)}
                 >
                     Delete
-                </button>
+                </Button>
             )}
         </div>
     );
@@ -396,9 +376,12 @@ function FacultyView({ token }) {
                 <div style={cardStyle}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                         <h2 style={{ ...sectionTitleStyle, marginBottom: 0 }}>Assignments</h2>
-                        <button style={btnPrimary} onClick={() => setShowForm(f => !f)}>
+                        <Button
+                            variant="cardinal"
+                            onClick={() => setShowForm(f => !f)}
+                        >
                             {showForm ? "Cancel" : "+ New Assignment"}
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Create form */}
@@ -445,13 +428,14 @@ function FacultyView({ token }) {
                                 />
                             </label>
 
-                            <button
-                                style={{ ...btnPrimary, marginTop: "8px" }}
+                            <Button
+                                variant="cardinal"
                                 onClick={handleCreate}
                                 disabled={creating}
+                                style={{ marginTop: "8px" }}
                             >
                                 {creating ? "Creating…" : "Create Assignment"}
-                            </button>
+                            </Button>
                         </div>
                     )}
 

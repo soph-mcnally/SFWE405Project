@@ -8,6 +8,7 @@ Frontend page for University Requirements
 
 import React, { useState, useEffect } from "react";
 import colors from "../styles/colors";
+import Button from "../components/Button";
 
 function UniversityRequirementsPage() {
     const [requirements, setRequirements] = useState([]);
@@ -132,12 +133,12 @@ function UniversityRequirementsPage() {
                 <div style={{ ...containerStyle, textAlign: "center", borderTop: `6px solid ${colors.cardinalRed}` }}>
                     <h1 style={{ color: colors.cardinalRed }}>403 - Forbidden</h1>
                     <p>Access Denied: You do not have permission to manage university requirements.</p>
-                    <button
+                    <Button
                         onClick={() => window.history.back()}
-                        style={buttonStyle}
+                        variant="primary"
                     >
                         Go Back
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -175,7 +176,9 @@ function UniversityRequirementsPage() {
                         style={inputStyle}
                         required
                     />
-                    <button type="submit" style={buttonStyle}>Save Requirement</button>
+                    <Button type="submit" variant="primary">
+                        Save Requirement
+                    </Button>
                 </form>
 
                 <h3 style={{ color: colors.navyBlue }}>Existing Requirements</h3>
@@ -200,18 +203,14 @@ function UniversityRequirementsPage() {
                     </span>
                                 </div>
 
-                                <button
+                                <Button
                                     onClick={() => handleDelete(req.requirementID)}
-                                    style={{
-                                        ...buttonStyle,
-                                        backgroundColor: colors.cardinalRed,
-                                        padding: "6px 12px",
-                                        fontSize: "12px",
-                                        marginLeft: "10px"
-                                    }}
+                                    variant="danger"
+                                    size="small"
+                                    style={{ marginLeft: "10px" }}
                                 >
                                     Delete
-                                </button>
+                                </Button>
                             </div>
                         ))
                     ) : (
@@ -223,15 +222,25 @@ function UniversityRequirementsPage() {
 
                 {totalPages > 1 && (
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
-                        <button onClick={prevPage} disabled={currentPage === 1} style={currentPage === 1 ? disabledButtonStyle : arrowButtonStyle}>
-                            ← Previous
-                        </button>
-                        <span style={{ margin: "0 15px", fontWeight: "bold" }}>
-                        Page {currentPage} of {totalPages}
-                    </span>
-                        <button onClick={nextPage} disabled={currentPage === totalPages} style={currentPage === totalPages ? disabledButtonStyle : arrowButtonStyle}>
-                            Next →
-                        </button>
+                        <Button
+                            onClick={prevPage}
+                            disabled={currentPage === 1}
+                            variant="pagination"
+                        >
+                            ‹
+                        </Button>
+
+                        <span style={{ margin: "0 15px", fontSize: "20px" }}>
+                            Page {currentPage} of {totalPages}
+                        </span>
+
+                        <Button
+                            onClick={nextPage}
+                            disabled={currentPage === totalPages}
+                            variant="pagination"
+                        >
+                            ›
+                        </Button>
                     </div>
                 )}
             </section>
@@ -272,16 +281,6 @@ const inputStyle = {
     border: `1px solid ${colors.borderGray}`
 };
 
-const buttonStyle = {
-    backgroundColor: colors.navyBlue,
-    color: colors.white,
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold"
-};
-
 const listItemStyle = {
     padding: "12px",
     marginBottom: "8px",
@@ -291,22 +290,6 @@ const listItemStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
-};
-
-const arrowButtonStyle = {
-    backgroundColor: colors.navyBlue,
-    color: colors.white,
-    padding: "8px 16px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontWeight: "bold"
-};
-
-const disabledButtonStyle = {
-    ...arrowButtonStyle,
-    backgroundColor: "#ccc",
-    cursor: "not-allowed"
 };
 
 export default UniversityRequirementsPage;
