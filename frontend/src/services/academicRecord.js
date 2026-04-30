@@ -15,7 +15,11 @@ export async function fetchAcademicRecord(token, page = 0, size = 5, search = ""
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch academic record");
+    const message = await response.text();
+
+    throw new Error(
+      message || "Failed to fetch academic record"
+    );
   }
 
   return response.json();
