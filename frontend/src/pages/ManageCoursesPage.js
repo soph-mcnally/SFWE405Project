@@ -95,10 +95,15 @@ function ManageCoursesPage() {
     };
 
     const handleAddCourse = async () => {
+        const error = validateCourse(newCourse);
+        if (error) {
+            setMessage(error);
+            return;
+        }
+
         try {
             await addCourse(token, selectedSemester, newCourse);
             setMessage("Course added successfully!");
-            setShowAddForm(false);
             setNewCourse({
                 courseCode: "",
                 courseName: "",
@@ -108,8 +113,13 @@ function ManageCoursesPage() {
                 university: { universityId: 1 }
             });
             loadCourses(selectedSemester);
+
+            setTimeout(() => {
+                setShowAddForm(false);
+                setMessage("");
+            }, 1500);
         } catch (error) {
-            setMessage("Failed to add course");
+            setMessage(error.message || "Failed to add course");
         }
     };
 
@@ -120,13 +130,18 @@ function ManageCoursesPage() {
     };
 
     const handleUpdateCourse = async () => {
+        const error = validateCourse(editingCourse);
+            if (error) {
+                setMessage(error);
+                return;
+            }
         try {
             await updateCourse(token, selectedSemester, editingCourse.courseId, editingCourse);
             setMessage("Course updated successfully!");
             setEditingCourse(null);
             loadCourses(selectedSemester);
         } catch (error) {
-            setMessage("Failed to update course");
+            setMessage(error.message || "Failed to update course");
         }
     };
 
@@ -175,6 +190,18 @@ function ManageCoursesPage() {
     const isFirstPage = coursePage === 0;
     const isLastPage = endIndex >= totalCourses;
 
+    const validateCourse = (course) => {
+        if (!course.courseCode || course.courseCode.trim() === "") {
+            return "Course code is required.";
+        }
+        if (!course.courseName || course.courseName.trim() === "") {
+            return "Course name is required.";
+        }
+        if (!course.unitsAmount || course.unitsAmount <= 0) {
+            return "Units must be a positive number.";
+        }
+        return null;
+    };
 
     return (
         <div style={pageStyle}>
@@ -236,7 +263,10 @@ function ManageCoursesPage() {
                 {selectedSemester && !showAddForm && !editingCourse && (
                     <div style={{ textAlign: "center", marginBottom: "20px" }}>
                         <Button
-                            onClick={() => setShowAddForm(true)}
+                            onClick={() => {
+                                setShowAddForm(true);
+                                setMessage("");
+                            }}
                             variant="primary"
                             size="medium"
                         >
@@ -306,6 +336,16 @@ function ManageCoursesPage() {
                             />
                             Upper Division
                         </label>
+                        {message && (
+                            <p style={{
+                                textAlign: "center",
+                                marginTop: "10px",
+                                color: message.includes("successfully") ? "green" : colors.cardinalRed
+                            }}>
+                                <strong>{message}</strong>
+                            </p>
+                        )}
+
                         <Button
                             onClick={handleAddCourse}
                             variant="cardinal"
@@ -385,6 +425,16 @@ function ManageCoursesPage() {
                             />
                             Upper Division
                         </label>
+                        {message && (
+                            <p style={{
+                                textAlign: "center",
+                                marginTop: "10px",
+                                color: message.includes("successfully") ? "green" : colors.cardinalRed
+                            }}>
+                                <strong>{message}</strong>
+                            </p>
+                        )}
+
                         <Button
                             onClick={handleUpdateCourse}
                             variant="cardinal"
@@ -510,7 +560,11 @@ function ManageCoursesPage() {
                 )}
 
                 {message && (
-                    <p style={{ textAlign: "center", marginTop: "20px" }}>
+                    <p style={{
+                        textAlign: "center",
+                        marginTop: "10px",
+                        color: message.includes("successfully") ? "green" : colors.cardinalRed
+                    }}>
                         <strong>{message}</strong>
                     </p>
                 )}
