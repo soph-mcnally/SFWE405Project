@@ -67,15 +67,6 @@ function ProtectedLayout({ children }) {
                     >
                         Homework
                     </Link>
-                    <Link
-                        to="/manage-account"
-                        style={navButtonStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        Manage Account
-                    </Link>
-
                     {role === "ADMIN" && (
                         <Link
                             to="/manage-courses"
@@ -84,8 +75,10 @@ function ProtectedLayout({ children }) {
                             onMouseLeave={handleMouseLeave}
                         >
                             Manage Courses
-                        </Link>,
-                            <Link
+                        </Link>
+                    )}
+                    {role === "ADMIN" && (
+                        <Link
                             to="/requirements"
                             style={navButtonStyle}
                             onMouseEnter={e => e.target.style.backgroundColor = "#8C1D40"}
@@ -94,6 +87,14 @@ function ProtectedLayout({ children }) {
                             University Requirements
                         </Link>
                     )}
+                    <Link
+                        to="/manage-account"
+                        style={navButtonStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        Manage Account
+                    </Link>
 
                 </nav>
 
