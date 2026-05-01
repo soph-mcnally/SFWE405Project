@@ -1,5 +1,13 @@
 import colors from "../styles/colors";
 
+/**
+ * @author Jeriah Garcia
+ *
+ * Reusable React component used to display available course information
+ * during the enrollment process. This file renders course details along with
+ * a selectable checkbox for enrolling in courses and applies shared application styling.
+ */
+
 function AvailableCourseCard({ course, selected, onSelect }) {
     return (
         <div

@@ -18,6 +18,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * @author Jeriah Garcia
+ *
+ * REST controller responsible for handling course enrollment-related API endpoints.
+ * This file manages requests for viewing available semesters and courses, retrieving
+ * enrolled and completed courses, enrolling and unenrolling students from courses,
+ * and validating authenticated student access through bearer token authorization.
+ */
+
 @RestController
 @RequestMapping("/api/enrollment")
 @CrossOrigin(origins = "http://localhost:3000")

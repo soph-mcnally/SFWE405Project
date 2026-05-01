@@ -9,6 +9,15 @@ import {
     inputStyle
 } from "../styles/sharedStyles";
 
+/**
+ * @author Jeriah Garcia
+ *
+ * React page component responsible for the student course enrollment interface.
+ * This file handles semester selection, course searching, enrollment and unenrollment
+ * actions, enrolled/completed course retrieval, pagination, validation popups,
+ * and communication with backend enrollment API endpoints using bearer token authentication.
+ */
+
 function EnrollCoursesPage() {
     const [semesters, setSemesters] = useState([]);
     const [selectedSemester, setSelectedSemester] = useState("");

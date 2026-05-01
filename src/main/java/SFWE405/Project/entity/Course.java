@@ -14,6 +14,18 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author Jeriah Garcia
+ *
+ * Entity class representing a university course in the system.
+ *
+ * This file stores course information such as course code, name, type,
+ * semester, university association, unit amount, and upper division status.
+ *
+ * It also defines the relationship between courses, semesters, and universities
+ * using JPA annotations.
+ */
+
 @Getter
 @Setter
 @Entity

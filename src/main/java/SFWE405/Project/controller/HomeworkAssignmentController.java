@@ -3,7 +3,7 @@
  *Last Update: 2026-04-07
  * 
  * Primary Author: @TravisPotter
- * Secondary Author: @N/A
+ * Secondary Author: @Jeriah Garcia
  * 
  * 
  * Controller for handling homework assignment related endpoints.

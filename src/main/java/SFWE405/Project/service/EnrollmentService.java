@@ -16,6 +16,17 @@ import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.EnrollmentRepository;
 import SFWE405.Project.repository.PeopleRepository;
 
+/**
+ * @author Jeriah Garcia
+ *
+ * Service class for handling student course enrollment logic.
+ *
+ * This file retrieves available semesters and courses, filters courses by search input,
+ * tracks enrolled and completed courses, enforces enrollment rules such as duplicate
+ * prevention and the 20-unit semester limit, and allows students to unenroll from courses.
+ *
+ */
+
 @Service
 public class EnrollmentService {
 
