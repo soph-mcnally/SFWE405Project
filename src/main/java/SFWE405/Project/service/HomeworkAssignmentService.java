@@ -3,7 +3,7 @@
  *Last Update: 2026-04-07
  * 
  * Primary Author: @TravisPotter
- * Secondary Author: @N/A
+ * Secondary Author: @Jeriah Garcia
  * 
  * Service class for handling homework assignment related business logic.
  * Provides functionality for students to view homework assignments for their courses and for teachers to manage homework assignments for their courses.

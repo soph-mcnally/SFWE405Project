@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import colors from "../styles/colors";
 
+/**
+ * @author Jeriah Garcia & Sophie McNally
+ *
+ * React page component for the application dashboard homepage.
+ * This file displays role-basestartd dashboard content for students, faculty,
+ * and administrators, including enrolled courses, upcoming homework assignments,
+ * teaching courses, semester information, and administrative controls.
+ * It also retrieves data from backend API endpoints using bearer token authentication.
+ */
+
 function HomePage() {
     const userRole = localStorage.getItem("role") || "student";
     const token = localStorage.getItem("token");
