@@ -35,7 +35,10 @@ export async function addCourse(token, semesterId, course) {
         },
         body: JSON.stringify(course)
     });
-    if (!response.ok) throw new Error("Failed to add course");
+    if (!response.ok){
+        const errorText = await response.text();
+        throw new Error(errorText);
+    }
     return response.json();
 }
 
@@ -48,7 +51,10 @@ export async function updateCourse(token, semesterId, courseId, course) {
         },
         body: JSON.stringify(course)
     });
-    if (!response.ok) throw new Error("Failed to update course");
+    if (!response.ok){
+        const errorText = await response.text();
+        throw new Error(errorText);
+    }
     return response.json();
 }
 

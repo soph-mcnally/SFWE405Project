@@ -8,6 +8,13 @@ Frontend page for University Requirements
 
 import React, { useState, useEffect } from "react";
 import colors from "../styles/colors";
+import Button from "../components/Button";
+import {
+    fullPageStyle,
+    dashboardCardStyle,
+    formCardStyle,
+    inputStyle
+} from "../styles/sharedStyles";
 
 function UniversityRequirementsPage() {
     const [requirements, setRequirements] = useState([]);
@@ -128,23 +135,23 @@ function UniversityRequirementsPage() {
     //Forbidden State
     if (role !== "ADMIN" && role !== "FACULTY") {
         return (
-            <div style={pageStyle}>
-                <div style={{ ...containerStyle, textAlign: "center", borderTop: `6px solid ${colors.cardinalRed}` }}>
+            <div style={fullPageStyle}>
+                <div style={{ ...containerStyle, textAlign: "center" }}>
                     <h1 style={{ color: colors.cardinalRed }}>403 - Forbidden</h1>
                     <p>Access Denied: You do not have permission to manage university requirements.</p>
-                    <button
+                    <Button
                         onClick={() => window.history.back()}
-                        style={buttonStyle}
+                        variant="primary"
                     >
                         Go Back
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div style={pageStyle}>
+        <div style={fullPageStyle}>
             <section style={containerStyle}>
                 <h2 style={{ color: colors.navyBlue, marginTop: 0 }}>University Requirements Management</h2>
                 <p style={{ color: "#666" }}>Logged in as: <strong>{role}</strong></p>
@@ -155,13 +162,13 @@ function UniversityRequirementsPage() {
                         placeholder="Requirement Description"
                         value={newReq.requirementDescription}
                         onChange={(e) => setNewReq({...newReq, requirementDescription: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     />
                     <select
                         value={newReq.universityId}
                         onChange={(e) => setNewReq({...newReq, universityId: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     >
                         <option value="">Select University</option>
@@ -172,10 +179,12 @@ function UniversityRequirementsPage() {
                         type="number"
                         value={newReq.category}
                         onChange={(e) => setNewReq({...newReq, category: e.target.value})}
-                        style={inputStyle}
+                        style={formInputStyle}
                         required
                     />
-                    <button type="submit" style={buttonStyle}>Save Requirement</button>
+                    <Button type="submit" variant="primary">
+                        Save Requirement
+                    </Button>
                 </form>
 
                 <h3 style={{ color: colors.navyBlue }}>Existing Requirements</h3>
@@ -184,7 +193,7 @@ function UniversityRequirementsPage() {
                     placeholder="Search by description, university, or category..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ ...inputStyle, marginBottom: "20px", borderColor: colors.navyBlue }}
+                    style={{ ...formInputStyle, marginBottom: "20px", borderColor: colors.navyBlue }}
                 />
 
                 <div style={{ marginTop: "20px" }}>
@@ -200,18 +209,14 @@ function UniversityRequirementsPage() {
                     </span>
                                 </div>
 
-                                <button
+                                <Button
                                     onClick={() => handleDelete(req.requirementID)}
-                                    style={{
-                                        ...buttonStyle,
-                                        backgroundColor: colors.cardinalRed,
-                                        padding: "6px 12px",
-                                        fontSize: "12px",
-                                        marginLeft: "10px"
-                                    }}
+                                    variant="danger"
+                                    size="small"
+                                    style={{ marginLeft: "10px" }}
                                 >
                                     Delete
-                                </button>
+                                </Button>
                             </div>
                         ))
                     ) : (
@@ -223,15 +228,25 @@ function UniversityRequirementsPage() {
 
                 {totalPages > 1 && (
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
-                        <button onClick={prevPage} disabled={currentPage === 1} style={currentPage === 1 ? disabledButtonStyle : arrowButtonStyle}>
-                            ← Previous
-                        </button>
-                        <span style={{ margin: "0 15px", fontWeight: "bold" }}>
+                        <Button
+                            onClick={prevPage}
+                            disabled={currentPage === 1}
+                            variant="pagination"
+                        >
+                            ‹
+                        </Button>
+
+                        <span style={{ margin: "0 15px", fontSize: "20px" }}>
                         Page {currentPage} of {totalPages}
                     </span>
-                        <button onClick={nextPage} disabled={currentPage === totalPages} style={currentPage === totalPages ? disabledButtonStyle : arrowButtonStyle}>
-                            Next →
-                        </button>
+
+                        <Button
+                            onClick={nextPage}
+                            disabled={currentPage === totalPages}
+                            variant="pagination"
+                        >
+                            ›
+                        </Button>
                     </div>
                 )}
             </section>
@@ -239,47 +254,25 @@ function UniversityRequirementsPage() {
     );
 }
 
-const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: colors.lightGray,
-    padding: "32px"
-};
-
 const containerStyle = {
+    ...dashboardCardStyle,
     maxWidth: "900px",
-    margin: "0 auto",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    margin: "0 auto"
 };
 
 const formStyle = {
+    ...formCardStyle,
     marginBottom: "30px",
-    border: `1px solid ${colors.borderGray}`,
-    padding: "20px",
-    borderRadius: "8px",
     backgroundColor: "#f9f9f9"
 };
 
-const inputStyle = {
+const formInputStyle = {
+    ...inputStyle,
     display: "block",
     marginBottom: "12px",
     width: "98%",
     padding: "10px",
-    borderRadius: "4px",
-    border: `1px solid ${colors.borderGray}`
-};
-
-const buttonStyle = {
-    backgroundColor: colors.navyBlue,
-    color: colors.white,
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold"
+    borderRadius: "4px"
 };
 
 const listItemStyle = {
@@ -291,22 +284,6 @@ const listItemStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center"
-};
-
-const arrowButtonStyle = {
-    backgroundColor: colors.navyBlue,
-    color: colors.white,
-    padding: "8px 16px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontWeight: "bold"
-};
-
-const disabledButtonStyle = {
-    ...arrowButtonStyle,
-    backgroundColor: "#ccc",
-    cursor: "not-allowed"
 };
 
 export default UniversityRequirementsPage;

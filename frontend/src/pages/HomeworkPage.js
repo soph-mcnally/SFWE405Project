@@ -1,15 +1,24 @@
 /*
  * HomeworkPage.js
  *Last Update: 2026-04-28
- * 
+ *
  * Primary Author: @TravisPotter
  * Secondary Author: @N/A
- * 
- * 
+ *
+ *
  */
 
 import React, { useState, useEffect, useCallback } from "react";
 import colors from "../styles/colors";
+import Button from "../components/Button";
+import {
+    pageStyle,
+    dashboardCardStyle,
+    cardStyle,
+    fullWidthInputStyle,
+    labelStyle,
+    placeholderStyle
+} from "../styles/sharedStyles";
 import {
     getHomeworkForCourse,
     getFacultyHomeworkForCourse,
@@ -27,35 +36,16 @@ function formatDate(dateString) {
 
 // ── styles (matching existing pages) ─────────────────────────────────────────
 
-const pageStyle = {
-    minHeight: "calc(100vh - 64px)",
-    backgroundColor: colors.lightGray,
-    padding: "40px 20px"
-};
-
 const containerStyle = {
     maxWidth: "860px",
     margin: "0 auto"
 };
 
 const headerCardStyle = {
-    backgroundColor: colors.white,
+    ...dashboardCardStyle,
     padding: "28px 32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
     marginBottom: "28px",
     textAlign: "center"
-};
-
-const cardStyle = {
-    backgroundColor: colors.white,
-    padding: "24px",
-    borderRadius: "12px",
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-    marginBottom: "24px"
 };
 
 const sectionTitleStyle = {
@@ -66,51 +56,15 @@ const sectionTitleStyle = {
 };
 
 const selectStyle = {
-    padding: "8px 12px",
-    border: `1px solid ${colors.borderGray}`,
-    borderRadius: "6px",
-    fontSize: "14px",
+    ...fullWidthInputStyle,
     width: "100%",
     marginTop: "6px"
 };
 
 const inputStyle = {
-    padding: "8px 12px",
-    border: `1px solid ${colors.borderGray}`,
-    borderRadius: "6px",
-    fontSize: "14px",
+    ...fullWidthInputStyle,
     width: "100%",
-    marginTop: "6px",
-    boxSizing: "border-box"
-};
-
-const labelStyle = {
-    display: "block",
-    fontWeight: "bold",
-    color: colors.navyBlue,
-    marginBottom: "12px"
-};
-
-const btnPrimary = {
-    backgroundColor: colors.cardinalRed,
-    color: colors.white,
-    border: "none",
-    padding: "9px 20px",
-    borderRadius: "6px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    fontSize: "14px"
-};
-
-const btnDanger = {
-    backgroundColor: "transparent",
-    color: colors.cardinalRed,
-    border: `1px solid ${colors.cardinalRed}`,
-    padding: "5px 12px",
-    borderRadius: "6px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    fontSize: "13px"
+    marginTop: "6px"
 };
 
 const assignmentCardStyle = {
@@ -124,16 +78,6 @@ const assignmentCardStyle = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start"
-};
-
-const placeholderStyle = {
-    marginTop: "16px",
-    padding: "28px",
-    borderRadius: "8px",
-    border: `2px dashed ${colors.cardinalRed}`,
-    textAlign: "center",
-    color: colors.navyBlue,
-    backgroundColor: colors.lightGray
 };
 
 const toastBase = {
@@ -191,12 +135,13 @@ function AssignmentItem({ assignment, isFaculty, onDelete, courseId }) {
                 </p>
             </div>
             {isFaculty && (
-                <button
-                    style={btnDanger}
+                <Button
+                    variant="outlineDanger"
+                    size="small"
                     onClick={() => onDelete(courseId, assignment.homeworkAssignmentsID)}
                 >
                     Delete
-                </button>
+                </Button>
             )}
         </div>
     );
@@ -396,9 +341,12 @@ function FacultyView({ token }) {
                 <div style={cardStyle}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                         <h2 style={{ ...sectionTitleStyle, marginBottom: 0 }}>Assignments</h2>
-                        <button style={btnPrimary} onClick={() => setShowForm(f => !f)}>
+                        <Button
+                            variant="cardinal"
+                            onClick={() => setShowForm(f => !f)}
+                        >
                             {showForm ? "Cancel" : "+ New Assignment"}
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Create form */}
@@ -445,13 +393,14 @@ function FacultyView({ token }) {
                                 />
                             </label>
 
-                            <button
-                                style={{ ...btnPrimary, marginTop: "8px" }}
+                            <Button
+                                variant="cardinal"
                                 onClick={handleCreate}
                                 disabled={creating}
+                                style={{ marginTop: "8px" }}
                             >
                                 {creating ? "Creating…" : "Create Assignment"}
-                            </button>
+                            </Button>
                         </div>
                     )}
 
