@@ -84,6 +84,26 @@ function HomePage() {
                 </p>
             </section>
 
+<<<<<<< Updated upstream
+=======
+            {userRole.toLowerCase() === "admin" && (
+                <section style={{ maxWidth: "700px", margin: "32px auto 0", textAlign: "center" }}>
+                    <h2 style={{ color: colors.navyBlue, marginBottom: "20px" }}>Admin Controls</h2>
+                    <Link to="/manage-courses">
+                        <Button variant="cardinal" size="large">
+                            Manage Courses
+                        </Button>
+                    </Link>
+                    <br/><br/>
+                    <Link to="/requirements">
+                        <button variant="cardinal" size="large">
+                            University Requirements
+                        </button>
+                    </Link>
+                </section>
+            )}
+
+>>>>>>> Stashed changes
             {userRole.toLowerCase() === "student" && (
                 <section style={contentGridStyle}>
                     <div style={cardStyle}>
