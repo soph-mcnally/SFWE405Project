@@ -69,6 +69,19 @@ The project was updated to use:
 - Displays clean UI cards
 - Handles missing grades (shows "Pending")
 
+### Homework Page
+- The homework page provides role-based views so that faculty and students each see only what is relevant to them.
+# Faculty
+- Select one of their assigned courses from a dropdown
+- View all existing homework assignments for that course
+- Create new assignments by filling in a name (required), optional description, and due date (required) — the form is toggled open with the + New Assignment button
+- Delete any assignment
+
+# Students
+- Select one of their enrolled courses from a dropdown
+- View all homework assignments for that course
+- Assignment cards display the assignment name, optional description, and formatted due date
+
 ### Pagination
 - Backend pagination using Spring Data
 - Frontend page navigation (Next/Previous)
