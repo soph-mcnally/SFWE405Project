@@ -69,6 +69,19 @@ The project was updated to use:
 - Displays clean UI cards
 - Handles missing grades (shows "Pending")
 
+### Enroll Courses 
+- Select a semester to view available courses
+- Search courses by course code or course name
+- Enroll in one or multiple courses
+- View currently enrolled courses by semester
+- Unenroll from courses with confirmation dialog
+- Prevents duplicate enrollments
+- Prevents enrollment in completed courses
+- Enforces maximum 20-unit limit per semester
+- Displays enrollment validation and success popups
+- Pagination for browsing available courses
+- Student-only access control
+
 ### Homework Page
 - The homework page provides role-based views so that faculty and students each see only what is relevant to them.
 #### Faculty
@@ -199,10 +212,25 @@ Available pages:
 /enroll
 /manage-account
 ```
+Homepage features:
 
+- View role-based dashboard information
+- Students can view enrolled courses and upcoming homework assignments
+- Faculty can view assigned teaching courses
+- Admins can access management controls
+  
 Academic Record features:
 
 - View academic records
 - Search by course code or course name
 - Use Next/Previous pagination
 - Export academic record as a CSV file
+
+Enrollment features:
+
+- Select a semester to view available courses
+- Search courses by course code or name
+- Enroll in courses
+- View enrolled courses by semester
+- Unenroll from courses
+- Navigate available courses with pagination
