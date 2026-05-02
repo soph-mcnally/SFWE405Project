@@ -3,7 +3,7 @@
  *Last Update: 2026-04-07
  * 
  * Primary Author: @TravisPotter
- * Secondary Author: @N/A
+ * Secondary Author: @Jeriah Garcia
  * 
  * 
  * Controller for handling homework assignment related endpoints.
@@ -115,7 +115,6 @@ public class HomeworkAssignmentController {
     }
 
     //Faculty - Create HW for course
-    //TODO: Catch duplicates
     @PostMapping("/facultyCreateAssignmentByCourse/{courseId}")
     public ResponseEntity<HomeworkAssignment> createAssignmentByCourse(
         @RequestHeader("Authorization") String authHeader,
@@ -136,10 +135,6 @@ public class HomeworkAssignmentController {
         
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAssignment);
     }
-
-
-    //TODO: Faculty - Update Assignment
-
 
     //Faculty - Delete Assignment
     @DeleteMapping("/facultyDeleteAssignment/{courseId}/{asgnId}")

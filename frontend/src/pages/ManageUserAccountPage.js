@@ -6,6 +6,12 @@ import React, { useEffect, useState } from "react";
 import { Link, redirect } from "react-router-dom";
 import colors from "../styles/colors";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+import {
+    fullPageStyle,
+    dashboardCardStyle,
+    fullWidthInputStyle
+} from "../styles/sharedStyles";
 
 function ManageUserAccountPage() {
     const token = localStorage.getItem("token");
@@ -133,7 +139,7 @@ function ManageUserAccountPage() {
 
         const data = await res.json();
         console.log("Updated profile:", data);
-        
+
         if (res.ok) {
             setMessage("Profile updated successfully!");
 
@@ -142,7 +148,7 @@ function ManageUserAccountPage() {
 
             // Clear password field after successful update
             setAccount(prev => ({ ...prev, password: "" }));
-            
+
             //navigate("/home");
         } else {
             setMessage("Error updating profile: " + (data.message || res.statusText));
@@ -152,12 +158,12 @@ function ManageUserAccountPage() {
     if (loading) return <p>Loading...</p>;
 
     return (
-        <div style={pageStyle}>
+        <div style={fullPageStyle}>
             <section style={dashboardStyle}>
                 <h1 style={dashboardTitleStyle}>Manage User Account</h1>
 
                 <form onSubmit={handleSubmit} style={{ textAlign: "left" }}>
-                    
+
                     <h3>Personal Info</h3>
                     <input
                         name="firstName"
@@ -228,9 +234,14 @@ function ManageUserAccountPage() {
                         </div>
                     )}
 
-                    <button type="submit" style={buttonStyle}>
+                    <Button
+                        type="submit"
+                        variant="cardinal"
+                        fullWidth
+                        style={{ padding: "12px", borderRadius: "8px" }}
+                    >
                         Save Changes to User Account
-                    </button>
+                    </Button>
 
                     {message && <p>{message}</p>}
                 </form>
@@ -242,20 +253,10 @@ function ManageUserAccountPage() {
 // *************************
 // STYLES
 // *************************
-const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: colors.lightGray,
-    padding: "32px"
-};
-
 const dashboardStyle = {
+    ...dashboardCardStyle,
     maxWidth: "700px",
-    margin: "0 auto",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    margin: "0 auto"
 };
 
 const dashboardTitleStyle = {
@@ -264,23 +265,9 @@ const dashboardTitleStyle = {
 };
 
 const inputStyle = {
-    width: "100%",
+    ...fullWidthInputStyle,
     padding: "10px",
-    marginBottom: "12px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-    boxSizing: "border-box"
-};
-
-const buttonStyle = {
-    padding: "12px",
-    width: "100%",
-    backgroundColor: colors.cardinalRed,
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    boxSizing: "border-box"
+    marginBottom: "12px"
 };
 
 export default ManageUserAccountPage;

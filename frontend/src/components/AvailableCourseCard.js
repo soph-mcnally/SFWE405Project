@@ -1,5 +1,13 @@
 import colors from "../styles/colors";
 
+/**
+ * @author Jeriah Garcia
+ *
+ * Reusable React component used to display available course information
+ * during the enrollment process. This file renders course details along with
+ * a selectable checkbox for enrolling in courses and applies shared application styling.
+ */
+
 function AvailableCourseCard({ course, selected, onSelect }) {
     return (
         <div
@@ -12,7 +20,7 @@ function AvailableCourseCard({ course, selected, onSelect }) {
                 backgroundColor: colors.white,
                 boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
                 display: "flex",
-                alignItems: "center",
+                alignItems: "flex-start",
                 gap: "12px"
             }}
         >
@@ -20,6 +28,13 @@ function AvailableCourseCard({ course, selected, onSelect }) {
                 type="checkbox"
                 checked={selected}
                 onChange={onSelect}
+                style={{
+                    width: "22px",
+                    height: "22px",
+                    cursor: "pointer",
+                    accentColor: colors.cardinalRed,
+                    flexShrink: 0
+                }}
             />
 
             <div>

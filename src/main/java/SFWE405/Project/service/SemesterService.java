@@ -4,6 +4,7 @@ import SFWE405.Project.dto.AvailableSemesterResponse;
 import SFWE405.Project.entity.Course;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.entity.University;
+import SFWE405.Project.repository.CourseAssignmentRepository;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.SemesterRepository;
 import SFWE405.Project.repository.UniversityRepository;
@@ -12,17 +13,29 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ * @author Sophie McNally
+ *
+ * Service class for semester business logic
+ * Handles semester CRUD operations and managing courses
+ * Enforces duplicate course code validation within a semester
+ *
+ */
 @Service
 public class SemesterService {
     private final SemesterRepository semesterRepository;
     private final CourseRepository courseRepository;
     private final UniversityRepository universityRepository;
+    private final CourseAssignmentRepository courseAssignmentRepository;
 
     public SemesterService(SemesterRepository semesterRepository,
-                           CourseRepository courseRepository, UniversityRepository universityRepository){
+                           CourseRepository courseRepository,
+                           UniversityRepository universityRepository,
+                           CourseAssignmentRepository courseAssignmentRepository){
         this.semesterRepository = semesterRepository;
         this.courseRepository = courseRepository;
         this.universityRepository = universityRepository;
+        this.courseAssignmentRepository = courseAssignmentRepository;
     }
 
     // semester CRUD
@@ -70,6 +83,13 @@ public class SemesterService {
                 .orElseThrow(() -> new RuntimeException("Semester not found"));
         University university = universityRepository.findById(course.getUniversity().getUniversityId())
                 .orElseThrow(() -> new RuntimeException("University not found"));
+        boolean duplicate = courseRepository.findBySemesterSemesterId(semesterId)
+                .stream()
+                .anyMatch(c -> c.getCourseCode().equalsIgnoreCase(course.getCourseCode()));
+
+        if (duplicate) {
+            throw new RuntimeException("Course with code " + course.getCourseCode() + " already exists in this semester");
+        }
         course.setSemester(semester);
         course.setUniversity(university);
         return courseRepository.save(course);
@@ -101,8 +121,13 @@ public class SemesterService {
         if (!existing.getSemester().getSemesterId().equals(semesterId)){
             throw new RuntimeException("Course does not belong to this semester");
         }
-
+        courseAssignmentRepository.deleteByCourse_CourseId(courseId);
         courseRepository.deleteById(courseId);
+    }
+    // adding faculty to course
+    public Course getCourseById(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
     // helper

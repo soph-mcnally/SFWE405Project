@@ -1,6 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Button from "../components/Button";
 import colors from "../styles/colors";
+import {
+    fullPageStyle,
+    dashboardCardStyle,
+    cardStyle,
+    placeholderStyle
+} from "../styles/sharedStyles";
+
+/**
+ * @author Jeriah Garcia & Sophie McNally
+ *
+ * React page component for the application dashboard homepage.
+ * This file displays role-basestartd dashboard content for students, faculty,
+ * and administrators, including enrolled courses, upcoming homework assignments,
+ * teaching courses, semester information, and administrative controls.
+ * It also retrieves data from backend API endpoints using bearer token authentication.
+ */
 
 function HomePage() {
     const userRole = localStorage.getItem("role") || "student";
@@ -11,23 +28,26 @@ function HomePage() {
     const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [homeworkAssignments, setHomeworkAssignments] = useState([]);
 
+    const [teachingCourses, setTeachingCourses] = useState([]);
+
     useEffect(() => {
-        fetchEnrolledCourses();
-        fetchHomeworkAssignments();
+        if (userRole.toLowerCase() === "student") {
+            fetchEnrolledCourses();
+            fetchHomeworkAssignments();
+        }
+
+        if (userRole.toLowerCase() === "faculty") {
+            fetchTeachingCourses();
+        }
     }, []);
 
     const fetchEnrolledCourses = async () => {
         try {
             const response = await fetch("http://localhost:8080/api/enrollment/my-courses", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (!response.ok) {
-                console.error(`Error loading enrolled courses: ${response.status}`);
-                return;
-            }
+            if (!response.ok) return;
 
             const data = await response.json();
             setEnrolledCourses(data);
@@ -39,9 +59,7 @@ function HomePage() {
     const fetchHomeworkAssignments = async () => {
         try {
             const response = await fetch("http://localhost:8080/api/homework-assignment/my-assignments", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.status === 204) {
@@ -49,43 +67,79 @@ function HomePage() {
                 return;
             }
 
-            if (!response.ok) {
-                console.error(`Error loading homework assignments: ${response.status}`);
-                return;
-            }
+            if (!response.ok) return;
 
             const data = await response.json();
-            console.log("Homework assignments:", data);
             setHomeworkAssignments(data);
         } catch (error) {
             console.error("Failed to load homework assignments", error);
         }
     };
 
-    const currentSemesterCourses = enrolledCourses.filter(course => {
-        return course.semester?.toLowerCase() === currentSemester.toLowerCase();
-    });
+    const fetchTeachingCourses = async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:8080/api/enrollment/my-assigned-courses",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                console.error(`Error loading teaching courses: ${response.status}`);
+                return;
+            }
+
+            const data = await response.json();
+
+            console.log("Teaching courses:", data);
+
+            setTeachingCourses(data);
+
+        } catch (error) {
+            console.error("Failed to load teaching courses", error);
+        }
+    };
+
+
+    const currentSemesterCourses = enrolledCourses.filter(course =>
+        course.semester?.toLowerCase() === currentSemester.toLowerCase()
+    );
 
     const totalCurrentUnits = currentSemesterCourses.reduce((total, course) => {
         return total + (course.unitsAmount || 0);
     }, 0);
 
-    const sortedHomeworkAssignments = [...homeworkAssignments].sort((a, b) => {
-        return new Date(a.dueDate) - new Date(b.dueDate);
-    });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const sevenDaysFromNow = new Date(today);
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+
+    const sortedUpcomingHomeworkAssignments = homeworkAssignments
+        .filter(assignment => {
+            const dueDate = new Date(assignment.dueDate);
+            dueDate.setHours(0, 0, 0, 0);
+            return dueDate >= today && dueDate <= sevenDaysFromNow;
+        })
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
     return (
-        <div style={pageStyle}>
+        <div style={fullPageStyle}>
             <section style={dashboardStyle}>
-                <h1 style={dashboardTitleStyle}>Dashboard</h1>
+                <h1 style={dashboardTitleStyle}>Welcome back!</h1>
+
+                <p style={dashboardSubtitleStyle}>
+                    Here is your {formatRole(userRole)} dashboard.
+                </p>
 
                 <p style={semesterStyle}>
                     Current Semester: <strong>{currentSemester}</strong>
                 </p>
             </section>
 
-<<<<<<< Updated upstream
-=======
             {userRole.toLowerCase() === "admin" && (
                 <section style={{ maxWidth: "700px", margin: "32px auto 0", textAlign: "center" }}>
                     <h2 style={{ color: colors.navyBlue, marginBottom: "20px" }}>Admin Controls</h2>
@@ -102,8 +156,7 @@ function HomePage() {
                     </Link>
                 </section>
             )}
-
->>>>>>> Stashed changes
+            
             {userRole.toLowerCase() === "student" && (
                 <section style={contentGridStyle}>
                     <div style={cardStyle}>
@@ -119,19 +172,7 @@ function HomePage() {
 
                         {currentSemesterCourses.length > 0 ? (
                             currentSemesterCourses.map(course => (
-                                <div key={course.courseId} style={courseItemStyle}>
-                                    <strong style={courseCodeStyle}>
-                                        {course.courseCode}
-                                    </strong>
-
-                                    <p style={courseNameStyle}>
-                                        {course.courseName}
-                                    </p>
-
-                                    <p style={courseUnitsStyle}>
-                                        {course.unitsAmount} units
-                                    </p>
-                                </div>
+                                <CourseCard key={course.courseId} course={course} />
                             ))
                         ) : (
                             <p>No enrolled courses for this semester.</p>
@@ -142,36 +183,84 @@ function HomePage() {
                         <h2 style={cardTitleStyle}>Upcoming Homework</h2>
 
                         <p style={{ ...subTextStyle, fontSize: "14px" }}>
-                            Assignments for your enrolled courses
+                            {sortedUpcomingHomeworkAssignments.length} assignment
+                            {sortedUpcomingHomeworkAssignments.length !== 1 ? "s" : ""} due within the next 7 days
                         </p>
 
-                        {sortedHomeworkAssignments.length > 0 ? (
-                            sortedHomeworkAssignments.map(assignment => (
-                                <div
+                        {sortedUpcomingHomeworkAssignments.length > 0 ? (
+                            sortedUpcomingHomeworkAssignments.map(assignment => (
+                                <AssignmentCard
                                     key={assignment.homeworkAssignmentsID}
-                                    style={homeworkItemStyle}
-                                >
-                                    <strong style={homeworkTitleStyle}>
-                                        {assignment.assignmentName}
-                                    </strong>
-
-                                    <p style={homeworkCourseStyle}>
-                                        {assignment.course?.courseCode} - {assignment.course?.courseName}
-                                    </p>
-
-                                    <p style={homeworkDueDateStyle}>
-                                        Due: {formatDate(assignment.dueDate)}
-                                    </p>
-                                </div>
+                                    assignment={assignment}
+                                />
                             ))
                         ) : (
                             <div style={placeholderStyle}>
-                                No upcoming homework assignments.
+                                No assignments due within the next 7 days.
                             </div>
                         )}
                     </div>
                 </section>
             )}
+
+            {userRole.toLowerCase() === "faculty" && (
+                <section style={singleCardGridStyle}>
+                    <div style={cardStyle}>
+                        <h2 style={cardTitleStyle}>Courses I’m Teaching</h2>
+
+                        <p style={{ ...subTextStyle, fontSize: "14px" }}>
+                            Teaching {teachingCourses.length} course
+                            {teachingCourses.length !== 1 ? "s" : ""} this semester
+                        </p>
+
+                        {teachingCourses.length > 0 ? (
+                            teachingCourses.map(course => (
+                                <CourseCard key={course.courseId} course={course} />
+                            ))
+                        ) : (
+                            <div style={placeholderStyle}>
+                                No teaching courses found.
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+        </div>
+    );
+}
+
+function CourseCard({ course }) {
+    return (
+        <div style={courseItemStyle}>
+            <strong style={courseCodeStyle}>
+                {course.courseCode}
+            </strong>
+
+            <p style={courseNameStyle}>
+                {course.courseName}
+            </p>
+
+            <p style={courseUnitsStyle}>
+                {course.unitsAmount} units
+            </p>
+        </div>
+    );
+}
+
+function AssignmentCard({ assignment }) {
+    return (
+        <div style={homeworkItemStyle}>
+            <strong style={homeworkTitleStyle}>
+                {assignment.assignmentName}
+            </strong>
+
+            <p style={homeworkCourseStyle}>
+                {assignment.course?.courseCode} - {assignment.course?.courseName}
+            </p>
+
+            <p style={homeworkDueDateStyle}>
+                Due: {formatDate(assignment.dueDate)}
+            </p>
         </div>
     );
 }
@@ -201,25 +290,19 @@ function formatDate(dateString) {
         year: "numeric"
     });
 }
+function formatRole(role) {
+    if (!role) {
+        return "user";
+    }
 
-const pageStyle = {
-    minHeight: "100vh",
-    backgroundColor: colors.lightGray,
-    padding: "32px"
-};
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+}
 
 const dashboardStyle = {
+    ...dashboardCardStyle,
     maxWidth: "700px",
     margin: "0 auto",
-    textAlign: "center",
-    backgroundColor: colors.white,
-    padding: "32px",
-    borderRadius: "12px",
-    borderTop: `6px solid ${colors.cardinalRed}`,
-    borderLeft: `1px solid ${colors.borderGray}`,
-    borderRight: `1px solid ${colors.borderGray}`,
-    borderBottom: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    textAlign: "center"
 };
 
 const dashboardTitleStyle = {
@@ -237,16 +320,8 @@ const contentGridStyle = {
     maxWidth: "1100px",
     margin: "32px auto 0",
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
     gap: "24px"
-};
-
-const cardStyle = {
-    backgroundColor: colors.white,
-    padding: "24px",
-    borderRadius: "12px",
-    border: `1px solid ${colors.borderGray}`,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
 };
 
 const cardTitleStyle = {
@@ -325,14 +400,16 @@ const homeworkDueDateStyle = {
     color: "#666"
 };
 
-const placeholderStyle = {
-    marginTop: "16px",
-    padding: "32px",
-    borderRadius: "8px",
-    border: `2px dashed ${colors.cardinalRed}`,
-    textAlign: "center",
-    color: colors.navyBlue,
-    backgroundColor: colors.lightGray
+const dashboardSubtitleStyle = {
+    fontSize: "16px",
+    color: "#666",
+    marginTop: "-4px",
+    marginBottom: "12px"
+};
+
+const singleCardGridStyle = {
+    maxWidth: "700px",
+    margin: "32px auto 0"
 };
 
 export default HomePage;

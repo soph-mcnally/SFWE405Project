@@ -2,6 +2,9 @@ package SFWE405.Project.controller;
 
 import java.util.List;
 
+import SFWE405.Project.entity.CourseAssignment;
+import SFWE405.Project.repository.CourseAssignmentRepository;
+import SFWE405.Project.repository.PeopleRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,17 +24,32 @@ import SFWE405.Project.entity.Semester;
 import SFWE405.Project.service.AuthenticationService;
 import SFWE405.Project.service.SemesterService;
 
+/*
+ * @author Sophie McNally
+ *
+ * Controller for handling semester related endpoints
+ * CRUD operations for semester and manages courses within each semester
+ * Handles faculty assignment to courses
+ * Admin authorization is required
+ *
+ */
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/semester")
-@CrossOrigin(origins = "http://localhost:3000")
 public class SemesterController {
     private final SemesterService semesterService;
     private final AuthenticationService authenticationService;
+    private final CourseAssignmentRepository courseAssignmentRepository;
+    private final PeopleRepository peopleRepository;
 
     public SemesterController(SemesterService semesterService,
-                              AuthenticationService authenticationService) {
+                              AuthenticationService authenticationService,
+                              CourseAssignmentRepository courseAssignmentRepository,
+                              PeopleRepository peopleRepository) {
         this.semesterService = semesterService;
         this.authenticationService = authenticationService;
+        this.courseAssignmentRepository = courseAssignmentRepository;
+        this.peopleRepository = peopleRepository;
     }
 
     // semester CRUD
@@ -138,6 +156,69 @@ public class SemesterController {
             throw new RuntimeException("Only admin can delete courses");
         }
         semesterService.deleteCourseFromSemester(semesterId, courseId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // get all faculty
+    @GetMapping("/faculty")
+    public ResponseEntity<List<People>> getAllFaculty(
+            @RequestHeader("Authorization") String authHeader) {
+        authenticationService.validateToken(authHeader);
+        List<People> faculty = peopleRepository.findAll()
+                .stream()
+                .filter(p -> p.getPersonType() == People.PersonType.FACULTY)
+                .toList();
+        return ResponseEntity.ok(faculty);
+    }
+
+    // get faculty assigned to a course
+    @GetMapping("/{semesterId}/courses/{courseId}/faculty")
+    public ResponseEntity<List<People>> getFacultyForCourse(
+            @PathVariable Long semesterId,
+            @PathVariable Long courseId,
+            @RequestHeader("Authorization") String authHeader) {
+        authenticationService.validateToken(authHeader);
+        List<People> faculty = courseAssignmentRepository
+                .findByCourse_CourseId(courseId)
+                .stream()
+                .map(CourseAssignment::getFaculty)
+                .toList();
+        return ResponseEntity.ok(faculty);
+    }
+
+    // assign faculty to a course
+    @PostMapping("/{semesterId}/courses/{courseId}/faculty/{personId}")
+    public ResponseEntity<Void> assignFacultyToCourse(
+            @PathVariable Long semesterId,
+            @PathVariable Long courseId,
+            @PathVariable Long personId,
+            @RequestHeader("Authorization") String authHeader) {
+        People person = authenticationService.validateToken(authHeader);
+        if (person.getPersonType() != People.PersonType.ADMIN) {
+            throw new RuntimeException("Only admin can assign faculty");
+        }
+        if (courseAssignmentRepository.existsByFaculty_PersonIDAndCourse_CourseId(personId, courseId)) {
+            throw new RuntimeException("Faculty already assigned to this course");
+        }
+        People faculty = peopleRepository.findById(personId)
+                .orElseThrow(() -> new RuntimeException("Faculty not found"));
+        Course course = semesterService.getCourseById(courseId);
+        courseAssignmentRepository.save(new CourseAssignment(faculty, course));
+        return ResponseEntity.ok().build();
+    }
+
+    // remove faculty from a course
+    @DeleteMapping("/{semesterId}/courses/{courseId}/faculty/{personId}")
+    public ResponseEntity<Void> removeFacultyFromCourse(
+            @PathVariable Long semesterId,
+            @PathVariable Long courseId,
+            @PathVariable Long personId,
+            @RequestHeader("Authorization") String authHeader) {
+        People person = authenticationService.validateToken(authHeader);
+        if (person.getPersonType() != People.PersonType.ADMIN) {
+            throw new RuntimeException("Only admin can remove faculty");
+        }
+        courseAssignmentRepository.deleteByFaculty_PersonIDAndCourse_CourseId(personId, courseId);
         return ResponseEntity.noContent().build();
     }
 

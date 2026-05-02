@@ -1,7 +1,9 @@
 package SFWE405.Project.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import SFWE405.Project.entity.Enrollment;
 import SFWE405.Project.entity.People;
@@ -13,6 +15,17 @@ import SFWE405.Project.entity.Semester;
 import SFWE405.Project.repository.CourseRepository;
 import SFWE405.Project.repository.EnrollmentRepository;
 import SFWE405.Project.repository.PeopleRepository;
+
+/**
+ * @author Jeriah Garcia
+ *
+ * Service class for handling student course enrollment logic.
+ *
+ * This file retrieves available semesters and courses, filters courses by search input,
+ * tracks enrolled and completed courses, enforces enrollment rules such as duplicate
+ * prevention and the 20-unit semester limit, and allows students to unenroll from courses.
+ *
+ */
 
 @Service
 public class EnrollmentService {
@@ -81,6 +94,15 @@ public class EnrollmentService {
                 .toList();
     }
 
+    public List<Course> getCompletedCourses(Long personId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByPersonPersonID(personId);
+
+        return enrollments.stream()
+                .filter(enrollment -> enrollment.getStatus() == Enrollment.EnrollmentStatus.COMPLETED)
+                .map(Enrollment::getCourse)
+                .toList();
+    }
+
     public EnrollCoursesResponse enrollStudentInCourses(Long personId, List<Long> courseIds) {
         People person = peopleRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("Person not found"));
@@ -88,6 +110,22 @@ public class EnrollmentService {
         EnrollCoursesResponse response = new EnrollCoursesResponse();
         List<Long> enrolledCourseIds = new ArrayList<>();
         List<String> errors = new ArrayList<>();
+
+        List<Enrollment> existingEnrollments = enrollmentRepository.findByPersonPersonID(personId);
+
+        Map<Long, Integer> semesterUnits = new HashMap<>();
+
+        for (Enrollment enrollment : existingEnrollments) {
+            if (enrollment.getStatus() == Enrollment.EnrollmentStatus.ENROLLED) {
+                Long semesterId = enrollment.getCourse().getSemester().getSemesterId();
+                int units = enrollment.getCourse().getUnitsAmount();
+
+                semesterUnits.put(
+                        semesterId,
+                        semesterUnits.getOrDefault(semesterId, 0) + units
+                );
+            }
+        }
 
         for (Long courseId : courseIds) {
             Course course = courseRepository.findById(courseId).orElse(null);
@@ -97,12 +135,26 @@ public class EnrollmentService {
                 continue;
             }
 
-            boolean alreadyEnrolled = enrollmentRepository
+            boolean existingEnrollment = enrollmentRepository
                     .findByPersonPersonIDAndCourseCourseId(personId, courseId)
                     .isPresent();
 
-            if (alreadyEnrolled) {
-                errors.add("Already enrolled in course ID: " + courseId);
+            if (existingEnrollment) {
+                errors.add("Already enrolled in or completed course ID: " + courseId);
+                continue;
+            }
+
+            Long semesterId = course.getSemester().getSemesterId();
+            int currentUnitsForSemester = semesterUnits.getOrDefault(semesterId, 0);
+            int courseUnits = course.getUnitsAmount();
+
+            if (currentUnitsForSemester + courseUnits > 20) {
+                errors.add("Cannot enroll in " + course.getCourseCode()
+                        + ". Maximum allowed units is 20 for "
+                        + course.getSemester().getSeason().name()
+                        + " "
+                        + course.getSemester().getSemesterYear()
+                        + ".");
                 continue;
             }
 
@@ -114,11 +166,25 @@ public class EnrollmentService {
 
             enrollmentRepository.save(enrollment);
             enrolledCourseIds.add(courseId);
+
+            semesterUnits.put(semesterId, currentUnitsForSemester + courseUnits);
         }
 
         response.setEnrolledCourseIds(enrolledCourseIds);
         response.setErrors(errors);
 
         return response;
+    }
+
+    public void unenrollStudentFromCourse(Long personId, Long courseId) {
+        Enrollment enrollment = enrollmentRepository
+                .findByPersonPersonIDAndCourseCourseId(personId, courseId)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+
+        if (enrollment.getStatus() != Enrollment.EnrollmentStatus.ENROLLED) {
+            throw new RuntimeException("Only currently enrolled courses can be dropped");
+        }
+
+        enrollmentRepository.delete(enrollment);
     }
 }

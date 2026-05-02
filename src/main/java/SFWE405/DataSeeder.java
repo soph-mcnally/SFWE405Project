@@ -3,6 +3,7 @@ package SFWE405;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import SFWE405.Project.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +17,7 @@ import SFWE405.Project.entity.HomeworkAssignment;
 import SFWE405.Project.entity.People;
 import SFWE405.Project.entity.Semester;
 import SFWE405.Project.entity.University;
-import SFWE405.Project.repository.AccountCredentialsRepository;
-import SFWE405.Project.repository.CourseAssignmentRepository;
-import SFWE405.Project.repository.CourseRepository;
-import SFWE405.Project.repository.EnrollmentRepository;
-import SFWE405.Project.repository.HomeworkAssignmentRepository;
-import SFWE405.Project.repository.PeopleRepository;
-import SFWE405.Project.repository.SemesterRepository;
-import SFWE405.Project.repository.UniversityRepository;
+import SFWE405.Project.entity.UniversityRequirements;
 
 @Configuration
 public class DataSeeder {
@@ -38,7 +32,8 @@ public class DataSeeder {
             EnrollmentRepository enrollmentRepository,
             HomeworkAssignmentRepository homeworkAssignmentRepository,
             CourseAssignmentRepository courseAssignmentRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            UniversityRequirementsRepository universityRequirementsRepository
     ) {
         return args -> {
 
@@ -58,8 +53,8 @@ public class DataSeeder {
             student = peopleRepository.save(student);
 
             People facultyMember = new People();
-            facultyMember.setFirstName("Faculty");
-            facultyMember.setLastName("Member");
+            facultyMember.setFirstName("Diana");
+            facultyMember.setLastName("Saldana");
             facultyMember.setPersonType(People.PersonType.FACULTY);
             facultyMember.setEnrolledAt(university);
             facultyMember = peopleRepository.save(facultyMember);
@@ -78,7 +73,7 @@ public class DataSeeder {
             AccountCredentials credsII = new AccountCredentials();
             credsII.setUserName("facultyMember");
             credsII.setPassword(passwordEncoder.encode("fac123"));
-            credsII.setEmail("faculty@example.com");
+            credsII.setEmail("saldana@example.com");
             credsII.setPerson(facultyMember);
             credsII.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
             credsII.setDateCreated(LocalDateTime.now());
@@ -88,8 +83,8 @@ public class DataSeeder {
             student.setAccountCredentials(credsI);
             student = peopleRepository.save(student); //authentication token requires link between person and credential
 
-            facultyMember.setAccountCredentials(credsII);
-            facultyMember = peopleRepository.save(facultyMember);
+             facultyMember.setAccountCredentials(credsII);
+             facultyMember = peopleRepository.save(facultyMember);
 
             // 4. Semester
             Semester semester = new Semester();
@@ -434,7 +429,7 @@ public class DataSeeder {
             // 8. Admin credentials
             AccountCredentials adminCreds = new AccountCredentials();
             adminCreds.setUserName("adminUser");
-            adminCreds.setPassword(passwordEncoder.encode("faculty123"));
+            adminCreds.setPassword(passwordEncoder.encode("Pass123"));
             adminCreds.setEmail("sophie@example.com");
             adminCreds.setPerson(admin);
             adminCreds.setAccountStatus(AccountCredentials.AccountStatus.ACTIVE);
@@ -477,6 +472,46 @@ public class DataSeeder {
             //11. Course Assignment for Faculty
             CourseAssignment courseAssignment = new CourseAssignment(faculty, course);
             courseAssignmentRepository.save(courseAssignment);
+
+            CourseAssignment courseAssignment2 = new CourseAssignment(faculty, sfwe405Spring);
+            courseAssignmentRepository.save(courseAssignment2);
+
+            //12. Populated University Requirements
+            UniversityRequirements req1 = new UniversityRequirements();
+            req1.setRequirementDescription("Minimum 3.0 GPA for Software Engineering enrollment.");
+            req1.setCategory(101L);
+            req1.setUniversity(university);
+            universityRequirementsRepository.save(req1);
+
+            UniversityRequirements req2 = new UniversityRequirements();
+            req2.setRequirementDescription("Must complete Software Programming II with a C or better.");
+            req2.setCategory(101L);
+            req2.setUniversity(university);
+            universityRequirementsRepository.save(req2);
+
+            UniversityRequirements req3 = new UniversityRequirements();
+            req3.setRequirementDescription("Must complete 45 credit hours.");
+            req3.setCategory(202L);
+            req3.setUniversity(university);
+            universityRequirementsRepository.save(req3);
+
+            UniversityRequirements req4 = new UniversityRequirements();
+            req4.setRequirementDescription("Must complete SFWE 405.");
+            req4.setCategory(202L);
+            req4.setUniversity(university);
+            universityRequirementsRepository.save(req4);
+
+            UniversityRequirements req5 = new UniversityRequirements();
+            req5.setRequirementDescription("Submit official transcripts from all previous institutions.");
+            req5.setCategory(202L);
+            req5.setUniversity(university);
+            universityRequirementsRepository.save(req5);
+
+            UniversityRequirements req6 = new UniversityRequirements();
+            req6.setRequirementDescription("Department Consent Required to enroll.");
+            req6.setCategory(303L);
+            req6.setUniversity(university);
+            universityRequirementsRepository.save(req6);
 
             System.out.println("Database seeded successfully!");
 
