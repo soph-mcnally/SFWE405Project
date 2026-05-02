@@ -15,7 +15,7 @@ import {
 
 function ManageUserAccountPage() {
     const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    const role = localStorage.getItem("role").toUpperCase();
     const credentialsId = localStorage.getItem("credentialsId");
     const personId = localStorage.getItem("personId");
     const navigate = useNavigate();
@@ -209,16 +209,18 @@ function ManageUserAccountPage() {
                         style={inputStyle}
                     />
 
-                    <select
-                        name="accountStatus"
-                        value={account.accountStatus}
-                        onChange={handleAccountChange}
-                        style={inputStyle}
-                    >
-                        <option value="ACTIVE">ACTIVE</option>
-                        <option value="INACTIVE">INACTIVE</option>
-                        <option value="SUSPENDED">SUSPENDED</option>
-                    </select>
+                    {role === "ADMIN" && (
+                      <select
+                          name="accountStatus"
+                          value={account.accountStatus}
+                          onChange={handleAccountChange}
+                          style={inputStyle}
+                      >
+                          <option value="ACTIVE">ACTIVE</option>
+                          <option value="INACTIVE">INACTIVE</option>
+                          <option value="SUSPENDED">SUSPENDED</option>
+                      </select>
+                    )}
 
                     {/* Role-based logic example */}
                     {role === "FACULTY" && (

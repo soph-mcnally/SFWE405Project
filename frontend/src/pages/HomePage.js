@@ -148,9 +148,15 @@ function HomePage() {
                             Manage Courses
                         </Button>
                     </Link>
+                    <br/><br/>
+                    <Link to="/requirements">
+                        <button variant="cardinal" size="large">
+                            University Requirements
+                        </button>
+                    </Link>
                 </section>
             )}
-
+            
             {userRole.toLowerCase() === "student" && (
                 <section style={contentGridStyle}>
                     <div style={cardStyle}>
