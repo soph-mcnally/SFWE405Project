@@ -150,9 +150,9 @@ function HomePage() {
                     </Link>
                     <br/><br/>
                     <Link to="/requirements">
-                        <button variant="cardinal" size="large">
+                        <Button variant="cardinal" size="large">
                             University Requirements
-                        </button>
+                        </Button>
                     </Link>
                 </section>
             )}
